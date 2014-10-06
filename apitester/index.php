@@ -2,11 +2,26 @@
 session_name("oauthtester");
 session_start();
 
-require 'kint/Kint.class.php';
+require 'includes/kint/Kint.class.php';
+require '../lib/Mautic/AutoLoader.php';
+
+use Mautic\Auth\OAuthClient;
+
+function __autoload($className) {
+    $filename = __DIR__ . '/../lib/' . str_replace('\\', '/', $className) . ".php";
+    if (is_readable($filename)) {
+        require $filename;
+    }
+}
 
 $auth = (isset($_POST['auth'])) ? $_POST['auth'] : @$_SESSION['auth'];
 if (empty($auth)) {
     $auth = 'OAuth1a';
+}
+
+//clear the debug info
+if (!empty($_POST['auth']) && $_POST['auth'] != @$_SESSION['auth']) {
+    unset($_SESSION['oauth']);
 }
 
 //OAuth1a
@@ -31,6 +46,7 @@ $apiurl = (isset($_POST['apiurl'])) ? $_POST['apiurl'] : @$_SESSION['apiurl'];
 if (!empty($apiurl) && substr($apiurl, -1) !== '/') {
     $apiurl .= '/';
 }
+
 $apiendpoint = (isset($_POST['apiendpoint'])) ? $_POST['apiendpoint'] : @$_SESSION['apiendpoint'];
 $method      = (isset($_POST['method'])) ? $_POST['method'] : @$_SESSION['method'];
 if (empty($method)) {
@@ -65,6 +81,7 @@ if (isset($_SESSION['redirect'])) {
     //should the tokens be reset
     if (!empty($_POST[$auth]['reset'])) {
         unset($_SESSION[$auth]);
+        unset($_SESSION['oauth']);
     }
 
     if ($auth == 'OAuth1a') {
@@ -96,57 +113,78 @@ if (isset($_SESSION['redirect'])) {
         $_SESSION['method']       = $method;
         $_SESSION['parameters']   = $parameters;
 
-        require '../oauthclient.php';
+        if ($auth == 'OAuth1a') {
+            $oauthObject = \Mautic\Auth\ApiAuth::initiate(array(
+                'clientKey'        => $consumerKey,
+                'clientSecret'     => $consumerSecret,
+                'callback'         => $callback,
+                'requestTokenUrl'  => $requestTokenUrl,
+                'authorizationUrl' => $authUrl,
+                'accessTokenUrl'   => $accessTokenUrl
+            ));
+        } else {
+            $oauthObject = \Mautic\Auth\ApiAuth::initiate(array(
+                'clientKey'        => $clientKey,
+                'clientSecret'     => $clientSecret,
+                'callback'         => $redirectUri,
+                'authorizationUrl' => $authUrl2,
+                'accessTokenUrl'   => $tokenUrl,
+                'scope'            => $scope
+            ));
+        }
 
-        if ($auth != 'None') {
-            if ($auth == 'OAuth1a') {
-                $oauthObject = new \Mautic\API\Oauth($consumerKey, $consumerSecret, $callback, $auth);
-                $oauthObject->setRequestTokenUrl($requestTokenUrl);
-                $oauthObject->setAuthorizeUrl($authUrl);
-                $oauthObject->setAccessTokenUrl($accessTokenUrl);
-            } else {
-                $oauthObject = new \Mautic\API\Oauth($clientKey, $clientSecret, $redirectUri, $auth);
-                $oauthObject->setAuthorizeUrl($authUrl2);
-                $oauthObject->setAccessTokenUrl($tokenUrl);
-                $oauthObject->setScope($scope);
-            }
+        if (!empty($_SESSION[$auth])) {
+            $oauthObject->setAccessTokenDetails($_SESSION[$auth]);
+        }
 
-            $oauthObject->enableDebugMode();
+        $oauthObject->enableDebugMode();
 
-            try {
-                if ($oauthObject->validateAccessToken()) {
-                    if (!empty($_POST['apiurl'])) {
-                        $url = $apiurl . $apiendpoint . $responsetype;
-
-                        $postParams = array();
-                        foreach ($parameters as $k => $v) {
-                            $postParams[$v['key']] = $v['value'];
-                        }
-                        parse_str(http_build_query($postParams), $postParams);
-
-                        if ($responsetype == '/') {
-                            $returnType = 'json';
-                        } else {
-                            $returnType = substr($responsetype, 1);
-                        }
-
-                        $response = $oauthObject->makeRequest($url, $method, $postParams, $returnType);
-                    }
+        try {
+            if ($oauthObject->validateAccessToken()) {
+                //Was the access token updated?
+                if ($oauthObject->accessTokenUpdated()) {
+                    $_SESSION[$auth] = $oauthObject->getAccessTokenData();
                 }
 
-                if (!empty($response)) {
-                    if (is_array($response)) {
-                        $output .= "<p>Response: " . @Kint::dump($response) . "</p>";
+                if (!empty($_POST['apiurl'])) {
+                    $url = $apiurl . $apiendpoint;
+                    if ($responsetype != '/') {
+                        $url .= $responsetype;
+                    }
+
+                    $postParams = array();
+                    foreach ($parameters as $k => $v) {
+                        $postParams[$v['key']] = $v['value'];
+                    }
+                    parse_str(http_build_query($postParams), $postParams);
+
+                    if ($responsetype == '/') {
+                        $returnType = 'json';
                     } else {
-                        $output .= "<p>Response: <br />$response</p>";
+                        $returnType = substr($responsetype, 1);
                     }
+
+                    $settings = array(
+                        'responseType' => $responsetype
+                    );
+
+                    $response = $oauthObject->makeRequest($url, $postParams, $method, $settings);
                 }
-            } catch (Exception $e) {
-                $output = '<div class="text-danger">' . $e->getMessage() . '</div>';
             }
+
+            if (!empty($response)) {
+                if (is_array($response)) {
+                    $output .= "<p>" . @Kint::dump($response) . "</p>";
+                } else {
+                    $output .= "<p>$response</p>";
+                }
+            }
+        } catch (Exception $e) {
+            $output = '<div class="text-danger">' . $e->getMessage() . '</div>';
         }
 
         $output .= @Kint::dump($_SESSION[$auth]);
+        $output .= @Kint::dump($_SESSION['oauth']['debug']);
         $output .= @Kint::dump($oauthObject);
 
         if (!empty($_POST)) {
@@ -165,10 +203,10 @@ if (isset($_SESSION['redirect'])) {
 <html>
 <head>
     <title>API Tester</title>
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <script src="bootstrap/js/jquery-1.11.1.min.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-
+    <link href="includes/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="includes/jquery-1.11.1.min.js"></script>
+    <script src="includes/bootstrap/js/bootstrap.min.js"></script>
+    <script src="includes/typeahead.js"></script>
     <script>
         $(document).ready(function () {
             $('.method-dropdown li').click(function (e) {
@@ -191,8 +229,55 @@ if (isset($_SESSION['redirect'])) {
                 $('.responsetype').val(selected);
                 $('.responsetype_label').html(selected);
             });
-        });
 
+            <?php
+            $files = scandir(__DIR__ . '/endpoints', 1);
+            $endpoints = array();
+            foreach ($files as $file) {
+                $check = substr($file, -5);
+                if ($check == '.json') {
+                $endpoint = str_replace($check, '', $file);
+echo <<<ENDPOINT
+
+            var {$endpoint}Endpoint = new Bloodhound({
+              datumTokenizer: Bloodhound.tokenizers.obj.whitespace('endpoint'),
+              queryTokenizer: Bloodhound.tokenizers.whitespace,
+              remote: {
+                    url: 'endpoints/$file',
+                    filter: function(list) {
+                        return $.map(list, function(ep) { return { endpoint: ep }; });
+                    }
+                }
+            });
+            {$endpoint}Endpoint.initialize();
+ENDPOINT;
+                    $endpoints[] = $endpoint;
+                }
+            }
+echo <<<ENDPOINT
+
+            $('#endpoint').typeahead({
+              highlight: true
+            },
+ENDPOINT;
+            $count = (count($endpoints) - 1);
+            foreach ($endpoints as $k => $endpoint) {
+            $comma = ($k < $count) ? ',' : '';
+echo <<<ENDPOINT
+
+            {
+              name: 'endpoints',
+              displayKey: 'endpoint',
+              source: {$endpoint}Endpoint.ttAdapter(),
+              templates: {
+                header: '<h3 class="endpoint-name">$endpoint</h3>'
+              }
+            }$comma
+ENDPOINT;
+            }
+            echo "\n);";
+            ?>
+        });
         function addParameter() {
             var parameterCount = $('#parameterCount').val();
 
@@ -211,23 +296,7 @@ if (isset($_SESSION['redirect'])) {
             $('#parameterCount').val(parameterCount);
         }
     </script>
-
-    <style>
-        .custom {
-            -webkit-border-radius: 0px !important;
-            -moz-border-radius: 0px !important;
-            border-radius: 0px !important;
-        }
-        .custom-right {
-            -webkit-border-radius: 4px 0px 0px 4px !important;
-            -moz-border-radius: 4px 0px 0px 4px !important;
-            border-radius: 4px 0px 0px 4px !important;
-            width: 100%;
-        }
-        .parameter-row {
-            margin-bottom: 3px;
-        }
-    </style>
+    <link rel="stylesheet" href="includes/style.css" type="text/css" />
 </head>
 
 <body>
@@ -239,11 +308,13 @@ if (isset($_SESSION['redirect'])) {
 
         <div class="row">
             <div class="col-lg-5" style="padding-right: 0px !important;">
-                <input class="form-control custom-right" type="text" value="<?php echo $apiurl; ?>" placeholder="URL" name="apiurl">
+                <input class="form-control custom-right" type="text" value="<?php echo $apiurl; ?>" placeholder="Base URL" name="apiurl">
             </div>
             <div class="col-lg-7" style="padding-left: 0px !important;">
                 <div class="input-group">
-                    <input class="form-control custom" type="text" value="<?php echo $apiendpoint; ?>" placeholder="API Endpoint" name="apiendpoint">
+                    <div id="scrollable-dropdown-menu">
+                        <input class="form-control custom" type="text" value="<?php echo $apiendpoint; ?>" id="endpoint" placeholder="API Endpoint" name="apiendpoint">
+                    </div>
                     <div class="input-group-btn fix-my-width">
                         <button type="button" class="btn btn-default dropdown-toggle custom" data-toggle="dropdown">
                             <span class="responsetype_label"><?php echo $responsetype; ?></span> <span class="caret"></span>
@@ -262,7 +333,6 @@ if (isset($_SESSION['redirect'])) {
                             <span class="auth_label"><?php echo $auth; ?></span> <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu auth-dropdown">
-                            <li><a href="#">None</a></li>
                             <li><a href="#">OAuth1a</a></li>
                             <li><a href="#">OAuth2</a></li>
                         </ul>

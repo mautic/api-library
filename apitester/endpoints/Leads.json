@@ -1,0 +1,9 @@
+[
+    "leads",
+    "leads/{id}",
+    "leads/list/fields",
+    "leads/list/owners",
+    "leads/new",
+    "leads/edit/{id}",
+    "leads/notes"
+]

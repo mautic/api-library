@@ -1,0 +1,6 @@
+[
+    "points",
+    "points/{id}",
+    "points/triggers",
+    "points/triggers/{id}"
+]
