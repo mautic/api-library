@@ -1,1 +1,4 @@
 .idea
+tests/local.config.php
+tests/phpunit.phar
+tests/bootstrap.php
