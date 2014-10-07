@@ -4,6 +4,11 @@
 * PHP 5.3
 * cURL support
 
+## Mautic Setup
+The API must be enabled in Mautic. Then go to Admin settings -> API Clients.  Create a new client.  Enter the 
+callback/redirect URI that the request will be sent from.  Click Apply then copy the consumer/client ID to the app/script
+that will be using the API.
+
 ## Authorization
 ### OAuth URLs
 ***OAuth 1.0a***
