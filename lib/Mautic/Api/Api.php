@@ -152,18 +152,37 @@ class Api
      * @param int    $limit
      * @param string $orderBy
      * @param string $orderByDir
+     * @param bool   $publishedOnly
      */
-    public function getList($filter = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
+    public function getList($filter = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false)
     {
-        $parameters = array(
-            'filter'     => $filter,
-            'start'      => $start,
-            'limit'      => $limit,
-            'orderBy'    => $orderBy,
-            'orderByDir' => $orderByDir
-        );
+        $parameters = array();
+
+        $args = array('filter', 'start', 'limit', 'orderBy', 'orderByDir', 'publishedOnly');
+
+        foreach ($args as $arg) {
+            if (!empty($$arg)) {
+                $parameters[$arg] = $$arg;
+            }
+        }
 
         return $this->makeRequest($this->endpoint, $parameters);
+    }
+
+    /**
+     * Proxy function to getList with $publishedOnly set to true
+     *
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $orderBy
+     * @param string $orderByDir
+     *
+     * @return array|mixed
+     */
+    public function getPublishedList($filter = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
+    {
+        return $this->getList($filter, $start, $limit, $orderBy, $orderByDir, true);
     }
 
     /**
