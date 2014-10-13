@@ -28,6 +28,7 @@ to decide which is enabled.  Thus it is best to have a configuration option with
 to choose what method should be used by your code.
 
     <?php
+    
     // Include the MauticApi file which handles the API class autoloading
     include __DIR__ . '/lib/Mautic/MauticApi.php';  
     
@@ -85,6 +86,8 @@ Note that currently only the Lead context allows creating, editing and deleting 
 
 ### Get a context object
 
+    <?php
+    
     // Create an api context by passing in the desired context (Leads, Forms, Pages, etc), the $auth object from above
     // and the base URL to the Mautic server (i.e. http://my-mautic-server.com/api/)
 
@@ -103,6 +106,8 @@ Supported contexts are currently:
 ### Retrieving items
 All of the above contexts support the following functions for retrieving items:
 
+    <?php
+    
     $lead = $leadApi->get($id);
     
     // getList accepts optional parameters for filtering, limiting, and ordering
@@ -110,6 +115,8 @@ All of the above contexts support the following functions for retrieving items:
     
 ### Creating an item
 Currently, only Leads support this
+
+    <?php
     
     $fields = $leadApi->getFieldList();
     
@@ -128,6 +135,8 @@ Currently, only Leads support this
 ### Editing an item
 Currently, only Leads support this
 
+    <?php
+    
     $updatedData = array(
         'firstname' => 'Updated Name'
     );
@@ -140,11 +149,15 @@ Currently, only Leads support this
     
 ### Deleting an item
 Currently, only Leads support this
+
+    <?php
     
     $result = $leadApi->delete($leadId);
     
 ### Error handling
 
+    <?php
+    
     // $result returned by an API call should be checked for errors
     $result = $leadApi->delete($leadId);
     
