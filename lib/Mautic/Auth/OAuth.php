@@ -210,7 +210,7 @@ class OAuth extends ApiAuth implements AuthInterface
      */
     public function getAccessTokenData ()
     {
-        if (strlen($this->_request_token_url) > 0) {
+        if ($this->isOauth1()) {
             return array(
                 "access_token"        => $this->_access_token,
                 "access_token_secret" => $this->_access_token_secret,
@@ -314,7 +314,7 @@ class OAuth extends ApiAuth implements AuthInterface
             $this->log('access token empty so authorize');
 
             //OAuth flows
-            if (strlen($this->_request_token_url) > 0) {
+            if ($this->isOauth1()) {
                 //OAuth 1.0
                 $this->log('authorizing with OAuth1.0a spec');
 
@@ -390,6 +390,8 @@ class OAuth extends ApiAuth implements AuthInterface
         );
         $params = $this->makeRequest($this->_request_token_url, array(), 'POST', $settings);
 
+
+
         //Add token and secret to the session
         if (is_array($params) && isset($params['oauth_token']) && isset($params['oauth_token_secret'])) {
             $this->log('token set as ' . $params['oauth_token']);
@@ -431,7 +433,7 @@ class OAuth extends ApiAuth implements AuthInterface
         $this->log('requestAccessToken()');
 
         //Set OAuth flow parameters
-        if (isset($this->_request_token_url) && strlen($this->_request_token_url) > 0) {
+        if ($this->isOauth1()) {
             //OAuth 1.0
             $this->log('using OAuth1.0a spec');
 
@@ -469,7 +471,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         //Add the token and secret to session
         if (is_array($params)) {
-            if (isset($this->_request_token_url) && strlen($this->_request_token_url) > 0) {
+            if ($this->isOauth1()) {
                 //OAuth 1.0a
                 if (isset($params['oauth_token']) && isset($params['oauth_token_secret'])) {
                     $this->log('access token set as ' . $params['oauth_token']);
@@ -535,7 +537,7 @@ class OAuth extends ApiAuth implements AuthInterface
         $authUrl = $this->_authorize_url;
 
         //Build authorization URL
-        if (isset($this->_request_token_url) && strlen($this->_request_token_url) > 0) {
+        if ($this->isOauth1()) {
             //OAuth 1.0
             $authUrl .= '?oauth_token=' . $_SESSION['oauth']['token'];
         } else {
@@ -579,7 +581,7 @@ class OAuth extends ApiAuth implements AuthInterface
         $method = strtoupper($method);
 
         //Set OAuth parameters/headers
-        if (isset($this->_request_token_url) && strlen($this->_request_token_url) > 0) {
+        if ($this->isOauth1()) {
             //OAuth 1.0
             $this->log('making request using OAuth1.0a spec');
 
@@ -626,7 +628,7 @@ class OAuth extends ApiAuth implements AuthInterface
         );
 
         //Set CURL headers for oauth 1.0 requests
-        if (isset($this->_request_token_url) && strlen($this->_request_token_url) > 0) {
+        if ($this->isOauth1()) {
             $options[CURLOPT_HTTPHEADER] = $header;
         }
 
@@ -661,21 +663,31 @@ class OAuth extends ApiAuth implements AuthInterface
             $_SESSION['oauth']['debug']['returnedBody']    = $body;
         }
 
+        $responseGood = false;
+
+        //Check to see if the response is JSON
+
+        $parsed = json_decode($body, true);
+        if ($parsed === null) {
+            if (strpos($body, '=') !== false) {
+                parse_str($body, $parsed);
+                $responseGood = true;
+            }
+        } else {
+            $responseGood = true;
+        }
+
         //Show error when http_code is not appropriate
         if (!in_array($info['http_code'], array(200, 201))) {
-            //Check to see if the response is JSON
-            $parsed = json_decode($body, true);
 
-            if ($parsed) {
+            if ($responseGood) {
                 return $parsed;
             } else {
                 throw new UnexpectedResponseFormatException($body);
             }
+        } else {
+            return ($responseGood) ? $parsed : $body;
         }
-
-        //Return json decoded array
-        $parsed = json_decode($body, true);
-        return (!$parsed) ? $body : $parsed;
     }
 
     /**
@@ -844,5 +856,13 @@ class OAuth extends ApiAuth implements AuthInterface
         if ($this->_debug) {
             $_SESSION['oauth']['debug']['flow'][date('m-d H:i:s')][] = $message;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isOauth1()
+    {
+        return strlen($this->_request_token_url) > 0;
     }
 }
