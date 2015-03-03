@@ -390,8 +390,6 @@ class OAuth extends ApiAuth implements AuthInterface
         );
         $params = $this->makeRequest($this->_request_token_url, array(), 'POST', $settings);
 
-
-
         //Add token and secret to the session
         if (is_array($params) && isset($params['oauth_token']) && isset($params['oauth_token_secret'])) {
             $this->log('token set as ' . $params['oauth_token']);
@@ -406,15 +404,17 @@ class OAuth extends ApiAuth implements AuthInterface
         } else {
             //Throw exception if the required parameters were not found
             $this->log('request did not return oauth tokens');
-            $s = array();
+
             if (is_array($params)) {
-                foreach ($params as $k => $v) {
-                    $s[] = $k . '=' . $v;
+                if (isset($params['error'])) {
+                    $response = $params['error'];
+                } else {
+                    $response = '???';
                 }
-                $response = implode('&', $s);
             } else {
                 $response = $params;
             }
+
             throw new IncorrectParametersReturnedException('Incorrect access token parameters returned: ' . $response);
         }
     }
