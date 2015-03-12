@@ -628,9 +628,9 @@ class OAuth extends ApiAuth implements AuthInterface
 
         // CURLOPT_FOLLOWLOCATION cannot be activated when an open_basedir is set
         if (ini_get('open_basedir')) {
-            $options[CURLOPT_HTTPHEADER] = true;
+            $options[CURLOPT_FOLLOWLOCATION] = false;
         } else {
-            $options[CURLOPT_HTTPHEADER] = false;
+            $options[CURLOPT_FOLLOWLOCATION] = true;
         }
 
         //Set CURL headers for oauth 1.0 requests
