@@ -57,4 +57,31 @@ class Campaigns extends Api
     {
         return $this->actionNotSupported('delete');
     }
+
+    /**
+     * Add a lead to the campaign
+     *
+     * @param $id       Campaign ID
+     * @param $leadId   Lead ID
+     *
+     * @return array|mixed
+     */
+    public function addLead($id, $leadId)
+    {
+        return $this->makeRequest($this->endpoint . '/' . $id . '/lead/add/' . $leadId, array(), 'POST');
+    }
+
+
+    /**
+     * Remove a lead from the campaign
+     *
+     * @param $id       Campaign ID
+     * @param $leadId   Lead ID
+     *
+     * @return array|mixed
+     */
+    public function removeLead($id, $leadId)
+    {
+        return $this->makeRequest($this->endpoint . '/' . $id . '/lead/remove/' . $leadId, array(), 'POST');
+    }
 }
