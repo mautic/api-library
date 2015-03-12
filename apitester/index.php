@@ -22,6 +22,7 @@ $apiurl = (isset($_POST['apiurl'])) ? $_POST['apiurl'] : @$_SESSION['apiurl'];
 if (!empty($apiurl) && substr($apiurl, -1) !== '/') {
     $apiurl .= '/';
 }
+$_SESSION['apiurl'] = $apiurl;
 
 //clear the debug info
 if (!empty($_POST['auth']) && $_POST['auth'] != @$_SESSION['auth']) {
@@ -176,7 +177,6 @@ if (isset($_SESSION['redirect'])) {
         $_SESSION['settings']['OAuth2']['state']        = $state;
 
         $_SESSION['auth']         = $auth;
-        $_SESSION['apiurl']       = $apiurl;
         $_SESSION['apiendpoint']  = $apiendpoint;
         $_SESSION['responsetype'] = $responsetype;
         $_SESSION['method']       = $method;
