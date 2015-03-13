@@ -18,11 +18,11 @@ $auth = (isset($_POST['auth'])) ? $_POST['auth'] : @$_SESSION['auth'];
 if (empty($auth)) {
     $auth = 'OAuth1a';
 }
-$apiurl = (isset($_POST['apiurl'])) ? $_POST['apiurl'] : @$_SESSION['apiurl'];
-if (!empty($apiurl) && substr($apiurl, -1) !== '/') {
-    $apiurl .= '/';
-}
+$apiurl             = (isset($_POST['apiurl'])) ? $_POST['apiurl'] : @$_SESSION['apiurl'];
 $_SESSION['apiurl'] = $apiurl;
+if (!empty($apiurl) && substr($apiurl, -1)) {
+    $apiUrl .= '/';
+}
 
 //clear the debug info
 if (!empty($_POST['auth']) && $_POST['auth'] != @$_SESSION['auth']) {
@@ -122,7 +122,7 @@ if (empty($method)) {
 }
 $responsetype = (isset($_POST['responsetype'])) ? $_POST['responsetype'] : @$_SESSION['responsetype'];
 if (empty($responsetype)) {
-    $responsetype = '.json';
+    $responsetype = '/';
 }
 
 $parameters = (isset($_POST['parameters'])) ? $_POST['parameters'] : @$_SESSION['parameters'];
@@ -216,7 +216,7 @@ if (isset($_SESSION['redirect'])) {
                 }
 
                 if (!empty($_POST['apiurl'])) {
-                    $url = $apiurl . $apiendpoint;
+                    $url = $apiurl . 'api/' . $apiendpoint;
                     if ($responsetype != '/') {
                         $url .= $responsetype;
                     }
@@ -377,9 +377,10 @@ ENDPOINT;
 
         <div class="row">
             <div class="col-lg-5" style="padding-right: 0px !important;">
-                <input class="form-control custom-right" type="text" value="<?php echo $apiurl; ?>" placeholder="Base URL" name="apiurl">
+                <input class="form-control custom-right" type="text" value="<?php echo $apiurl; ?>" placeholder="Mautic URL" name="apiurl">
             </div>
-            <div class="col-lg-7" style="padding-left: 0px !important;">
+            <div class="col-lg-1 text-center" style="padding: 8px; font-size: 15px;"><strong>/api/</strong></div>
+            <div class="col-lg-6" style="padding-left: 0px !important;">
                 <div class="input-group">
                     <div id="scrollable-dropdown-menu">
                         <input class="form-control custom" type="text" value="<?php echo $apiendpoint; ?>" id="endpoint" placeholder="API Endpoint" name="apiendpoint">
@@ -390,8 +391,10 @@ ENDPOINT;
                         </button>
                         <ul class="dropdown-menu responsetype-dropdown">
                             <li><a href="#">/</a></li>
+                            <!--
                             <li><a href="#">.json</a></li>
                             <li><a href="#">.xml</a></li>
+                            -->
                         </ul>
                         <input type="hidden" name="responsetype" class="responsetype" value="<?php echo $responsetype; ?>">
                         <button class="btn btn-primary custom" type="submit">Submit</button>
