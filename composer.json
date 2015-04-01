@@ -11,5 +11,8 @@
   "require": {
     "php": ">=5.3.7",
     "ext-curl": "*"
+  },
+  "require-dev": {
+    "raveren/kint": "~0.9"
   }
 }

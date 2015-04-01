@@ -2,17 +2,9 @@
 session_name("oauthtester");
 session_start();
 
-require 'includes/kint/Kint.class.php';
-require '../lib/Mautic/AutoLoader.php';
+require realpath(dirname(__DIR__).'/vendor/autoload.php');
 
 use Mautic\Auth\OAuthClient;
-
-function __autoload($className) {
-    $filename = __DIR__ . '/../lib/' . str_replace('\\', '/', $className) . ".php";
-    if (is_readable($filename)) {
-        require $filename;
-    }
-}
 
 $auth = (isset($_POST['auth'])) ? $_POST['auth'] : @$_SESSION['auth'];
 if (empty($auth)) {
