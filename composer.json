@@ -8,6 +8,11 @@
       "Mautic\\": "lib/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Mautic\\Tests": "tests/"
+    }
+  },
   "require": {
     "php": ">=5.3.7",
     "ext-curl": "*"
