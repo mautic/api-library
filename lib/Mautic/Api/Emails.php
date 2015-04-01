@@ -10,17 +10,17 @@
 namespace Mautic\Api;
 
 /**
- * Campaigns Context
+ * Emails Context
  *
  * @package Mautic\Api
  */
-class Campaigns extends Api
+class Emails extends Api
 {
 
     /**
      * @var string
      */
-    protected $endpoint = 'campaigns';
+    protected $endpoint = 'emails';
 
     /**
      * {@inheritdoc}
@@ -59,29 +59,27 @@ class Campaigns extends Api
     }
 
     /**
-     * Add a lead to the campaign
+     * Send email to the assigned lists
      *
-     * @param $id       Campaign ID
-     * @param $leadId   Lead ID
+     * @param $id
      *
      * @return array|mixed
      */
-    public function addLead($id, $leadId)
+    public function send($id)
     {
-        return $this->makeRequest($this->endpoint . '/' . $id . '/lead/add/' . $leadId, array(), 'POST');
+        return $this->makeRequest($this->endpoint . '/' . $id . '/send', array(), 'POST');
     }
 
-
     /**
-     * Remove a lead from the campaign
+     * Send email to a specific lead
      *
-     * @param $id       Campaign ID
-     * @param $leadId   Lead ID
+     * @param $id
+     * @param $leadId
      *
      * @return array|mixed
      */
-    public function removeLead($id, $leadId)
+    public function sendToLead($id, $leadId)
     {
-        return $this->makeRequest($this->endpoint . '/' . $id . '/lead/remove/' . $leadId, array(), 'POST');
+        return $this->makeRequest($this->endpoint . '/' . $id . '/send/lead/' . $leadId, array(), 'POST');
     }
 }

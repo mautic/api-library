@@ -1,4 +1,6 @@
 [
     "emails",
-    "emails/{id}"
+    "emails/{id}",
+    "emails/{id}/send",
+    "emails/{id}/send/lead/{leadId}"
 ]
