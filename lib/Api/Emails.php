@@ -11,21 +11,17 @@ namespace Mautic\Api;
 
 /**
  * Emails Context
- *
- * @package Mautic\Api
  */
 class Emails extends Api
 {
 
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $endpoint = 'emails';
 
     /**
      * {@inheritdoc}
-     *
-     * @param array $parameters
      */
     public function create(array $parameters)
     {
@@ -34,12 +30,6 @@ class Emails extends Api
 
     /**
      * {@inheritdoc}
-     *
-     * @param int   $id
-     * @param array $parameters
-     * @param bool  $createIfNotExists = false
-     *
-     * @return array|mixed
      */
     public function edit($id, array $parameters, $createIfNotExists = false)
     {
@@ -48,10 +38,6 @@ class Emails extends Api
 
     /**
      * {@inheritdoc}
-     *
-     * @param $id
-     *
-     * @return array|mixed
      */
     public function delete($id)
     {
@@ -61,25 +47,25 @@ class Emails extends Api
     /**
      * Send email to the assigned lists
      *
-     * @param $id
+     * @param int $id
      *
      * @return array|mixed
      */
     public function send($id)
     {
-        return $this->makeRequest($this->endpoint . '/' . $id . '/send', array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/send', array(), 'POST');
     }
 
     /**
      * Send email to a specific lead
      *
-     * @param $id
-     * @param $leadId
+     * @param int $id
+     * @param int $leadId
      *
      * @return array|mixed
      */
     public function sendToLead($id, $leadId)
     {
-        return $this->makeRequest($this->endpoint . '/' . $id . '/send/lead/' . $leadId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/send/lead/'.$leadId, array(), 'POST');
     }
 }
