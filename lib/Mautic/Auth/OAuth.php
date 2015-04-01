@@ -623,9 +623,15 @@ class OAuth extends ApiAuth implements AuthInterface
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_HEADER         => true,
-            CURLOPT_FOLLOWLOCATION => true
+            CURLOPT_HEADER         => true
         );
+
+        // CURLOPT_FOLLOWLOCATION cannot be activated when an open_basedir is set
+        if (ini_get('open_basedir')) {
+            $options[CURLOPT_FOLLOWLOCATION] = false;
+        } else {
+            $options[CURLOPT_FOLLOWLOCATION] = true;
+        }
 
         //Set CURL headers for oauth 1.0 requests
         if ($this->isOauth1()) {
