@@ -9,20 +9,15 @@
 
 namespace Mautic\Tests\Api;
 
-/**
- * Leads Context
- *
- * @package Mautic\Api
- */
-class Leads extends CommonTest
+class LeadsTest extends MauticApiTestCase
 {
     public function testGet()
     {
         $leadApi = $this->getContext('leads');
         $lead    = $leadApi->get(1);
 
-        $valid = empty($result['error']) || $result['error']['code'] == 404;
-        $this->assertTrue($valid, $result['error']['message']);
+        $message = isset($lead['error']) ? $lead['error']['message'] : '';
+        $this->assertFalse(isset($lead['error']), $message);
     }
 
     public function testGetList()
@@ -30,7 +25,8 @@ class Leads extends CommonTest
         $leadApi = $this->getContext('leads');
         $leads   = $leadApi->getList();
 
-        $this->assertTrue(empty($leads['error']), $leads['error']['message']);
+        $message = isset($leads['error']) ? $leads['error']['message'] : '';
+        $this->assertFalse(isset($leads['error']), $message);
     }
 
     public function testGetFieldList()
@@ -38,7 +34,8 @@ class Leads extends CommonTest
         $leadApi = $this->getContext('leads');
         $fields  = $leadApi->getFieldList();
 
-        $this->assertTrue(empty($fields['error']), $fields['error']['message']);
+        $message = isset($fields['error']) ? $fields['error']['message'] : '';
+        $this->assertFalse(isset($fields['error']), $message);
     }
 
     public function testGetListList()
@@ -46,7 +43,8 @@ class Leads extends CommonTest
         $leadApi = $this->getContext('leads');
         $lists   = $leadApi->getLists();
 
-        $this->assertTrue(empty($lists['error']), $lists['error']['message']);
+        $message = isset($lists['error']) ? $lists['error']['message'] : '';
+        $this->assertFalse(isset($lists['error']), $message);
     }
 
     public function testGetNotes()
@@ -54,57 +52,79 @@ class Leads extends CommonTest
         $leadApi = $this->getContext('leads');
         $leads   = $leadApi->getNotes(1);
 
-        $this->assertTrue(empty($leads['error']), $leads['error']['message']);
+        $message = isset($leads['error']) ? $leads['error']['message'] : '';
+        $this->assertFalse(isset($leads['error']), $message);
     }
 
     public function testCreateAndDelete()
     {
         $leadApi = $this->getContext('leads');
-        $lead    = $leadApi->create(array(
-            'firstname' => 'test',
-            'lastname'  => 'test'
-        ));
+        $lead    = $leadApi->create(
+            array(
+                'firstname' => 'test',
+                'lastname'  => 'test'
+            )
+        );
 
-        $this->assertTrue(empty($lead['error']), $lead['error']['message']);
+        $message = isset($lead['error']) ? $lead['error']['message'] : '';
+        $this->assertFalse(isset($lead['error']), $message);
 
         //now delete the lead
         $result = $leadApi->delete($lead['lead']['id']);
-        $this->assertTrue(empty($result['error']), $result['error']['message']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testEditPut()
     {
         $leadApi = $this->getContext('leads');
-        $lead    = $leadApi->edit(10000, array(
-            'firstname' => 'test',
-            'lastname'  => 'test'
-        ));
+        $lead    = $leadApi->edit(
+            10000,
+            array(
+                'firstname' => 'test',
+                'lastname'  => 'test'
+            )
+        );
 
         //there should be an error as the lead shouldn't exist
         $this->assertTrue(isset($lead['error']), $lead['error']['message']);
 
-        $lead    = $leadApi->create(array(
-            'firstname' => 'test',
-            'lastname'  => 'test'
-        ));
+        $lead = $leadApi->create(
+            array(
+                'firstname' => 'test',
+                'lastname'  => 'test'
+            )
+        );
 
-        $this->assertTrue(empty($lead['error']), $lead['error']['message']);
+        $message = isset($lead['error']) ? $lead['error']['message'] : '';
+        $this->assertFalse(isset($lead['error']), $message);
 
-        $lead    = $leadApi->edit($lead['lead']['id'], array(
-            'firstname' => 'test2',
-            'lastname'  => 'test2'
-        ));
-        $this->assertTrue(empty($lead['error']), $lead['error']['message']);
+        $lead = $leadApi->edit(
+            $lead['lead']['id'],
+            array(
+                'firstname' => 'test2',
+                'lastname'  => 'test2'
+            )
+        );
+
+        $message = isset($lead['error']) ? $lead['error']['message'] : '';
+        $this->assertFalse(isset($lead['error']), $message);
     }
 
     public function testEditPatch()
     {
         $leadApi = $this->getContext('leads');
-        $lead    = $leadApi->edit(10000, array(
-            'firstname' => 'test',
-            'lastname'  => 'test'
-        ), true);
+        $lead    = $leadApi->edit(
+            10000,
+            array(
+                'firstname' => 'test',
+                'lastname'  => 'test'
+            ),
+            true
+        );
 
-        $this->assertTrue(empty($lead['error']), $lead['error']['message']);
+        $message = isset($lead['error']) ? $lead['error']['message'] : '';
+        $this->assertFalse(isset($lead['error']), $message);
     }
 }

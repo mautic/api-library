@@ -260,7 +260,13 @@ if (isset($_SESSION['redirect'])) {
             //save to session, refresh
             $_SESSION['redirect']   = 1;
             $_SESSION['lastOutput'] = $output;
-            header('Location: index.php');
+
+            if (headers_sent()) {
+                echo "<script>document.location.href='index.php';</script>\n";
+            } else {
+                header('Location: index.php');
+            }
+
             exit;
         }
     } else {

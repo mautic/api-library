@@ -9,21 +9,15 @@
 
 namespace Mautic\Tests\Api;
 
-/**
- * Forms Context
- *
- * @package Mautic\Api
- */
-class Forms extends CommonTest
+class FormsTest extends MauticApiTestCase
 {
-
     public function testGet()
     {
         $apiContext = $this->getContext('forms');
         $result     = $apiContext->get(1);
 
-        $valid = empty($result['error']) || $result['error']['code'] == 404;
-        $this->assertTrue($valid, $result['error']['message']);
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testGetList()
@@ -31,6 +25,7 @@ class Forms extends CommonTest
         $apiContext = $this->getContext('forms');
         $result     = $apiContext->getList();
 
-        $this->assertTrue(empty($result['error']), $result['error']['message']);
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 }

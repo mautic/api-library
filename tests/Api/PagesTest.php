@@ -9,21 +9,15 @@
 
 namespace Mautic\Tests\Api;
 
-/**
- * Pages Context
- *
- * @package Mautic\Api
- */
-class Pages extends CommonTest
+class PagesTest extends MauticApiTestCase
 {
-
     public function testGet()
     {
         $apiContext = $this->getContext('pages');
         $result     = $apiContext->get(1);
 
-        $valid = empty($result['error']) || $result['error']['code'] == 404;
-        $this->assertTrue($valid, $result['error']['message']);
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testGetList()
@@ -31,6 +25,7 @@ class Pages extends CommonTest
         $apiContext = $this->getContext('pages');
         $result     = $apiContext->getList();
 
-        $this->assertTrue(empty($result['error']), $result['error']['message']);
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 }

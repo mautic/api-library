@@ -9,16 +9,15 @@
 
 namespace Mautic\Tests\Api;
 
-class AssetsTest extends CommonTest
+class AssetsTest extends MauticApiTestCase
 {
-
     public function testGet()
     {
         $apiContext = $this->getContext('assets');
         $result     = $apiContext->get(1);
 
-        $valid = empty($result['error']) || $result['error']['code'] == 404;
-        $this->assertTrue($valid, $result['error']['message']);
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testGetList()
@@ -26,6 +25,7 @@ class AssetsTest extends CommonTest
         $apiContext = $this->getContext('assets');
         $result     = $apiContext->getList();
 
-        $this->assertTrue(empty($result['error']), $result['error']['message']);
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 }

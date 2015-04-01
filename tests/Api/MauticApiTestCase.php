@@ -12,11 +12,11 @@ namespace Mautic\Tests\Api;
 use Mautic\Auth\ApiAuth;
 use Mautic\MauticApi;
 
-class CommonTest extends \PHPUnit_Framework_TestCase
+abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 {
     protected function getAuth()
     {
-        include __DIR__ . '/../../local.config.php';
+        include __DIR__.'/../local.config.php';
 
         $auth = ApiAuth::initiate(array('accessToken' => $accessToken));
 
@@ -28,8 +28,7 @@ class CommonTest extends \PHPUnit_Framework_TestCase
     protected function getContext($context)
     {
         list($auth, $apiUrl) = $this->getAuth();
-        $api                 = MauticApi::getContext($context, $auth, $apiUrl);
 
-        return $api;
+        return MauticApi::getContext($context, $auth, $apiUrl);
     }
 }
