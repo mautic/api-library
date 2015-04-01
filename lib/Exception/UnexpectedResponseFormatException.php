@@ -9,9 +9,14 @@
 
 namespace Mautic\Exception;
 
+/**
+ * Exception representing an unexpected HTTP response
+ */
 class UnexpectedResponseFormatException extends \Exception
 {
-
+    /**
+     * {@inheritdoc}
+     */
     public function __construct($message = 'The response returned is in an unexpected format.', $code = 500, \Exception $previous = null)
     {
         if (empty($message)) {

@@ -11,21 +11,17 @@ namespace Mautic\Api;
 
 /**
  * Pages Context
- *
- * @package Mautic\Api
  */
 class Pages extends Api
 {
 
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $endpoint = 'pages';
 
     /**
      * {@inheritdoc}
-     *
-     * @param array $parameters
      */
     public function create(array $parameters)
     {
@@ -34,12 +30,6 @@ class Pages extends Api
 
     /**
      * {@inheritdoc}
-     *
-     * @param int   $id
-     * @param array $parameters
-     * @param bool  $createIfNotExists = false
-     *
-     * @return array|mixed
      */
     public function edit($id, array $parameters, $createIfNotExists = false)
     {
@@ -48,10 +38,6 @@ class Pages extends Api
 
     /**
      * {@inheritdoc}
-     *
-     * @param $id
-     *
-     * @return array|mixed
      */
     public function delete($id)
     {

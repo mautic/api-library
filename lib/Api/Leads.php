@@ -11,14 +11,12 @@ namespace Mautic\Api;
 
 /**
  * Leads Context
- *
- * @package Mautic\Api
  */
 class Leads extends Api
 {
 
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $endpoint = 'leads';
 
@@ -55,7 +53,9 @@ class Leads extends Api
     /**
      * Get the notes on a lead
      *
-     * @param $id ID of lead
+     * @param int $id ID of lead
+     *
+     * @return array|mixed
      */
     public function getNotes($id)
     {

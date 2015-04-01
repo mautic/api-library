@@ -9,13 +9,12 @@
 
 namespace Mautic\Auth;
 
-
 interface AuthInterface
 {
     /**
      * Make a request to server using the supported auth method
      *
-     * @param        $url
+     * @param string $url
      * @param array  $parameters
      * @param string $method
      * @param array  $settings

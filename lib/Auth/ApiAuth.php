@@ -11,9 +11,6 @@ namespace Mautic\Auth;
 
 /**
  * OAuth Client modified from https://code.google.com/p/simple-php-oauth/
- *
- * Class Oauth
- *
  */
 class ApiAuth
 {
@@ -31,6 +28,7 @@ class ApiAuth
 
         $reflection = new \ReflectionMethod($class, 'setup');
         $pass       = array();
+
         foreach ($reflection->getParameters() as $param) {
             if (isset($parameters[$param->getName()])) {
                 $pass[] = $parameters[$param->getName()];
