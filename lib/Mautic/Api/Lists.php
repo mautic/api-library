@@ -10,44 +10,22 @@
 namespace Mautic\Api;
 
 /**
- * Campaigns Context
+ * Lists Context
+ *
+ * @package Mautic\Api
  */
-class Campaigns extends Api
+class Lists extends Api
 {
 
     /**
-     * {@inheritdoc}
+     * @var string
      */
-    protected $endpoint = 'campaigns';
+    protected $endpoint = 'lists';
 
     /**
-     * {@inheritdoc}
-     */
-    public function create(array $parameters)
-    {
-        return $this->actionNotSupported('create');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function edit($id, array $parameters, $createIfNotExists = false)
-    {
-        return $this->actionNotSupported('edit');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        return $this->actionNotSupported('delete');
-    }
-
-    /**
-     * Add a lead to the campaign
+     * Add a lead to the list
      *
-     * @param $id       Campaign ID
+     * @param $id       List ID
      * @param $leadId   Lead ID
      *
      * @return array|mixed
@@ -59,9 +37,9 @@ class Campaigns extends Api
 
 
     /**
-     * Remove a lead from the campaign
+     * Remove a lead from the list
      *
-     * @param $id       Campaign ID
+     * @param $id       List ID
      * @param $leadId   Lead ID
      *
      * @return array|mixed

@@ -472,6 +472,10 @@ class OAuth extends ApiAuth implements AuthInterface
             //Throw exception if the required parameters were not found
             $this->log('request did not return oauth tokens');
 
+            if ($this->_debug) {
+                $_SESSION['oauth']['debug']['response'] = $params;
+            }
+
             if (is_array($params)) {
                 if (isset($params['error'])) {
                     $response = $params['error'];
@@ -580,15 +584,16 @@ class OAuth extends ApiAuth implements AuthInterface
 
         $this->log('response did not have an access token');
 
-        //Throw exception if required parameters were not found
-        $s = array();
+        if ($this->_debug) {
+            $_SESSION['oauth']['debug']['response'] = $params;
+        }
 
         if (is_array($params)) {
-            foreach ($params as $k => $v) {
-                $s[] = $k.'='.$v;
+            if (isset($params['error'])) {
+                $response = $params['error'];
+            } else {
+                $response = '???';
             }
-
-            $response = implode('&', $s);
         } else {
             $response = $params;
         }
@@ -691,9 +696,15 @@ class OAuth extends ApiAuth implements AuthInterface
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_HEADER         => true,
-            CURLOPT_FOLLOWLOCATION => true
+            CURLOPT_HEADER         => true
         );
+
+        // CURLOPT_FOLLOWLOCATION cannot be activated when an open_basedir is set
+        if (ini_get('open_basedir')) {
+            $options[CURLOPT_FOLLOWLOCATION] = false;
+        } else {
+            $options[CURLOPT_FOLLOWLOCATION] = true;
+        }
 
         //Set CURL headers for oauth 1.0 requests
         if ($this->isOauth1()) {
