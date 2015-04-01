@@ -2,17 +2,9 @@
 session_name("oauthtester");
 session_start();
 
-require 'includes/kint/Kint.class.php';
-require '../lib/Mautic/AutoLoader.php';
+require realpath(dirname(__DIR__).'/vendor/autoload.php');
 
 use Mautic\Auth\OAuthClient;
-
-function __autoload($className) {
-    $filename = __DIR__ . '/../lib/' . str_replace('\\', '/', $className) . ".php";
-    if (is_readable($filename)) {
-        require $filename;
-    }
-}
 
 $auth = (isset($_POST['auth'])) ? $_POST['auth'] : @$_SESSION['auth'];
 if (empty($auth)) {
@@ -29,7 +21,7 @@ if (!empty($_POST['auth']) && $_POST['auth'] != @$_SESSION['auth']) {
     unset($_SESSION['oauth']);
 }
 
-$getCurrentUrl = function() {
+$getCurrentUrl = function () {
     $pageURL = 'http';
     if ((isset($_SERVER["HTTPS"]) && $_SERVER['HTTPS'] == "on")) {
         $pageURL .= "s";
@@ -40,6 +32,7 @@ $getCurrentUrl = function() {
     } else {
         $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
     }
+
     return $pageURL;
 };
 
@@ -48,7 +41,7 @@ $oauthBaseUrl = str_replace('/api', '', $apiurl);
 if (!empty($oauthBaseUrl) && substr($oauthBaseUrl, -1) == '/') {
     $oauthBaseUrl = substr($oauthBaseUrl, 0, -1);
 }
-$getOauth1Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
+$getOauth1Value = function ($key) use ($getCurrentUrl, $oauthBaseUrl) {
 
     switch ($key) {
         case 'callback':
@@ -58,17 +51,17 @@ $getOauth1Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
             break;
         case 'authUrl':
             if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth1a']['authUrl'])) {
-                $_SESSION['settings']['OAuth1a']['authUrl'] = $oauthBaseUrl . '/oauth/v1/authorize';
+                $_SESSION['settings']['OAuth1a']['authUrl'] = $oauthBaseUrl.'/oauth/v1/authorize';
             }
             break;
         case 'accessTokenUrl':
             if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth1a']['accessTokenUrl'])) {
-                $_SESSION['settings']['OAuth1a']['accessTokenUrl'] = $oauthBaseUrl . '/oauth/v1/access_token';
+                $_SESSION['settings']['OAuth1a']['accessTokenUrl'] = $oauthBaseUrl.'/oauth/v1/access_token';
             }
             break;
         case 'requestTokenUrl':
             if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth1a']['requestTokenUrl'])) {
-                $_SESSION['settings']['OAuth1a']['requestTokenUrl'] = $oauthBaseUrl . '/oauth/v1/request_token';
+                $_SESSION['settings']['OAuth1a']['requestTokenUrl'] = $oauthBaseUrl.'/oauth/v1/request_token';
             }
             break;
     }
@@ -84,7 +77,7 @@ $accessTokenUrl  = $getOauth1Value('accessTokenUrl');
 $requestTokenUrl = $getOauth1Value('requestTokenUrl');
 
 //OAuth2
-$getOauth2Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
+$getOauth2Value = function ($key) use ($getCurrentUrl, $oauthBaseUrl) {
     switch ($key) {
         case 'redirectUri':
             if (empty($_SESSION['settings']['OAuth2']['redirectUri'])) {
@@ -93,12 +86,12 @@ $getOauth2Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
             break;
         case 'authUrl2':
             if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth2']['authUrl2'])) {
-                $_SESSION['settings']['OAuth2']['authUrl2'] = $oauthBaseUrl . '/oauth/v2/authorize';
+                $_SESSION['settings']['OAuth2']['authUrl2'] = $oauthBaseUrl.'/oauth/v2/authorize';
             }
             break;
         case 'tokenUrl':
             if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth2']['tokenUrl'])) {
-                $_SESSION['settings']['OAuth2']['tokenUrl'] = $oauthBaseUrl . '/oauth/v2/token';
+                $_SESSION['settings']['OAuth2']['tokenUrl'] = $oauthBaseUrl.'/oauth/v2/token';
             }
             break;
     }
@@ -155,9 +148,12 @@ if (isset($_SESSION['redirect'])) {
     }
 
     if ($auth == 'OAuth1a') {
-        $valid = (isset($_GET['oauth_verifier']) || !empty($_POST)) && !empty($consumerKey) && !empty($consumerSecret) && !empty($callback) && !empty($authUrl) && !empty($accessTokenUrl);
+        $valid = (isset($_GET['oauth_verifier']) || !empty($_POST)) && !empty($consumerKey) && !empty($consumerSecret) && !empty($callback)
+            && !empty($authUrl)
+            && !empty($accessTokenUrl);
     } elseif ($auth == 'OAuth2') {
-        $valid = (isset($_GET['code']) || !empty($_POST)) && !empty($clientKey) && !empty($clientSecret) && !empty($redirectUri) && !empty($authUrl2) && !empty($tokenUrl);
+        $valid = (isset($_GET['code']) || !empty($_POST)) && !empty($clientKey) && !empty($clientSecret) && !empty($redirectUri) && !empty($authUrl2)
+            && !empty($tokenUrl);
     }
 
     if ($valid) {
@@ -183,23 +179,27 @@ if (isset($_SESSION['redirect'])) {
         $_SESSION['parameters']   = $parameters;
 
         if ($auth == 'OAuth1a') {
-            $oauthObject = \Mautic\Auth\ApiAuth::initiate(array(
-                'clientKey'        => $consumerKey,
-                'clientSecret'     => $consumerSecret,
-                'callback'         => $callback,
-                'requestTokenUrl'  => $requestTokenUrl,
-                'authorizationUrl' => $authUrl,
-                'accessTokenUrl'   => $accessTokenUrl
-            ));
+            $oauthObject = \Mautic\Auth\ApiAuth::initiate(
+                array(
+                    'clientKey'        => $consumerKey,
+                    'clientSecret'     => $consumerSecret,
+                    'callback'         => $callback,
+                    'requestTokenUrl'  => $requestTokenUrl,
+                    'authorizationUrl' => $authUrl,
+                    'accessTokenUrl'   => $accessTokenUrl
+                )
+            );
         } else {
-            $oauthObject = \Mautic\Auth\ApiAuth::initiate(array(
-                'clientKey'        => $clientKey,
-                'clientSecret'     => $clientSecret,
-                'callback'         => $redirectUri,
-                'authorizationUrl' => $authUrl2,
-                'accessTokenUrl'   => $tokenUrl,
-                'scope'            => $scope
-            ));
+            $oauthObject = \Mautic\Auth\ApiAuth::initiate(
+                array(
+                    'clientKey'        => $clientKey,
+                    'clientSecret'     => $clientSecret,
+                    'callback'         => $redirectUri,
+                    'authorizationUrl' => $authUrl2,
+                    'accessTokenUrl'   => $tokenUrl,
+                    'scope'            => $scope
+                )
+            );
         }
 
         if (!empty($_SESSION[$auth])) {
@@ -216,7 +216,8 @@ if (isset($_SESSION['redirect'])) {
                 }
 
                 if (!empty($_POST['apiurl'])) {
-                    $url = $apiurl . 'api/' . $apiendpoint;
+                    $url = $apiurl.'api/'.$apiendpoint;
+
                     if ($responsetype != '/') {
                         $url .= $responsetype;
                     }
@@ -243,13 +244,13 @@ if (isset($_SESSION['redirect'])) {
 
             if (!empty($response)) {
                 if (is_array($response)) {
-                    $output .= "<p>" . @Kint::dump($response) . "</p>";
+                    $output .= "<p>".@Kint::dump($response)."</p>";
                 } else {
                     $output .= "<p>$response</p>";
                 }
             }
         } catch (Exception $e) {
-            $output = '<div class="text-danger">' . $e->getMessage() . '</div>';
+            $output = '<div class="text-danger">'.$e->getMessage().'</div>';
         }
 
         $output .= @Kint::dump($_SESSION[$auth]);
@@ -260,7 +261,13 @@ if (isset($_SESSION['redirect'])) {
             //save to session, refresh
             $_SESSION['redirect']   = 1;
             $_SESSION['lastOutput'] = $output;
-            header('Location: index.php');
+
+            if (headers_sent()) {
+                echo "<script>document.location.href='index.php';</script>\n";
+            } else {
+                header('Location: index.php');
+            }
+
             exit;
         }
     } else {

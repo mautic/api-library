@@ -1,0 +1,5 @@
+<?php
+$clientId     = '';
+$clientSecret = '';
+$accessToken  = '';
+$apiUrl       = 'http://example.com/index_dev.php/api/';
