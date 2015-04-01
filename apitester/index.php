@@ -13,7 +13,7 @@ if (empty($auth)) {
 $apiurl             = (isset($_POST['apiurl'])) ? $_POST['apiurl'] : @$_SESSION['apiurl'];
 $_SESSION['apiurl'] = $apiurl;
 if (!empty($apiurl) && substr($apiurl, -1)) {
-    $apiUrl .= '/';
+    $apiurl .= '/';
 }
 
 //clear the debug info
