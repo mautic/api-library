@@ -22,19 +22,19 @@ class Api
     /**
      * Common endpoint for this API
      *
-     * @var
+     * @var string
      */
     protected $endpoint;
 
     /**
      * Base URL for API endpoints
      *
-     * @var
+     * @var string
      */
     protected $baseUrl;
 
     /**
-     * @var AuthInterface $auth
+     * @var AuthInterface
      */
     private $auth;
 
@@ -72,7 +72,7 @@ class Api
     {
         return array(
             'error' => array(
-                'code' => 500,
+                'code'    => 500,
                 'message' => "$action is not supported at this time."
             )
         );
@@ -89,7 +89,7 @@ class Api
      */
     public function makeRequest($endpoint, array $parameters = array(), $method = 'GET')
     {
-        $url = $this->baseUrl . $endpoint;
+        $url = $this->baseUrl.$endpoint;
 
         if (strpos($url, 'http') === false) {
             $response = array(
@@ -106,16 +106,16 @@ class Api
                     //assume an error
                     $response = array(
                         'error' => array(
-                            'code' => 500,
+                            'code'    => 500,
                             'message' => $response
                         )
                     );
                 } elseif (isset($response['error'])) {
                     if (isset($response['error_description'])) {
-                        $error = array(
+                        $error    = array(
                             'error' => array(
-                                'code' => 403,
-                                'message' => $response['error'] . ": " . $response['error_description']
+                                'code'    => 403,
+                                'message' => $response['error'].": ".$response['error_description']
                             )
                         );
                         $response = $error;
@@ -192,7 +192,7 @@ class Api
      */
     public function create(array $parameters)
     {
-        return $this->makeRequest($this->endpoint. '/new', $parameters, 'POST');
+        return $this->makeRequest($this->endpoint.'/new', $parameters, 'POST');
     }
 
     /**
@@ -207,7 +207,8 @@ class Api
     public function edit($id, array $parameters, $createIfNotExists = false)
     {
         $method = $createIfNotExists ? 'PUT' : 'PATCH';
-        return $this->makeRequest($this->endpoint . '/' . $id . '/edit', $parameters, $method);
+
+        return $this->makeRequest($this->endpoint.'/'.$id.'/edit', $parameters, $method);
     }
 
     /**
@@ -219,6 +220,6 @@ class Api
      */
     public function delete($id)
     {
-        return $this->makeRequest($this->endpoint . '/' . $id . '/delete', array(), 'DELETE');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/delete', array(), 'DELETE');
     }
 }

@@ -24,9 +24,9 @@ class ApiAuth
      *
      * @return mixed
      */
-    public static function initiate ($parameters = array(), $authMethod = 'OAuth')
+    public static function initiate($parameters = array(), $authMethod = 'OAuth')
     {
-        $class      = 'Mautic\\Auth\\' . $authMethod;
+        $class      = 'Mautic\\Auth\\'.$authMethod;
         $authObject = new $class();
 
         $reflection = new \ReflectionMethod($class, 'setup');

@@ -22,7 +22,7 @@ interface AuthInterface
      *
      * @return array
      */
-    public function makeRequest ($url, array $parameters = array(), $method = 'GET', array $settings = array());
+    public function makeRequest($url, array $parameters = array(), $method = 'GET', array $settings = array());
 
     /**
      * Check if current authorization is still valid
