@@ -13,11 +13,7 @@ use Mautic\Exception\IncorrectParametersReturnedException;
 use Mautic\Exception\UnexpectedResponseFormatException;
 
 /**
- * Class OAuth
- *
  * OAuth Client modified from https://code.google.com/p/simple-php-oauth/
- *
- * @package Mautic\Auth
  */
 class OAuth extends ApiAuth implements AuthInterface
 {
