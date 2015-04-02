@@ -2,7 +2,7 @@
 session_name("oauthtester");
 session_start();
 
-require realpath(dirname(__DIR__).'/vendor/autoload.php');
+require dirname(__DIR__).'/vendor/autoload.php';
 
 use Mautic\Auth\OAuthClient;
 
