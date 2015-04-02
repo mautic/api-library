@@ -1,5 +1,12 @@
 <?php
-$clientId     = '';
-$clientSecret = '';
-$accessToken  = '';
-$apiUrl       = 'http://example.com/index_dev.php/api/';
+return array(
+    // Required for both OAuth 1a and 2 testing
+    'accessToken'     => '',
+    'apiUrl'          => 'http://example.com/index_dev.php/api/',
+
+    // Required only for OAuth 1a testing
+    'requestTokenUrl' => 'http://example.com', // Can be set to anything which will force the OAuth library to use the 1.0a spec
+    'clientKey'       => '',
+    'clientSecret'    => '',
+    'callback'        => ''
+);

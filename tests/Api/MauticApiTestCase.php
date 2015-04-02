@@ -16,13 +16,13 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 {
     protected function getAuth()
     {
-        include __DIR__.'/../local.config.php';
+        $parameters = include __DIR__.'/../local.config.php';
 
-        $auth = ApiAuth::initiate(array('accessToken' => $accessToken));
+        $auth = ApiAuth::initiate($parameters);
 
         $this->assertTrue($auth->isAuthorized(), 'Authorization failed. Check credentials in local.config.php.');
 
-        return array($auth, $apiUrl);
+        return array($auth, $parameters['apiUrl']);
     }
 
     protected function getContext($context)
