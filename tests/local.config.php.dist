@@ -5,7 +5,7 @@ return array(
     'apiUrl'          => 'http://example.com/index_dev.php/api/',
 
     // Required only for OAuth 1a testing
-    'requestTokenUrl' => 'http://example.com', // Can be set to anything which will force the OAuth library to use the 1.0a spec
+    'requestTokenUrl' => '', // Set with any string to force the library to use the OAuth1.a spec; leave blank to use OAuth2
     'clientKey'       => '',
     'clientSecret'    => '',
     'callback'        => ''
