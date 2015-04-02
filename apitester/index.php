@@ -12,8 +12,8 @@ if (empty($auth)) {
 }
 $apiurl             = (isset($_POST['apiurl'])) ? $_POST['apiurl'] : @$_SESSION['apiurl'];
 $_SESSION['apiurl'] = $apiurl;
-if (!empty($apiurl) && substr($apiurl, -1)) {
-    $apiurl .= '/';
+if (!empty($apiurl) && substr($apiurl, -1) == '/') {
+    $apiurl = substr($apiurl, 0, -1);
 }
 
 //clear the debug info
@@ -37,11 +37,8 @@ $getCurrentUrl = function () {
 };
 
 //OAuth1a
-$oauthBaseUrl = str_replace('/api', '', $apiurl);
-if (!empty($oauthBaseUrl) && substr($oauthBaseUrl, -1) == '/') {
-    $oauthBaseUrl = substr($oauthBaseUrl, 0, -1);
-}
-$getOauth1Value = function ($key) use ($getCurrentUrl, $oauthBaseUrl) {
+$oauthBaseUrl   = $apiurl;
+$getOauth1Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
 
     switch ($key) {
         case 'callback':
@@ -113,6 +110,7 @@ $method      = (isset($_POST['method'])) ? $_POST['method'] : @$_SESSION['method
 if (empty($method)) {
     $method = "GET";
 }
+
 $responsetype = (isset($_POST['responsetype'])) ? $_POST['responsetype'] : @$_SESSION['responsetype'];
 if (empty($responsetype)) {
     $responsetype = '/';
@@ -216,8 +214,7 @@ if (isset($_SESSION['redirect'])) {
                 }
 
                 if (!empty($_POST['apiurl'])) {
-                    $url = $apiurl.'api/'.$apiendpoint;
-
+                    $url = $apiurl . '/api/' . $apiendpoint;
                     if ($responsetype != '/') {
                         $url .= $responsetype;
                     }
@@ -244,13 +241,13 @@ if (isset($_SESSION['redirect'])) {
 
             if (!empty($response)) {
                 if (is_array($response)) {
-                    $output .= "<p>".@Kint::dump($response)."</p>";
+                    $output .= @Kint::dump($response);
                 } else {
-                    $output .= "<p>$response</p>";
+                    $output .= $response;
                 }
             }
         } catch (Exception $e) {
-            $output = '<div class="text-danger">'.$e->getMessage().'</div>';
+            $output .= '<div class="text-danger">'.$e->getMessage().'</div>';
         }
 
         $output .= @Kint::dump($_SESSION[$auth]);
@@ -318,7 +315,7 @@ echo <<<ENDPOINT
             var {$endpoint}Endpoint = new Bloodhound({
               datumTokenizer: Bloodhound.tokenizers.obj.whitespace('endpoint'),
               queryTokenizer: Bloodhound.tokenizers.whitespace,
-              remote: {
+              prefetch: {
                     url: 'endpoints/$file',
                     filter: function(list) {
                         return $.map(list, function(ep) { return { endpoint: ep }; });

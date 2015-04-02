@@ -714,7 +714,6 @@ class OAuth extends ApiAuth implements AuthInterface
         //Set custom REST method if not GET or POST
         if (!in_array($method, array('GET', 'POST'))) {
             $options[CURLOPT_CUSTOMREQUEST] = $method;
-            $options[CURLOPT_POSTFIELDS]    = http_build_query($parameters);
         }
 
         //Set post fields for POST/PUT/PATCH requests
