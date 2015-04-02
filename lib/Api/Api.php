@@ -154,7 +154,7 @@ class Api
     /**
      * Get a list of items
      *
-     * @param string $filter
+     * @param string $search
      * @param int    $start
      * @param int    $limit
      * @param string $orderBy
@@ -163,11 +163,11 @@ class Api
      *
      * @return array|mixed
      */
-    public function getList($filter = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false)
+    public function getList($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false)
     {
         $parameters = array();
 
-        $args = array('filter', 'start', 'limit', 'orderBy', 'orderByDir', 'publishedOnly');
+        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir', 'publishedOnly');
 
         foreach ($args as $arg) {
             if (!empty($$arg)) {
@@ -181,7 +181,7 @@ class Api
     /**
      * Proxy function to getList with $publishedOnly set to true
      *
-     * @param string $filter
+     * @param string $search
      * @param int    $start
      * @param int    $limit
      * @param string $orderBy
@@ -189,9 +189,9 @@ class Api
      *
      * @return array|mixed
      */
-    public function getPublishedList($filter = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
+    public function getPublishedList($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        return $this->getList($filter, $start, $limit, $orderBy, $orderByDir, true);
+        return $this->getList($search, $start, $limit, $orderBy, $orderByDir, true);
     }
 
     /**
