@@ -50,7 +50,25 @@ class LeadsTest extends MauticApiTestCase
     public function testGetNotes()
     {
         $leadApi = $this->getContext('leads');
-        $leads   = $leadApi->getNotes(1);
+        $leads   = $leadApi->getLeadNotes(1);
+
+        $message = isset($leads['error']) ? $leads['error']['message'] : '';
+        $this->assertFalse(isset($leads['error']), $message);
+    }
+
+    public function testGetLists()
+    {
+        $leadApi = $this->getContext('leads');
+        $leads   = $leadApi->getLeadLists(1);
+
+        $message = isset($leads['error']) ? $leads['error']['message'] : '';
+        $this->assertFalse(isset($leads['error']), $message);
+    }
+
+    public function testGetCampaigns()
+    {
+        $leadApi = $this->getContext('leads');
+        $leads   = $leadApi->getLeadCampaigns(1);
 
         $message = isset($leads['error']) ? $leads['error']['message'] : '';
         $this->assertFalse(isset($leads['error']), $message);

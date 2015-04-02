@@ -51,14 +51,50 @@ class Leads extends Api
     }
 
     /**
-     * Get the notes on a lead
+     * Get a list of a lead's notes
      *
-     * @param int $id ID of lead
+     * @param int    $id Lead ID
+     * @param string $search
+     * @param int    $start
+     * @param int    $limit
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param bool   $publishedOnly
      *
      * @return array|mixed
      */
-    public function getNotes($id)
+    public function getLeadNotes($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        return $this->makeRequest('leads/'.$id.'/notes');
+        $parameters = array();
+
+        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir');
+
+        foreach ($args as $arg) {
+            if (!empty($$arg)) {
+                $parameters[$arg] = $$arg;
+            }
+        }
+
+        return $this->makeRequest('leads/'.$id.'/notes', $parameters);
+    }
+
+    /**
+     * Get a list of smart lists the lead is in
+     *
+     * @param $id
+     */
+    public function getLeadLists($id)
+    {
+        return $this->makeRequest('leads/'.$id.'/lists');
+    }
+
+    /**
+     * Get a list of campaigns the lead is in
+     *
+     * @param $id
+     */
+    public function getLeadCampaigns($id)
+    {
+        return $this->makeRequest('leads/'.$id.'/campaigns');
     }
 }
