@@ -46,21 +46,6 @@ $getOauth1Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
                 $_SESSION['settings']['OAuth1a']['callback'] = $getCurrentUrl();
             }
             break;
-        case 'authUrl':
-            if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth1a']['authUrl'])) {
-                $_SESSION['settings']['OAuth1a']['authUrl'] = $oauthBaseUrl.'/oauth/v1/authorize';
-            }
-            break;
-        case 'accessTokenUrl':
-            if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth1a']['accessTokenUrl'])) {
-                $_SESSION['settings']['OAuth1a']['accessTokenUrl'] = $oauthBaseUrl.'/oauth/v1/access_token';
-            }
-            break;
-        case 'requestTokenUrl':
-            if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth1a']['requestTokenUrl'])) {
-                $_SESSION['settings']['OAuth1a']['requestTokenUrl'] = $oauthBaseUrl.'/oauth/v1/request_token';
-            }
-            break;
     }
 
     return (isset($_POST['OAuth1a'][$key])) ? $_POST['OAuth1a'][$key] : @$_SESSION['settings']['OAuth1a'][$key];
@@ -69,9 +54,6 @@ $getOauth1Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
 $consumerKey     = $getOauth1Value('consumerKey');
 $consumerSecret  = $getOauth1Value('consumerSecret');
 $callback        = $getOauth1Value('callback');
-$authUrl         = $getOauth1Value('authUrl');
-$accessTokenUrl  = $getOauth1Value('accessTokenUrl');
-$requestTokenUrl = $getOauth1Value('requestTokenUrl');
 
 //OAuth2
 $getOauth2Value = function ($key) use ($getCurrentUrl, $oauthBaseUrl) {
@@ -79,16 +61,6 @@ $getOauth2Value = function ($key) use ($getCurrentUrl, $oauthBaseUrl) {
         case 'redirectUri':
             if (empty($_SESSION['settings']['OAuth2']['redirectUri'])) {
                 $_SESSION['settings']['OAuth2']['redirectUri'] = $getCurrentUrl();
-            }
-            break;
-        case 'authUrl2':
-            if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth2']['authUrl2'])) {
-                $_SESSION['settings']['OAuth2']['authUrl2'] = $oauthBaseUrl.'/oauth/v2/authorize';
-            }
-            break;
-        case 'tokenUrl':
-            if ($oauthBaseUrl && empty($_SESSION['settings']['OAuth2']['tokenUrl'])) {
-                $_SESSION['settings']['OAuth2']['tokenUrl'] = $oauthBaseUrl.'/oauth/v2/token';
             }
             break;
     }
@@ -99,8 +71,6 @@ $getOauth2Value = function ($key) use ($getCurrentUrl, $oauthBaseUrl) {
 $clientKey    = $getOauth2Value('clientKey');
 $clientSecret = $getOauth2Value('clientSecret');
 $redirectUri  = $getOauth2Value('redirectUri');
-$authUrl2     = $getOauth2Value('authUrl2');
-$tokenUrl     = $getOauth2Value('tokenUrl');
 $scope        = $getOauth2Value('scope');
 $state        = $getOauth2Value('state');
 
@@ -146,27 +116,19 @@ if (isset($_SESSION['redirect'])) {
     }
 
     if ($auth == 'OAuth1a') {
-        $valid = (isset($_GET['oauth_verifier']) || !empty($_POST)) && !empty($consumerKey) && !empty($consumerSecret) && !empty($callback)
-            && !empty($authUrl)
-            && !empty($accessTokenUrl);
+        $valid = (isset($_GET['oauth_verifier']) || !empty($_POST)) && !empty($consumerKey) && !empty($consumerSecret) && !empty($callback) && !empty($apiurl);
     } elseif ($auth == 'OAuth2') {
-        $valid = (isset($_GET['code']) || !empty($_POST)) && !empty($clientKey) && !empty($clientSecret) && !empty($redirectUri) && !empty($authUrl2)
-            && !empty($tokenUrl);
+        $valid = (isset($_GET['code']) || !empty($_POST)) && !empty($clientKey) && !empty($clientSecret) && !empty($redirectUri) && !empty($apiurl);
     }
 
     if ($valid) {
         $_SESSION['settings']['OAuth1a']['consumerKey']     = $consumerKey;
         $_SESSION['settings']['OAuth1a']['consumerSecret']  = $consumerSecret;
         $_SESSION['settings']['OAuth1a']['callback']        = $callback;
-        $_SESSION['settings']['OAuth1a']['authUrl']         = $authUrl;
-        $_SESSION['settings']['OAuth1a']['accessTokenUrl']  = $accessTokenUrl;
-        $_SESSION['settings']['OAuth1a']['requestTokenUrl'] = $requestTokenUrl;
 
         $_SESSION['settings']['OAuth2']['clientKey']    = $clientKey;
         $_SESSION['settings']['OAuth2']['clientSecret'] = $clientSecret;
         $_SESSION['settings']['OAuth2']['redirectUri']  = $redirectUri;
-        $_SESSION['settings']['OAuth2']['authUrl2']     = $authUrl2;
-        $_SESSION['settings']['OAuth2']['tokenUrl']     = $tokenUrl;
         $_SESSION['settings']['OAuth2']['scope']        = $scope;
         $_SESSION['settings']['OAuth2']['state']        = $state;
 
@@ -176,29 +138,17 @@ if (isset($_SESSION['redirect'])) {
         $_SESSION['method']       = $method;
         $_SESSION['parameters']   = $parameters;
 
-        if ($auth == 'OAuth1a') {
-            $oauthObject = \Mautic\Auth\ApiAuth::initiate(
-                array(
-                    'clientKey'        => $consumerKey,
-                    'clientSecret'     => $consumerSecret,
-                    'callback'         => $callback,
-                    'requestTokenUrl'  => $requestTokenUrl,
-                    'authorizationUrl' => $authUrl,
-                    'accessTokenUrl'   => $accessTokenUrl
-                )
-            );
-        } else {
-            $oauthObject = \Mautic\Auth\ApiAuth::initiate(
-                array(
-                    'clientKey'        => $clientKey,
-                    'clientSecret'     => $clientSecret,
-                    'callback'         => $redirectUri,
-                    'authorizationUrl' => $authUrl2,
-                    'accessTokenUrl'   => $tokenUrl,
-                    'scope'            => $scope
-                )
-            );
-        }
+
+        $oauthObject = \Mautic\Auth\ApiAuth::initiate(
+            array(
+                'baseUrl'       => $oauthBaseUrl,
+                'version'       => $auth,
+                'clientKey'     => ($auth == 'OAuth1a') ? $consumerKey : $clientKey,
+                'clientSecret'  => ($auth == 'OAuth1a') ? $consumerSecret : $clientSecret,
+                'callback'      => $callback,
+                'scope'         => $scope
+            )
+        );
 
         if (!empty($_SESSION[$auth])) {
             $oauthObject->setAccessTokenDetails($_SESSION[$auth]);
@@ -524,21 +474,6 @@ ENDPOINT;
                 <input type="text" class="form-control" id="callback" name="OAuth1a[callback]" value="<?php echo $callback; ?>" />
             </div>
 
-            <div class="form-group">
-                <label class="control-label" for="requestTokenUrl">Request Token URL</label>
-                <input placeholder="/oauth/v1/request_token" type="text" class="form-control" id="requestTokenUrl" name="OAuth1a[requestTokenUrl]" value="<?php echo $requestTokenUrl; ?>" />
-            </div>
-
-            <div class="form-group">
-                <label class="control-label" for="authUrl">Authorization URL</label>
-                <input placeholder="/oauth/v1/authorize" type="text" class="form-control" id="authUrl" name="OAuth1a[authUrl]" value="<?php echo $authUrl; ?>" />
-            </div>
-
-            <div class="form-group">
-                <label class="control-label" for="accessTokenUrl">Access Token URL</label>
-                <input placeholder="/oauth/v1/access_token" type="text" class="form-control" id="accessTokenUrl" name="OAuth1a[accessTokenUrl]" value="<?php echo $accessTokenUrl; ?>" />
-            </div>
-
             <?php if (!empty($_SESSION['OAuth1a']['access_token'])): ?>
                 <input type="submit" name="OAuth1a[reset]" class="btn btn-danger" value="Reauthorize" />
             <?php else: ?>
@@ -577,16 +512,6 @@ ENDPOINT;
             <div class="form-group <?php echo $label; ?>">
                 <label class="control-label" for="redirectUri">Redirect URI</label>
                 <input type="text" class="form-control" id="redirectUri" name="OAuth2[redirectUri]" value="<?php echo $redirectUri; ?>" />
-            </div>
-
-            <div class="form-group">
-                <label class="control-label" for="authUrl2">Authorization URL</label>
-                <input placeholder="/oauth/v2/authorize" type="text" class="form-control" id="authUrl2" name="OAuth2[authUrl2]" value="<?php echo $authUrl2; ?>" />
-            </div>
-
-            <div class="form-group">
-                <label class="control-label" for="tokenUrl">Token URL</label>
-                <input placeholder="/oauth/v2/token" type="text" class="form-control" id="tokenUrl" name="OAuth2[tokenUrl]" value="<?php echo $tokenUrl; ?>" />
             </div>
 
             <div class="form-group">

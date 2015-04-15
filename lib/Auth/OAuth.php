@@ -124,28 +124,26 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_debug = false;
 
     /**
+     * @param string $baseUrl               URL of the Mautic instance
+     * @param string $version               ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
      * @param string $clientKey
      * @param string $clientSecret
      * @param string $accessToken
      * @param string $accessTokenSecret
      * @param string $accessTokenExpires
      * @param string $callback
-     * @param string $accessTokenUrl
-     * @param string $authorizationUrl
-     * @param string $requestTokenUrl
      * @param string $scope
      * @param string $refreshToken
      */
     public function setup(
+        $baseUrl = null,
+        $version = 'OAuth2',
         $clientKey = null,
         $clientSecret = null,
         $accessToken = null,
         $accessTokenSecret = null,
         $accessTokenExpires = null,
         $callback = null,
-        $accessTokenUrl = null,
-        $authorizationUrl = null,
-        $requestTokenUrl = null,
         $scope = null,
         $refreshToken = null
     ) {
@@ -157,6 +155,27 @@ class OAuth extends ApiAuth implements AuthInterface
         $this->_access_token_url    = $accessTokenUrl;
         $this->_request_token_url   = $requestTokenUrl;
         $this->_authorize_url       = $authorizationUrl;
+
+        if ($baseUrl) {
+            if ($version == 'OAuth1a') {
+                if (!$this->_access_token_url) {
+                    $this->_access_token_url = $baseUrl . '/oauth/v1/access_token';
+                }
+                if (!$this->_request_token_url) {
+                    $this->_request_token_url = $baseUrl . '/oauth/v1/request_token';
+                }
+                if (!$this->_authorize_url) {
+                    $this->_authorize_url = $baseUrl . '/oauth/v1/authorize';
+                }
+            } else {
+                if (!$this->_access_token_url) {
+                    $this->_access_token_url = $baseUrl . '/oauth/v2/token';
+                }
+                if (!$this->_authorize_url) {
+                    $this->_authorize_url = $baseUrl . '/oauth/v2/authorize';
+                }
+            }
+        }
 
         if (!empty($scope)) {
             $this->setScope($scope);
