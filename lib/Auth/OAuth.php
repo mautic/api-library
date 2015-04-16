@@ -152,9 +152,6 @@ class OAuth extends ApiAuth implements AuthInterface
         $this->_access_token        = $accessToken;
         $this->_access_token_secret = $accessTokenSecret;
         $this->_callback            = $callback;
-        $this->_access_token_url    = $accessTokenUrl;
-        $this->_request_token_url   = $requestTokenUrl;
-        $this->_authorize_url       = $authorizationUrl;
 
         if ($baseUrl) {
             if ($version == 'OAuth1a') {
