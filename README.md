@@ -11,17 +11,6 @@ Mautic's API.  You can also choose which OAuth protocol to use here.  After savi
 then copy the Client ID and Client Secret to the application that will be using the API.
 
 ## Authorization
-### OAuth URLs
-#### OAuth 1.0a
-
-* Authorization URL: /oauth/v1/authorize
-* Request Token URL: /oauth/v1/request_token
-* Access Token URL:  /oauth/v1/access_token
-
-#### OAuth 2
-
-* Authorization URL: /oauth/v2/authorize
-* Access Token URL:  /oauth/v2/token
     
 ### Obtaining an access token
 The first step is to obtain authorization.  Mautic supports OAuth 1.0a and OAuth 2 however it is up to the administrator
@@ -34,21 +23,18 @@ to choose what method should be used by your code.
 // Bootup the Composer autoloader
 include __DIR__ . '/vendor/autoload.php';  
 
-$publicKey = ''; // Client/Consumer key from Mautic
-$secretKey = ''; // Client/Consumer secret key from Mautic
-$callback  = ''; // Redirect URI/Callback URI for this script
+$publicKey = ''; 
+$secretKey = ''; 
+$callback  = ''; 
 
 // ApiAuth::initiate will accept an array of OAuth settings
 $settings = array(
-    'clientKey'        => $publicKey,
-    'clientSecret'     => $secretKey,
-    'callback'         => $callback,
-    'accessTokenUrl'   => $accessTokenUrl,
-    'authorizationUrl' => $authorizationUrl
+    'baseUrl'          => '',       // Base URL of the Mautic instance
+    'version'          => 'OAuth2'  // Version of the OAuth can be OAuth2 or OAuth1a. OAuth2 is the default value.
+    'clientKey'        => '',       // Client/Consumer key from Mautic
+    'clientSecret'     => '',       // Client/Consumer secret key from Mautic
+    'callback'         => ''        // Redirect URI/Callback URI for this script
 );
-
-// Pass requestTokenUrl to activate OAuth1
-// $settings['requestTokenUrl'] = $requestTokenUrl;
 
 /*
 // If you already have the access token, et al, pass them in as well to prevent the need for reauthorization
