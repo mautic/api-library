@@ -616,6 +616,11 @@ class OAuth extends ApiAuth implements AuthInterface
         if ($this->isOauth1()) {
             //OAuth 1.0
             $authUrl .= '?oauth_token='.$_SESSION['oauth']['token'];
+
+            if (!empty($this->_callback)) {
+                $authUrl .= '&oauth_callback=' . urlencode($this->_callback);
+            }
+
         } else {
             //OAuth 2.0
             $authUrl .= '?client_id='.$this->_client_id.'&redirect_uri='.$this->_callback;
