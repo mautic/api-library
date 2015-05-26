@@ -15,7 +15,8 @@
   },
   "require": {
     "php": ">=5.3.7",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "psr/log": "~1.0"
   },
   "require-dev": {
     "raveren/kint": "~0.9",

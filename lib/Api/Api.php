@@ -10,11 +10,14 @@
 namespace Mautic\Api;
 
 use Mautic\Auth\AuthInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Base API class
  */
-class Api
+class Api implements LoggerAwareInterface
 {
     /**
      * Common endpoint for this API
@@ -36,6 +39,11 @@ class Api
     private $auth;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param AuthInterface $auth
      * @param string        $baseUrl
      */
@@ -43,6 +51,35 @@ class Api
     {
         $this->auth    = $auth;
         $this->baseUrl = $baseUrl;
+    }
+
+    /**
+     * Get the logger.
+     *
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        // If a logger hasn't been set, use NullLogger
+        if (!($this->logger instanceof LoggerInterface)) {
+            $this->logger = new NullLogger();
+        }
+
+        return $this->logger;
+    }
+
+    /**
+     * Sets a logger.
+     *
+     * @param LoggerInterface $logger
+     *
+     * @return $this
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+
+        return $this;
     }
 
     /**
@@ -109,6 +146,8 @@ class Api
             $response = $this->auth->makeRequest($url, $parameters, $method);
 
             if (!is_array($response)) {
+                $this->getLogger()->warning($response);
+
                 //assume an error
                 return array(
                     'error' => array(
@@ -119,14 +158,20 @@ class Api
             }
 
             if (isset($response['error']) && isset($response['error_description'])) {
+                $message = $response['error'].': '.$response['error_description'];
+
+                $this->getLogger()->warning($message);
+
                 return array(
                     'error' => array(
                         'code'    => 403,
-                        'message' => $response['error'].': '.$response['error_description']
+                        'message' => $message
                     )
                 );
             }
         } catch (\Exception $e) {
+            $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
+
             return array(
                 'error' => array(
                     'code'    => $e->getCode(),
