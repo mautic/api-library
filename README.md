@@ -161,7 +161,7 @@ $result = $leadApi->delete($leadId);
 // $result returned by an API call should be checked for errors
 $result = $leadApi->delete($leadId);
 
-if (isset($result['error'])) {
+if (isset($result['errors'])) {
     echo $result['error']['code'] . ": " . $result['error']['message'];
 } else {
     // do whatever with the info
