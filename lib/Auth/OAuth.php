@@ -431,7 +431,7 @@ class OAuth extends ApiAuth implements AuthInterface
             }
 
             unset($_SESSION['oauth']['state']);
-            $this->requestAccessToken('GET', array(), 'json');
+            $this->requestAccessToken('POST', array(), 'json');
 
             return true;
         }
@@ -500,7 +500,7 @@ class OAuth extends ApiAuth implements AuthInterface
      * @return bool
      * @throws IncorrectParametersReturnedException
      */
-    protected function requestAccessToken($method = 'GET', array $params = array(), $responseType = 'flat')
+    protected function requestAccessToken($method = 'POST', array $params = array(), $responseType = 'flat')
     {
         $this->log('requestAccessToken()');
 
@@ -623,7 +623,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         } else {
             //OAuth 2.0
-            $authUrl .= '?client_id='.$this->_client_id.'&redirect_uri='.$this->_callback;
+            $authUrl .= '?client_id='.$this->_client_id.'&redirect_uri='.urlencode($this->_callback);
             $state                      = md5(time().mt_rand());
             $_SESSION['oauth']['state'] = $state;
             if ($this->_debug) {
