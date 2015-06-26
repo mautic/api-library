@@ -535,9 +535,12 @@ class OAuth extends ApiAuth implements AuthInterface
                 'client_id'     => $this->_client_id,
                 'redirect_uri'  => $this->_callback,
                 'client_secret' => $this->_client_secret,
-                'code'          => $_GET['code'],
                 'grant_type'    => 'authorization_code'
             );
+            
+            if (isset($_GET['code'])) {
+                $parameters['code'] = $_GET['code'];
+            }
 
             if (strlen($this->_refresh_token) > 0) {
                 $this->log('Using refresh token');
