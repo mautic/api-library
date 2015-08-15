@@ -14,14 +14,32 @@ namespace Mautic\Auth;
  */
 class ApiAuth
 {
-
     /**
+     * Get an API Auth object
+     *
      * @param array  $parameters
      * @param string $authMethod
      *
-     * @return mixed
+     * @return $this
+     *
+     * @deprecated
      */
     public static function initiate($parameters = array(), $authMethod = 'OAuth')
+    {
+        $object = new self;
+
+        return $object->newAuth($parameters, $authMethod);
+    }
+
+    /**
+     * Get an API Auth object
+     *
+     * @param array  $parameters
+     * @param string $authMethod
+     *
+     * @return $this
+     */
+    public function newAuth($parameters = array(), $authMethod = 'OAuth')
     {
         $class      = 'Mautic\\Auth\\'.$authMethod;
         $authObject = new $class();
