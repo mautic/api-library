@@ -145,6 +145,8 @@ class Api implements LoggerAwareInterface
         try {
             $response = $this->auth->makeRequest($url, $parameters, $method);
 
+            $this->getLogger()->debug('API Response', array('response' => $response));
+
             if (!is_array($response)) {
                 $this->getLogger()->warning($response);
 
