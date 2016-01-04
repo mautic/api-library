@@ -23,6 +23,8 @@ to choose what method should be used by your code.
 // Bootup the Composer autoloader
 include __DIR__ . '/vendor/autoload.php';  
 
+use Mautic\Auth\ApiAuth;
+
 $publicKey = ''; 
 $secretKey = ''; 
 $callback  = ''; 
@@ -78,6 +80,8 @@ Note that currently only the Lead context allows creating, editing and deleting 
 ```php
 <?php
 
+use Mautic\MauticApi;
+
 // Create an api context by passing in the desired context (Leads, Forms, Pages, etc), the $auth object from above
 // and the base URL to the Mautic server (i.e. http://my-mautic-server.com/api/)
 
@@ -88,11 +92,14 @@ Supported contexts are currently:
 
 * Assets - read only
 * Campaigns - read only
+* Emails - read only
 * Forms - read only
 * Leads - read and write
+* Lists - read and write
 * Pages - read only
 * Points - read only
 * PointTriggers - read only
+* Reports - read only
 
 ### Retrieving items
 All of the above contexts support the following functions for retrieving items:
