@@ -108,4 +108,27 @@ class Leads extends Api
     public function setPointsToLead($leadId, $points) {
     	return $this->makeRequest('leads/'.$leadId.'/setpoints/'.$points);
     }
+    
+    /**
+     * Add points a lead
+     *
+     * @param int $leadId
+     * @param int $points
+     * @return mixed
+     */
+    public function addPointsToLead($leadId, $points) {
+    	return $this->makeRequest('leads/'.$leadId.'/addpoints/'.$points);
+    }
+    
+    /**
+     * Remove points a lead
+     *
+     * @param int $leadId
+     * @param int $points
+     * @return mixed
+     */
+    public function removePointsToLead($leadId, $points) {
+    	return $this->makeRequest('leads/'.$leadId.'/removepoints/'.$points);
+    }
+    
 }
