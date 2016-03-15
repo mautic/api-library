@@ -73,4 +73,15 @@ class Leads extends Contacts
     {
         return $this->makeRequest('contacts/'.$id.'/campaigns');
     }
+    
+    /**
+     * Change the number of points a lead
+     * 
+     * @param int $leadId
+     * @param int $points
+     * @return mixed
+     */
+    public function setPointsToLead($leadId, $points) {
+    	return $this->makeRequest('leads/'.$leadId.'/setpoints/'.$points);
+    }
 }
