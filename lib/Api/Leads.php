@@ -103,10 +103,11 @@ class Leads extends Api
      * 
      * @param int $leadId
      * @param int $points
+     * @param array $parameters 'eventname' and 'actionname'
      * @return mixed
      */
-    public function setPointsToLead($leadId, $points) {
-    	return $this->makeRequest('leads/'.$leadId.'/setpoints/'.$points);
+    public function setPoints($id, $points, array $parameters = array()) {
+        return $this->makeRequest('leads/'.$id.'/setpoints/'.$points, $parameters, 'PATCH');
     }
     
     /**
@@ -114,10 +115,11 @@ class Leads extends Api
      *
      * @param int $leadId
      * @param int $points
+     * @param array $parameters 'eventname' and 'actionname'
      * @return mixed
      */
-    public function addPointsToLead($leadId, $points) {
-    	return $this->makeRequest('leads/'.$leadId.'/addpoints/'.$points);
+    public function addPoints($id, $points, array $parameters = array()) {     
+        return $this->makeRequest('leads/'.$id.'/addpoints/'.$points, $parameters, 'PATCH');
     }
     
     /**
@@ -125,10 +127,10 @@ class Leads extends Api
      *
      * @param int $leadId
      * @param int $points
+     * @param array $parameters 'eventname' and 'actionname'
      * @return mixed
      */
-    public function removePointsToLead($leadId, $points) {
-    	return $this->makeRequest('leads/'.$leadId.'/removepoints/'.$points);
+    public function removePoints($id, $points, array $parameters = array()) {
+        return $this->makeRequest('leads/'.$id.'/removepoints/'.$points, $parameters, 'PATCH');
     }
-    
 }
