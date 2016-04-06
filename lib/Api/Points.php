@@ -43,4 +43,14 @@ class Points extends Api
     {
         return $this->actionNotSupported('delete');
     }
+    
+    /**
+     * [apply_rule description]
+     * @param  [int] $PointsId [id des regles de points]
+     * @param  [int] $LeadId   [id du lead]
+     * @return []           []
+     */
+    public function apply_rule($PointsId, $LeadId) {
+    	return $this->makeRequest('points/'.$PointsId.'/lead/'.$LeadId);
+    }
 }
