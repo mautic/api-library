@@ -54,20 +54,24 @@ $auth = ApiAuth::initiate($settings);
 
 // If the access token is expired, and a refresh token is set above, then a new access token will be requested
 
-if ($auth->validateAccessToken()) {
-     
-    // Obtain the access token returned; call accessTokenUpdated() to catch if the token was updated via a 
-    // refresh token
+try {
+    if ($auth->validateAccessToken()) {
 
-    // $accessTokenData will have the following keys:
-    // For OAuth1.0a: access_token, access_token_secret, expires
-    // For OAuth2: access_token, expires, token_type, refresh_token
-    
-    if ($auth->accessTokenUpdated()) {
-        $accessTokenData = $auth->getAccessTokenData();
-        
-        //store access token data however you want
+        // Obtain the access token returned; call accessTokenUpdated() to catch if the token was updated via a
+        // refresh token
+
+        // $accessTokenData will have the following keys:
+        // For OAuth1.0a: access_token, access_token_secret, expires
+        // For OAuth2: access_token, expires, token_type, refresh_token
+
+        if ($auth->accessTokenUpdated()) {
+            $accessTokenData = $auth->getAccessTokenData();
+
+            //store access token data however you want
+        }
     }
+} catch (Exception $e) {
+    // Do Error handling
 }
 ```
 
