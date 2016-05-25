@@ -5,6 +5,7 @@
     "leads/list/owners",
     "leads/new",
     "leads/edit/{id}",
+    "leads/{id}/delete",
     "leads/{id}/notes",
     "leads/{id}/lists",
     "leads/{id}/campaigns"
