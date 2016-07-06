@@ -10,12 +10,35 @@
 namespace Mautic\Api;
 
 /**
- * Leads Context
- *
- * This class is deprecated and will be removed in future versions! Use Contacts instead!
+ * Contacts Context
  */
-class Leads extends Contacts
+class Contacts extends Api
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $endpoint = 'contacts';
+
+    /**
+     * Get a list of users available as lead owners
+     *
+     * @return array|mixed
+     */
+    public function getOwners()
+    {
+        return $this->makeRequest('contacts/list/owners');
+    }
+
+    /**
+     * Get a list of custom fields
+     *
+     * @return array|mixed
+     */
+    public function getFieldList()
+    {
+        return $this->makeRequest('contacts/list/fields');
+    }
+
     /**
      * Get a list of lead segments
      *
@@ -39,7 +62,7 @@ class Leads extends Contacts
      *
      * @return array|mixed
      */
-    public function getLeadNotes($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
+    public function getContactNotes($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
         $parameters = array();
 
@@ -59,7 +82,7 @@ class Leads extends Contacts
      *
      * @param $id
      */
-    public function getLeadLists($id)
+    public function getContactLists($id)
     {
         return $this->makeRequest('contacts/'.$id.'/segments');
     }
@@ -69,7 +92,7 @@ class Leads extends Contacts
      *
      * @param $id
      */
-    public function getLeadCampaigns($id)
+    public function getContactCampaigns($id)
     {
         return $this->makeRequest('contacts/'.$id.'/campaigns');
     }
