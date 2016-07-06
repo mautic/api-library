@@ -44,7 +44,7 @@ class Contacts extends Api
      *
      * @return array|mixed
      */
-    public function getLists()
+    public function getSegments()
     {
         return $this->makeRequest('contacts/list/segments');
     }
@@ -82,7 +82,7 @@ class Contacts extends Api
      *
      * @param $id
      */
-    public function getContactLists($id)
+    public function getContactSegments($id)
     {
         return $this->makeRequest('contacts/'.$id.'/segments');
     }
