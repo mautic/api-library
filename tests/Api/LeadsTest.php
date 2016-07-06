@@ -88,7 +88,7 @@ class LeadsTest extends MauticApiTestCase
         $this->assertFalse(isset($lead['error']), $message);
 
         //now delete the lead
-        $result = $leadApi->delete($lead['lead']['id']);
+        $result = $leadApi->delete($lead['contact']['id']);
 
         $message = isset($result['error']) ? $result['error']['message'] : '';
         $this->assertFalse(isset($result['error']), $message);
@@ -119,7 +119,7 @@ class LeadsTest extends MauticApiTestCase
         $this->assertFalse(isset($lead['error']), $message);
 
         $lead = $leadApi->edit(
-            $lead['lead']['id'],
+            $lead['contact']['id'],
             array(
                 'firstname' => 'test2',
                 'lastname'  => 'test2'
