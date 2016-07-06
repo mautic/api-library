@@ -11,14 +11,16 @@ namespace Mautic\Api;
 
 /**
  * Lists Context
+ *
+ * This class is deprecated and will be removed in future versions! Use Segments instead!
  */
-class Lists extends Api
+class Lists extends Segments
 {
 
     /**
      * {@inheritdoc}
      */
-    protected $endpoint = 'lists';
+    protected $endpoint = 'segments';
 
     /**
      * Add a lead to the list
@@ -30,7 +32,7 @@ class Lists extends Api
      */
     public function addLead($id, $leadId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/lead/add/'.$leadId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$leadId, array(), 'POST');
     }
 
 
@@ -44,6 +46,6 @@ class Lists extends Api
      */
     public function removeLead($id, $leadId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/lead/remove/'.$leadId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$leadId, array(), 'POST');
     }
 }
