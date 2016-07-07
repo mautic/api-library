@@ -1,5 +1,0 @@
-[
-    "lists",
-    "lists/lead/{id}/add/{leadId}",
-    "lists/lead/{id}/remove/{leadId}"
-]

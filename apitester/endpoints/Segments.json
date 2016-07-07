@@ -1,0 +1,5 @@
+[
+    "segments",
+    "segments/contact/{id}/add/{leadId}",
+    "segments/contact/{id}/remove/{leadId}"
+]
