@@ -743,7 +743,7 @@ class OAuth extends ApiAuth implements AuthInterface
         //Set post fields for POST/PUT/PATCH requests
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
             $options[CURLOPT_POST]       = true;
-            $options[CURLOPT_POSTFIELDS] = http_build_query($parameters);
+            $options[CURLOPT_POSTFIELDS] = http_build_query($parameters, '', '&');
             $this->log('Posted parameters = '.$options[CURLOPT_POSTFIELDS]);
         }
 
