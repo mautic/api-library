@@ -33,6 +33,20 @@ class Segments extends Api
         return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$contactId, array(), 'POST');
     }
 
+    /**
+     * Add a lead to the segment
+     *
+     * @deprecated 2.0.1, use addContact() instead
+     *
+     * @param int $id     Segment ID
+     * @param int $leadId Lead ID
+     *
+     * @return array|mixed
+     */
+    public function addLead($id, $leadId)
+    {
+        return $this->addContact($id, $leadId);
+    }
 
     /**
      * Remove a contact from the segment
@@ -45,5 +59,18 @@ class Segments extends Api
     public function removeContact($id, $contactId)
     {
         return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
+    }
+
+    /**
+     * Remove a lead from the segment
+     *
+     * @param int $id     Segment ID
+     * @param int $leadId Lead ID
+     *
+     * @return array|mixed
+     */
+    public function removeLead($id, $leadId)
+    {
+        return $this->removeContact($id, $leadId);
     }
 }

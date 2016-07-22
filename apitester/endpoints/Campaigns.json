@@ -1,6 +1,6 @@
 [
     "campaigns",
     "campaigns/{id}",
-    "campaigns/lead/{id}/add/{leadId}",
-    "campaigns/lead/{id}/remove/{leadId}"
+    "campaigns/contact/{id}/add/{leadId}",
+    "campaigns/contact/{id}/remove/{leadId}"
 ]
