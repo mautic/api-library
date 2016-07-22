@@ -47,7 +47,8 @@ $settings['refreshToken']       = $refreshToken;
 */
 
 // Initiate the auth object
-$auth = ApiAuth::initiate($settings);
+$auth = new ApiAuth();
+$auth->newAuth($settings);
 
 // Initiate process for obtaining an access token; this will redirect the user to the $authorizationUrl and/or
 // set the access_tokens when the user is redirected back after granting authorization
@@ -77,7 +78,7 @@ try {
 
 ## API Requests
 Now that you have an access token and the auth object, you can make API requests.  The API is broken down into contexts.
-Note that currently only the Lead context allows creating, editing and deleting items.  The others are read only.
+Note that currently only the Contact context allows creating, editing and deleting items.  The others are read only.
 
 ### Get a context object
 
@@ -86,10 +87,11 @@ Note that currently only the Lead context allows creating, editing and deleting 
 
 use Mautic\MauticApi;
 
-// Create an api context by passing in the desired context (Leads, Forms, Pages, etc), the $auth object from above
+// Create an api context by passing in the desired context (Contacts, Forms, Pages, etc), the $auth object from above
 // and the base URL to the Mautic server (i.e. http://my-mautic-server.com/api/)
 
-$leadApi = MauticApi::getContext("leads", $auth, $apiUrl);
+$api = new MauticApi();
+$contactApi = $api->newApi('contacts', $auth, $apiUrl);
 ```
 
 Supported contexts are currently:
@@ -98,8 +100,8 @@ Supported contexts are currently:
 * Campaigns - read only
 * Emails - read only
 * Forms - read only
-* Leads - read and write
-* Lists - read and write
+* Contacts - read and write
+* Segments - read and write
 * Pages - read only
 * Points - read only
 * PointTriggers - read only
@@ -111,19 +113,19 @@ All of the above contexts support the following functions for retrieving items:
 ```php
 <?php
 
-$lead = $leadApi->get($id);
+$contact = $contactApi->get($id);
 
 // getList accepts optional parameters for filtering, limiting, and ordering
-$leads = $leadApi->getList($filter, $start, $limit, $orderBy, $orderByDir);
+$contacts = $contactApi->getList($filter, $start, $limit, $orderBy, $orderByDir);
 ```
 
 ### Creating an item
-Currently, only Leads support this
+Currently, only Contacts support this
 
 ```php
 <?php
 
-$fields = $leadApi->getFieldList();
+$fields = $contactApi->getFieldList();
 
 $data = array();
 
@@ -131,15 +133,15 @@ foreach ($fields as $f) {
     $data[$f['alias']] = $_POST[$f['alias']];
 }
 
-// Set the IP address the lead originated from if it is different than that of the server making the request
+// Set the IP address the contact originated from if it is different than that of the server making the request
 $data['ipAddress'] = $ipAddress;
  
-// Create the lead 
-$lead = $leadApi->create($data);
+// Create the contact 
+$contact = $contactApi->create($data);
 ```
     
 ### Editing an item
-Currently, only Leads support this
+Currently, only Contacts support this
 
 ```php
 <?php
@@ -148,20 +150,20 @@ $updatedData = array(
     'firstname' => 'Updated Name'
 );
 
-$result = $leadApi->edit($leadId, $updatedData);
+$result = $contactApi->edit($contactId, $updatedData);
 
-// If you want to create a new lead in the case that $leadId no longer exists
-// $result will be populated with the new lead item
-$result = $leadApi->edit($leadId, $updatedData, true);
+// If you want to create a new contact in the case that $contactId no longer exists
+// $result will be populated with the new contact item
+$result = $contactApi->edit($contactId, $updatedData, true);
 ```
     
 ### Deleting an item
-Currently, only Leads support this
+Currently, only Contacts support this
 
 ```php
 <?php
 
-$result = $leadApi->delete($leadId);
+$result = $contactApi->delete($contactId);
 ```
 
 ### Error handling
@@ -170,7 +172,7 @@ $result = $leadApi->delete($leadId);
 <?php
 
 // $result returned by an API call should be checked for errors
-$result = $leadApi->delete($leadId);
+$result = $contactApi->delete($contactId);
 
 if (isset($result['error'])) {
     echo $result['error']['code'] . ": " . $result['error']['message'];
