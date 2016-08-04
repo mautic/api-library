@@ -130,6 +130,31 @@ class ContactsTest extends MauticApiTestCase
         $this->assertFalse(isset($contact['error']), $message);
     }
 
+    public function testEditPutFormError()
+    {
+        $contactApi = $this->getContext('contacts');
+
+        $contact = $contactApi->create(
+            array(
+                'firstname' => 'country',
+                'lastname'  => 'test'
+            )
+        );
+
+        $message = isset($contact['error']) ? $contact['error']['message'] : '';
+        $this->assertFalse(isset($contact['error']), $message);
+
+        $contact = $contactApi->edit(
+            $contact['contact']['id'],
+            array(
+                'country' => 'not existing country'
+            )
+        );
+
+        //there should be an error as the country does not exist
+        $this->assertTrue(isset($contact['error']), $contact['error']['message']);
+    }
+
     public function testEditPatch()
     {
         $contactApi = $this->getContext('contacts');
