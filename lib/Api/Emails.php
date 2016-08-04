@@ -57,7 +57,22 @@ class Emails extends Api
     }
 
     /**
+     * Send email to a specific contact
+     *
+     * @param int $id
+     * @param int $contactId
+     *
+     * @return array|mixed
+     */
+    public function sendToContact($id, $contactId)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$id.'/send/contact/'.$contactId, array(), 'POST');
+    }
+
+    /**
      * Send email to a specific lead
+     *
+     * @deprecated use sendToContact instead
      *
      * @param int $id
      * @param int $leadId
@@ -66,6 +81,6 @@ class Emails extends Api
      */
     public function sendToLead($id, $leadId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/send/lead/'.$leadId, array(), 'POST');
+        return $this->sendToContact($id, $leadId);
     }
 }
