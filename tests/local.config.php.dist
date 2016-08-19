@@ -8,5 +8,8 @@ return array(
     'requestTokenUrl' => '', // Set with any string to force the library to use the OAuth1.a spec; leave blank to use OAuth2
     'clientKey'       => '',
     'clientSecret'    => '',
-    'callback'        => ''
+    'callback'        => '',
+
+    // Usefull only for OAuth 2 testing
+    'refreshToken'     => ''
 );
