@@ -537,7 +537,7 @@ class OAuth extends ApiAuth implements AuthInterface
                 'client_secret' => $this->_client_secret,
                 'grant_type'    => 'authorization_code'
             );
-            
+
             if (isset($_GET['code'])) {
                 $parameters['code'] = $_GET['code'];
             }
@@ -668,6 +668,8 @@ class OAuth extends ApiAuth implements AuthInterface
     public function makeRequest($url, array $parameters = array(), $method = 'GET', array $settings = array())
     {
         $this->log('makeRequest('.$url.', '.http_build_query($parameters).', '.$method.',...)');
+
+        list($url, $parameters) = $this->separateUrlParams($url, $parameters);
 
         $includeCallback = (isset($settings['includeCallback'])) ? $settings['includeCallback'] : false;
         $includeVerifier = (isset($settings['includeVerifier'])) ? $settings['includeVerifier'] : false;
@@ -851,7 +853,7 @@ class OAuth extends ApiAuth implements AuthInterface
      */
     private function buildBaseString($baseURI, $method, $params)
     {
-        $r = $this->normalizeParameters($params);
+        $r = $this->normalizeParameters($params, true);
 
         return $method.'&'.$this->encode($baseURI).'&'.$this->encode($r);
     }
@@ -975,5 +977,26 @@ class OAuth extends ApiAuth implements AuthInterface
     protected function isOauth1()
     {
         return strlen($this->_request_token_url) > 0;
+    }
+
+    /**
+     * Separates parameters from base URL
+     *
+     * @return array
+     */
+    protected function separateUrlParams($url, $params)
+    {
+        $a = parse_url($url);
+
+        if (!empty($a['query'])) {
+            parse_str($a['query'], $qparts);
+            foreach ($qparts as $k => $v) {
+                $cleanParams[$k] = $v ? $v : '';
+            }
+            $params = array_merge($params, $cleanParams);
+            $url = explode('?', $url, 2)[0];
+        }
+
+        return array($url, $params);
     }
 }
