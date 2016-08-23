@@ -43,14 +43,17 @@ class Points extends Api
     {
         return $this->actionNotSupported('delete');
     }
-    
+
     /**
-     * [apply_rule description]
-     * @param  [int] $PointsId [id des regles de points]
-     * @param  [int] $LeadId   [id du lead]
+     * only point rules "mautic.api_call" ca be applied throught this method
+     *
+     * @param [int] $pointsId
+     * @param [int] $leadId
+     * @param [array] $parameters No specific parameters configured
+     *
      * @return []           []
      */
-    public function apply_rule($PointsId, $LeadId) {
-    	return $this->makeRequest('points/'.$PointsId.'/lead/'.$LeadId);
+    public function applyRule($pointsId, $leadId, array $parameters = array()) {
+    	return $this->makeRequest('points/'.$pointsId.'/lead/'.$leadId, $parameters, 'PATCH');
     }
 }

@@ -2,5 +2,6 @@
     "points",
     "points/{id}",
     "points/triggers",
-    "points/triggers/{id}"
+    "points/triggers/{id}",
+    "points/{id}/lead/{id}"
 ]
