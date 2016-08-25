@@ -50,7 +50,7 @@ class Api implements LoggerAwareInterface
     public function __construct(AuthInterface $auth, $baseUrl = '')
     {
         $this->auth    = $auth;
-        $this->baseUrl = $baseUrl;
+        $this->setBaseUrl($baseUrl);
     }
 
     /**
@@ -94,7 +94,11 @@ class Api implements LoggerAwareInterface
         if (strpos($url, -1) != '/') {
             $url .= '/';
         }
-
+        
+        if(substr($url,-4,4) != 'api/'){
+            $url .= 'api/';
+        }
+        
         $this->baseUrl = $url;
 
         return $this;
