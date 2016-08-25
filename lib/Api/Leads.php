@@ -73,4 +73,14 @@ class Leads extends Contacts
     {
         return $this->makeRequest('contacts/'.$id.'/campaigns');
     }
+
+    /**
+     * Recover contact timeline (only visited url
+     *
+     * @param int $leadId
+     * @return mixed
+     */
+    public function leadHistory($leadId) {
+        return $this->makeRequest('leads/'.$leadId.'/history');
+    }
 }
