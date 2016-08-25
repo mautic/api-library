@@ -96,4 +96,14 @@ class Contacts extends Api
     {
         return $this->makeRequest('contacts/'.$id.'/campaigns');
     }
+
+    /**
+     * Recover list of URL visited by a Contact
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getContactHistory($id) {
+        return $this->makeRequest('contacts/'.$id.'/history');
+    }
 }
