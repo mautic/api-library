@@ -25,6 +25,8 @@ include __DIR__ . '/vendor/autoload.php';
 
 use Mautic\Auth\ApiAuth;
 
+session_start();
+
 $publicKey = ''; 
 $secretKey = ''; 
 $callback  = ''; 
