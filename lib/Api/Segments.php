@@ -64,6 +64,8 @@ class Segments extends Api
     /**
      * Remove a lead from the segment
      *
+     * @deprecated 2.0.1, use addContact() instead
+     *
      * @param int $id     Segment ID
      * @param int $leadId Lead ID
      *
