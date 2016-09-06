@@ -744,9 +744,23 @@ class OAuth extends ApiAuth implements AuthInterface
 
         //Set post fields for POST/PUT/PATCH requests
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
+
+            //Set file to upload
+            // Sending file data requires an array to set
+            // the Content-Type header to multipart/form-data
+            if (!empty($parameters['file']) && file_exists($parameters['file'])) {
+                $parameters['file'] = '@'.realpath($parameters['file']);
+            } else {
+                $parameters = http_build_query($parameters, '', '&');
+            }
+
             $options[CURLOPT_POST]       = true;
-            $options[CURLOPT_POSTFIELDS] = http_build_query($parameters, '', '&');
-            $this->log('Posted parameters = '.$options[CURLOPT_POSTFIELDS]);
+            $options[CURLOPT_POSTFIELDS] = $parameters;
+            
+            if (is_array($parameters)) {
+                $parameters = print_r($parameters, true);
+            }
+            $this->log('Posted parameters = '.$parameters);
         }
 
         //Make CURL request
