@@ -756,10 +756,11 @@ class OAuth extends ApiAuth implements AuthInterface
 
             $options[CURLOPT_POST]       = true;
             $options[CURLOPT_POSTFIELDS] = $parameters;
-            
+
             if (is_array($parameters)) {
                 $parameters = print_r($parameters, true);
             }
+            
             $this->log('Posted parameters = '.$parameters);
         }
 
