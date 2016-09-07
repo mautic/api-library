@@ -83,6 +83,12 @@ class EmailsTest extends MauticApiTestCase
 
         $message = isset($email['error']) ? $email['error']['message'] : '';
         $this->assertFalse(isset($email['error']), $message);
+
+        //now delete the email
+        $result = $emailApi->delete($email['email']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testEditPatch()
@@ -102,5 +108,11 @@ class EmailsTest extends MauticApiTestCase
 
         $message = isset($email['error']) ? $email['error']['message'] : '';
         $this->assertFalse(isset($email['error']), $message);
+
+        //now delete the email
+        $result = $emailApi->delete($email['email']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 }

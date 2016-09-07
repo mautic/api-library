@@ -128,6 +128,12 @@ class LeadsTest extends MauticApiTestCase
 
         $message = isset($lead['error']) ? $lead['error']['message'] : '';
         $this->assertFalse(isset($lead['error']), $message);
+
+        //now delete the lead
+        $result = $leadApi->delete($lead['contact']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testEditPatch()
@@ -144,5 +150,11 @@ class LeadsTest extends MauticApiTestCase
 
         $message = isset($lead['error']) ? $lead['error']['message'] : '';
         $this->assertFalse(isset($lead['error']), $message);
+
+        //now delete the lead
+        $result = $leadApi->delete($lead['contact']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 }

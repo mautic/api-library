@@ -128,6 +128,12 @@ class ContactsTest extends MauticApiTestCase
 
         $message = isset($contact['error']) ? $contact['error']['message'] : '';
         $this->assertFalse(isset($contact['error']), $message);
+
+        //now delete the contact
+        $result = $contactApi->delete($contact['contact']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testEditPutFormError()
@@ -169,5 +175,11 @@ class ContactsTest extends MauticApiTestCase
 
         $message = isset($contact['error']) ? $contact['error']['message'] : '';
         $this->assertFalse(isset($contact['error']), $message);
+
+        //now delete the contact
+        $result = $contactApi->delete($contact['contact']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 }

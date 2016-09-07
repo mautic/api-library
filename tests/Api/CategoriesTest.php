@@ -83,6 +83,12 @@ class CategoriesTest extends MauticApiTestCase
 
         $message = isset($category['error']) ? $category['error']['message'] : '';
         $this->assertFalse(isset($category['error']), $message);
+
+        //now delete the category
+        $result = $categoryApi->delete($category['category']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testEditPatch()
@@ -101,5 +107,11 @@ class CategoriesTest extends MauticApiTestCase
 
         $message = isset($category['error']) ? $category['error']['message'] : '';
         $this->assertFalse(isset($category['error']), $message);
+
+        //now delete the category
+        $result = $categoryApi->delete($category['category']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 }

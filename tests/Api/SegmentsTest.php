@@ -79,6 +79,12 @@ class SegmentsTest extends MauticApiTestCase
 
         $message = isset($segment['error']) ? $segment['error']['message'] : '';
         $this->assertFalse(isset($segment['error']), $message);
+
+        //now delete the segment
+        $result = $segmentApi->delete($segment['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testEditPatch()
@@ -97,6 +103,12 @@ class SegmentsTest extends MauticApiTestCase
 
         $message = isset($segment['error']) ? $segment['error']['message'] : '';
         $this->assertFalse(isset($segment['error']), $message);
+
+        //now delete the segment
+        $result = $segmentApi->delete($segment['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testAddAndRemove()

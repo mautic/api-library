@@ -79,6 +79,12 @@ class StagesTest extends MauticApiTestCase
 
         $message = isset($stage['error']) ? $stage['error']['message'] : '';
         $this->assertFalse(isset($stage['error']), $message);
+
+        //now delete the stage
+        $result = $stageApi->delete($stage['stage']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testEditPatch()
@@ -96,6 +102,12 @@ class StagesTest extends MauticApiTestCase
 
         $message = isset($stage['error']) ? $stage['error']['message'] : '';
         $this->assertFalse(isset($stage['error']), $message);
+
+        //now delete the stage
+        $result = $stageApi->delete($stage['stage']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
     }
 
     public function testAddAndRemove()
