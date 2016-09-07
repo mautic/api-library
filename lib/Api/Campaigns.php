@@ -21,30 +21,6 @@ class Campaigns extends Api
     protected $endpoint = 'campaigns';
 
     /**
-     * {@inheritdoc}
-     */
-    public function create(array $parameters)
-    {
-        return $this->actionNotSupported('create');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function edit($id, array $parameters, $createIfNotExists = false)
-    {
-        return $this->actionNotSupported('edit');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        return $this->actionNotSupported('delete');
-    }
-
-    /**
      * Add a lead to the campaign
      *
      * @deprecated 2.0.1, use addContact instead
