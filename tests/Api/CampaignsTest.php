@@ -29,7 +29,6 @@ class CampaignsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    
     public function testCreateAndDelete()
     {
         $campaignApi = $this->getContext('campaigns');
