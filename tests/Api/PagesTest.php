@@ -94,9 +94,7 @@ class PagesTest extends MauticApiTestCase
         $page    = $pageApi->edit(
             10000,
             array(
-                'title' => 'test',
-                // following cannot be null
-                'isPublished' => 1
+                'title' => 'test'
             ),
             true
         );

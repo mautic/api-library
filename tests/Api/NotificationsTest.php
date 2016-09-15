@@ -101,10 +101,7 @@ class NotificationsTest extends MauticApiTestCase
             array(
                 'name' => 'test',
                 'heading' => 'API test heading',
-                'message' => 'API test message',
-                // following cannot be null
-                'language' => 'en',
-                'isPublished' => 1
+                'message' => 'API test message'
             ),
             true
         );

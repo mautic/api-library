@@ -93,9 +93,7 @@ class CampaignsTest extends MauticApiTestCase
         $campaign    = $campaignApi->edit(
             10000,
             array(
-                'name' => 'test',
-                // following cannot be null
-                'isPublished' => 1
+                'name' => 'test'
             ),
             true
         );

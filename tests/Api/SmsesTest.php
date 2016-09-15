@@ -98,10 +98,7 @@ class SmsesTest extends MauticApiTestCase
             10000,
             array(
                 'name' => 'test',
-                'message' => 'API test message',
-                // following cannot be null
-                'language' => 'en',
-                'isPublished' => 1
+                'message' => 'API test message'
             ),
             true
         );

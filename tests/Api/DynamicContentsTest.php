@@ -93,10 +93,7 @@ class DynamicContentsTest extends MauticApiTestCase
         $dynamiccontent    = $dynamiccontentApi->edit(
             10000,
             array(
-                'name' => 'test',
-                // following cannot be null
-                'language' => 'en',
-                'isPublished' => 1
+                'name' => 'test'
             ),
             true
         );

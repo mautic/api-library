@@ -98,9 +98,7 @@ class CategoriesTest extends MauticApiTestCase
             10000,
             array(
                 'title' => 'test',
-                'bundle' => 'asset',
-                // following cannot be null
-                'isPublished' => 1
+                'bundle' => 'asset'
             ),
             true
         );

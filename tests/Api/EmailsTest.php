@@ -98,10 +98,7 @@ class EmailsTest extends MauticApiTestCase
             10000,
             array(
                 'name' => 'test',
-                'body' => 'test',
-                // following cannot be null
-                'isPublished' => 1,
-                'language' => 'en'
+                'body' => 'test'
             ),
             true
         );

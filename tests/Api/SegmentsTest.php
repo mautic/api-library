@@ -93,10 +93,7 @@ class SegmentsTest extends MauticApiTestCase
         $segment    = $segmentApi->edit(
             10000,
             array(
-                'name' => 'test',
-                // following cannot be null
-                'isPublished' => 1,
-                'isGlobal' => 1
+                'name' => 'test'
             ),
             true
         );
