@@ -94,7 +94,7 @@ class LeadsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $leadApi = $this->getContext('leads');
         $lead    = $leadApi->edit(
@@ -136,7 +136,7 @@ class LeadsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $leadApi = $this->getContext('leads');
         $lead    = $leadApi->edit(

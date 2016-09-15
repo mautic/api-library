@@ -48,7 +48,7 @@ class SegmentsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $segmentApi = $this->getContext('segments');
         $segment    = $segmentApi->edit(
@@ -87,7 +87,7 @@ class SegmentsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $segmentApi = $this->getContext('segments');
         $segment    = $segmentApi->edit(

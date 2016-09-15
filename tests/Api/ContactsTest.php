@@ -94,7 +94,7 @@ class ContactsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $contactApi = $this->getContext('contacts');
         $contact    = $contactApi->edit(
@@ -136,7 +136,7 @@ class ContactsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPutFormError()
+    public function testEditPatchFormError()
     {
         $contactApi = $this->getContext('contacts');
 
@@ -161,7 +161,7 @@ class ContactsTest extends MauticApiTestCase
         $this->assertTrue(isset($contact['error']), $contact['error']['message']);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $contactApi = $this->getContext('contacts');
         $contact    = $contactApi->edit(

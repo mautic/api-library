@@ -29,7 +29,6 @@ class NotificationsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-
     public function testCreateAndDelete()
     {
         $notificationApi = $this->getContext('notifications');
@@ -51,7 +50,7 @@ class NotificationsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $notificationApi = $this->getContext('notifications');
         $notification    = $notificationApi->edit(
@@ -94,7 +93,7 @@ class NotificationsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $notificationApi = $this->getContext('notifications');
         $notification    = $notificationApi->edit(

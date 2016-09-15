@@ -48,7 +48,7 @@ class DynamicContentsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $dynamiccontentApi = $this->getContext('DynamicContents');
         $dynamiccontent    = $dynamiccontentApi->edit(
@@ -87,7 +87,7 @@ class DynamicContentsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $dynamiccontentApi = $this->getContext('DynamicContents');
         $dynamiccontent    = $dynamiccontentApi->edit(

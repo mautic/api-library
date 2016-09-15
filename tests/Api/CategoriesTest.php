@@ -49,7 +49,7 @@ class CategoriesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $categoryApi = $this->getContext('categories');
         $category    = $categoryApi->edit(
@@ -91,7 +91,7 @@ class CategoriesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $categoryApi = $this->getContext('categories');
         $category    = $categoryApi->edit(

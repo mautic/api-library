@@ -49,7 +49,7 @@ class PagesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $pageApi = $this->getContext('pages');
         $page    = $pageApi->edit(
@@ -88,7 +88,7 @@ class PagesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $pageApi = $this->getContext('pages');
         $page    = $pageApi->edit(

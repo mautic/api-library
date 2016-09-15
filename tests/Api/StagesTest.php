@@ -48,7 +48,7 @@ class StagesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $stageApi = $this->getContext('stages');
         $stage    = $stageApi->edit(
@@ -87,7 +87,7 @@ class StagesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $stageApi = $this->getContext('stages');
         $stage    = $stageApi->edit(

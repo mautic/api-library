@@ -48,7 +48,7 @@ class CampaignsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $campaignApi = $this->getContext('campaigns');
         $campaign    = $campaignApi->edit(
@@ -87,7 +87,7 @@ class CampaignsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $campaignApi = $this->getContext('campaigns');
         $campaign    = $campaignApi->edit(

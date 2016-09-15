@@ -50,7 +50,7 @@ class SmsesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPut()
+    public function testEditPatch()
     {
         $smsApi = $this->getContext('smses');
         $sms    = $smsApi->edit(
@@ -91,7 +91,7 @@ class SmsesTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
-    public function testEditPatch()
+    public function testEditPut()
     {
         $smsApi = $this->getContext('smses');
         $sms    = $smsApi->edit(
