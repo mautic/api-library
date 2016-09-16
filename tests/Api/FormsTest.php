@@ -35,6 +35,7 @@ class FormsTest extends MauticApiTestCase
         $form    = $formApi->create(
             array(
                 'name' => 'test',
+                'formType' => 'standalone',
                 'description' => 'API test'
             )
         );
@@ -51,40 +52,78 @@ class FormsTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $formApi = $this->getContext('forms');
-        $form    = $formApi->edit(
+        $formApi  = $this->getContext('forms');
+        $response = $formApi->edit(
             10000,
             array(
                 'name' => 'test',
+                'formType' => 'standalone',
                 'description' => 'API test'
             )
         );
 
         //there should be an error as the form shouldn't exist
-        $this->assertTrue(isset($form['error']), $form['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $form = $formApi->create(
+        $response = $formApi->create(
             array(
                 'name' => 'test',
-                'description' => 'API test'
+                'formType' => 'standalone',
+                'description' => 'API test',
+                'fields' => array(
+                    array(
+                        'label' => 'field name',
+                        'type' => 'text'
+                    )
+                ),
+                'actions' => array(
+                    array(
+                        'name' => 'action name',
+                        'description' => 'field desc',
+                        'type' => 'lead.pointschange',
+                        'properties' => array(
+                            'operator' => 'plus',
+                            'points' => 2
+                        )
+                    )
+                )
             )
         );
 
-        $message = isset($form['error']) ? $form['error']['message'] : '';
-        $this->assertFalse(isset($form['error']), $message);
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
 
-        $form = $formApi->edit(
-            $form['form']['id'],
+        $response = $formApi->edit(
+            $response['form']['id'],
             array(
-                'name' => 'test2'
+                'name' => 'test2',
+                'formType' => 'standalone',
+                'fields' => array(
+                    array(
+                        'id' => 73,
+                        'label' => 'field name',
+                        'type' => 'text'
+                    )
+                ),
+                'actions' => array(
+                    array(
+                        'name' => 'action name',
+                        'description' => 'field desc',
+                        'type' => 'lead.pointschange',
+                        'properties' => array(
+                            'operator' => 'plus',
+                            'points' => 2
+                        )
+                    )
+                )
             )
         );
 
-        $message = isset($form['error']) ? $form['error']['message'] : '';
-        $this->assertFalse(isset($form['error']), $message);
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
 
         //now delete the form
-        $result = $formApi->delete($form['form']['id']);
+        $result = $formApi->delete($response['form']['id']);
 
         $message = isset($result['error']) ? $result['error']['message'] : '';
         $this->assertFalse(isset($result['error']), $message);
@@ -92,21 +131,39 @@ class FormsTest extends MauticApiTestCase
 
     public function testEditPut()
     {
-        $formApi = $this->getContext('forms');
-        $form    = $formApi->edit(
+        $formApi  = $this->getContext('forms');
+        $response = $formApi->edit(
             10000,
             array(
-                'name' => 'test',
-                'description' => 'API test'
+                'name' => 'test 2',
+                'description' => 'API test',
+                'formType' => 'standalone',
+                'fields' => array(
+                    array(
+                        'label' => 'field name 2',
+                        'type' => 'text'
+                    )
+                ),
+                'actions' => array(
+                    array(
+                        'name' => 'action name 2',
+                        'description' => 'field desc',
+                        'type' => 'lead.pointschange',
+                        'properties' => array(
+                            'operator' => 'plus',
+                            'points' => 2
+                        )
+                    )
+                )
             ),
             true
         );
 
-        $message = isset($form['error']) ? $form['error']['message'] : '';
-        $this->assertFalse(isset($form['error']), $message);
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
 
         //now delete the form
-        $result = $formApi->delete($form['form']['id']);
+        $result = $formApi->delete($response['form']['id']);
 
         $message = isset($result['error']) ? $result['error']['message'] : '';
         $this->assertFalse(isset($result['error']), $message);
