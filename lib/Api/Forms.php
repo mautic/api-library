@@ -30,7 +30,7 @@ class Forms extends Api
      */
     public function deleteFields($formId, array $fieldIds)
     {
-        return $this->makeRequest($this->endpoint.'/'.$formId.'/fields/remove', array('fields' => $fieldIds), 'DELETE');
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/fields/delete', array('fields' => $fieldIds), 'DELETE');
     }
 
     /**
@@ -43,6 +43,6 @@ class Forms extends Api
      */
     public function deleteActions($formId, array $actionIds)
     {
-        return $this->makeRequest($this->endpoint.'/'.$formId.'/actions/remove', array('actions' => $actionIds), 'DELETE');
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/actions/delete', array('actions' => $actionIds), 'DELETE');
     }
 }
