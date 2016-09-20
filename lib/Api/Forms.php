@@ -19,4 +19,30 @@ class Forms extends Api
      * {@inheritdoc}
      */
     protected $endpoint = 'forms';
+
+    /**
+     * Remove fields from a form
+     *
+     * @param integer $formId
+     * @param array   $fieldIds
+     *
+     * @return array|mixed
+     */
+    public function deleteFields($formId, array $fieldIds)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/fields/remove', array('fields' => $fieldIds), 'DELETE');
+    }
+
+    /**
+     * Remove actions from a form
+     *
+     * @param integer $formId
+     * @param array   $actionIds
+     *
+     * @return array|mixed
+     */
+    public function deleteActions($formId, array $actionIds)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/actions/remove', array('actions' => $actionIds), 'DELETE');
+    }
 }

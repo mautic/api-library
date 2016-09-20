@@ -74,6 +74,58 @@ class FormsTest extends MauticApiTestCase
         $this->assertFalse(isset($result['error']), $message);
     }
 
+    public function testDeleteFields()
+    {
+        $fieldIds = array();
+        $formApi  = $this->getContext('forms');
+        $response = $formApi->create($this->basicForm);
+
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
+
+        foreach ($response['form']['fields'] as $field) {
+            $fieldIds[] = $field['id'];
+        }
+
+        $response = $formApi->deleteFields($response['form']['id'], $fieldIds);
+
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
+        $this->assertTrue(empty($response['form']['fields']), 'Fields were not deleted');
+
+        //now delete the form
+        $result = $formApi->delete($response['form']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
+    }
+
+    public function testDeleteActions()
+    {
+        $actionIds = array();
+        $formApi  = $this->getContext('forms');
+        $response = $formApi->create($this->basicForm);
+
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
+
+        foreach ($response['form']['actions'] as $action) {
+            $actionIds[] = $action['id'];
+        }
+
+        $response = $formApi->deleteActions($response['form']['id'], $actionIds);
+
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
+        $this->assertTrue(empty($response['form']['actions']), 'Actions were not deleted');
+
+        //now delete the form
+        $result = $formApi->delete($response['form']['id']);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
+    }
+
     public function testEditPatch()
     {
         $formApi  = $this->getContext('forms');
