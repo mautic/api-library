@@ -21,26 +21,12 @@ class Points extends Api
     protected $endpoint = 'points';
 
     /**
-     * {@inheritdoc}
+     * Get list of available action types
+     *
+     * @return array|mixed
      */
-    public function create(array $parameters)
+    public function getPointActionTypes()
     {
-        return $this->actionNotSupported('create');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function edit($id, array $parameters, $createIfNotExists = false)
-    {
-        return $this->actionNotSupported('edit');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        return $this->actionNotSupported('delete');
+        return $this->makeRequest($this->endpoint.'/actions/types');
     }
 }
