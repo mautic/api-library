@@ -14,18 +14,14 @@ class ReportsTest extends MauticApiTestCase
     public function testGet()
     {
         $apiContext = $this->getContext('reports');
-        $result     = $apiContext->get(1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('reports');
-        $result     = $apiContext->getList();
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->getList();
+        $this->assertErrors($response);
     }
 }

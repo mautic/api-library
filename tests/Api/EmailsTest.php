@@ -11,105 +11,73 @@ namespace Mautic\Tests\Api;
 
 class EmailsTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'name' => 'test',
+        'body' => 'test'
+    );
+
     public function testGet()
     {
         $emailApi = $this->getContext('emails');
-        $email    = $emailApi->get(1);
-
-        $message = isset($email['error']) ? $email['error']['message'] : '';
-        $this->assertFalse(isset($email['error']), $message);
+        $response = $emailApi->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $emailApi = $this->getContext('emails');
-        $emails   = $emailApi->getList();
-
-        $message = isset($emails['error']) ? $emails['error']['message'] : '';
-        $this->assertFalse(isset($emails['error']), $message);
+        $response = $emailApi->getList();
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
         $emailApi = $this->getContext('emails');
-        $email    = $emailApi->create(
-            array(
-                'name' => 'test',
-                'body' => 'test'
-            )
-        );
+        $response = $emailApi->create($this->testPayload);
 
-        $message = isset($email['error']) ? $email['error']['message'] : '';
-        $this->assertFalse(isset($email['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the email
-        $result = $emailApi->delete($email['email']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $emailApi->delete($response['email']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $emailApi = $this->getContext('emails');
-        $email    = $emailApi->edit(
-            10000,
-            array(
-                'name' => 'test',
-                'body' => 'test'
-            )
-        );
+        $response = $emailApi->edit(10000, $this->testPayload);
 
         //there should be an error as the email shouldn't exist
-        $this->assertTrue(isset($email['error']), $email['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $email = $emailApi->create(
-            array(
-                'name' => 'test',
-                'body' => 'test'
-            )
-        );
+        $response = $emailApi->create($this->testPayload);
 
-        $message = isset($email['error']) ? $email['error']['message'] : '';
-        $this->assertFalse(isset($email['error']), $message);
+        $this->assertErrors($response);
 
-        $email = $emailApi->edit(
-            $email['email']['id'],
+        $response = $emailApi->edit(
+            $response['email']['id'],
             array(
                 'name' => 'test2',
                 'body' => 'test2'
             )
         );
 
-        $message = isset($email['error']) ? $email['error']['message'] : '';
-        $this->assertFalse(isset($email['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the email
-        $result = $emailApi->delete($email['email']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $emailApi->delete($response['email']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $emailApi = $this->getContext('emails');
-        $email    = $emailApi->edit(
-            10000,
-            array(
-                'name' => 'test',
-                'body' => 'test'
-            ),
-            true
-        );
+        $response = $emailApi->edit(10000, $this->testPayload, true);
 
-        $message = isset($email['error']) ? $email['error']['message'] : '';
-        $this->assertFalse(isset($email['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the email
-        $result = $emailApi->delete($email['email']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $emailApi->delete($response['email']['id']);
+        $this->assertErrors($response);
     }
 }

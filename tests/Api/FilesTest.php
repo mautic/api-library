@@ -14,29 +14,27 @@ class FilesTest extends MauticApiTestCase
     // public function testGet()
     // {
     //     $apiContext = $this->getContext('files');
-    //     $result     = $apiContext->get(1);
+    //     $response     = $apiContext->get(1);
 
-    //     $message = isset($result['error']) ? $result['error']['message'] : '';
-    //     $this->assertFalse(isset($result['error']), $message);
+    //     $message = isset($response['error']) ? $response['error']['message'] : '';
+    //     $this->assertFalse(isset($response['error']), $message);
     // }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('files');
-        $result     = $apiContext->getList();
+        $response     = $apiContext->getList();
 
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $this->assertErrors($response);
     }
 
     public function testGetListAssetFiles()
     {
         $apiContext = $this->getContext('files');
         $apiContext->setFolder('assets');
-        $result     = $apiContext->getList();
+        $response     = $apiContext->getList();
 
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $this->assertErrors($response);
     }
 
 //     public function testCreateAndDelete()
@@ -57,9 +55,9 @@ class FilesTest extends MauticApiTestCase
 //         $this->assertFalse(isset($file['error']), $message);
 
 //         //now delete the file
-//         $result = $apiContext->delete($file['file']['id']);
+//         $response = $apiContext->delete($file['file']['id']);
 
-//         $message = isset($result['error']) ? $result['error']['message'] : '';
-//         $this->assertFalse(isset($result['error']), $message);
+//         $message = isset($response['error']) ? $response['error']['message'] : '';
+//         $this->assertFalse(isset($response['error']), $message);
 //     }
 }

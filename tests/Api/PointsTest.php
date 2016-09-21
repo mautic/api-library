@@ -14,18 +14,14 @@ class PointsTest extends MauticApiTestCase
     public function testGet()
     {
         $apiContext = $this->getContext('points');
-        $result     = $apiContext->get(1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('points');
-        $result     = $apiContext->getList();
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->getList();
+        $this->assertErrors($response);
     }
 }

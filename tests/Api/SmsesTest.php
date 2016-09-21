@@ -11,105 +11,70 @@ namespace Mautic\Tests\Api;
 
 class SmsesTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'name' => 'test',
+        'message' => 'API test message'
+    );
+
     public function testGet()
     {
         $apiContext = $this->getContext('smses');
-        $result     = $apiContext->get(1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('smses');
-        $result     = $apiContext->getList();
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->getList();
+        $this->assertErrors($response);
     }
 
 
     public function testCreateAndDelete()
     {
-        $smsApi = $this->getContext('smses');
-        $sms    = $smsApi->create(
-            array(
-                'name' => 'test',
-                'message' => 'API test message'
-            )
-        );
-
-        $message = isset($sms['error']) ? $sms['error']['message'] : '';
-        $this->assertFalse(isset($sms['error']), $message);
+        $smsApi   = $this->getContext('smses');
+        $response = $smsApi->create($this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the sms
-        $result = $smsApi->delete($sms['sms']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $smsApi->delete($response['sms']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $smsApi = $this->getContext('smses');
-        $sms    = $smsApi->edit(
-            10000,
-            array(
-                'name' => 'test',
-                'message' => 'API test message'
-            )
-        );
+        $smsApi   = $this->getContext('smses');
+        $response = $smsApi->edit(10000, $this->testPayload);
 
         //there should be an error as the sms shouldn't exist
-        $this->assertTrue(isset($sms['error']), $sms['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $sms = $smsApi->create(
-            array(
-                'name' => 'test',
-                'message' => 'API test message'
-            )
-        );
+        $response = $smsApi->create($this->testPayload);
+        $this->assertErrors($response);
 
-        $message = isset($sms['error']) ? $sms['error']['message'] : '';
-        $this->assertFalse(isset($sms['error']), $message);
-
-        $sms = $smsApi->edit(
-            $sms['sms']['id'],
+        $response = $smsApi->edit(
+            $response['sms']['id'],
             array(
                 'name' => 'test2'
             )
         );
 
-        $message = isset($sms['error']) ? $sms['error']['message'] : '';
-        $this->assertFalse(isset($sms['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the sms
-        $result = $smsApi->delete($sms['sms']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $smsApi->delete($response['sms']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $smsApi = $this->getContext('smses');
-        $sms    = $smsApi->edit(
-            10000,
-            array(
-                'name' => 'test',
-                'message' => 'API test message'
-            ),
-            true
-        );
-
-        $message = isset($sms['error']) ? $sms['error']['message'] : '';
-        $this->assertFalse(isset($sms['error']), $message);
+        $response    = $smsApi->edit(10000, $this->testPayload, true);
+        $this->assertErrors($response);
 
         //now delete the sms
-        $result = $smsApi->delete($sms['sms']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $smsApi->delete($response['sms']['id']);
+        $this->assertErrors($response);
     }
 }

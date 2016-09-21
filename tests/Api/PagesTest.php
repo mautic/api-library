@@ -11,101 +11,69 @@ namespace Mautic\Tests\Api;
 
 class PagesTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'title' => 'test'
+    );
+
     public function testGet()
     {
         $apiContext = $this->getContext('pages');
-        $result     = $apiContext->get(1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('pages');
-        $result     = $apiContext->getList();
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->getList();
+        $this->assertErrors($response);
     }
 
 
     public function testCreateAndDelete()
     {
-        $pageApi = $this->getContext('pages');
-        $page    = $pageApi->create(
-            array(
-                'title' => 'test'
-            )
-        );
-
-        $message = isset($page['error']) ? $page['error']['message'] : '';
-        $this->assertFalse(isset($page['error']), $message);
+        $pageApi  = $this->getContext('pages');
+        $response = $pageApi->create($this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the page
-        $result = $pageApi->delete($page['page']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $pageApi->delete($response['page']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $pageApi = $this->getContext('pages');
-        $page    = $pageApi->edit(
-            10000,
-            array(
-                'title' => 'test'
-            )
-        );
+        $pageApi  = $this->getContext('pages');
+        $response = $pageApi->edit(10000, $this->testPayload);
 
         //there should be an error as the page shouldn't exist
-        $this->assertTrue(isset($page['error']), $page['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $page = $pageApi->create(
-            array(
-                'title' => 'test'
-            )
-        );
+        $response = $pageApi->create($this->testPayload);
+        $this->assertErrors($response);
 
-        $message = isset($page['error']) ? $page['error']['message'] : '';
-        $this->assertFalse(isset($page['error']), $message);
-
-        $page = $pageApi->edit(
-            $page['page']['id'],
+        $response = $pageApi->edit(
+            $response['page']['id'],
             array(
                 'title' => 'test2'
             )
         );
 
-        $message = isset($page['error']) ? $page['error']['message'] : '';
-        $this->assertFalse(isset($page['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the page
-        $result = $pageApi->delete($page['page']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $pageApi->delete($response['page']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $pageApi = $this->getContext('pages');
-        $page    = $pageApi->edit(
-            10000,
-            array(
-                'title' => 'test'
-            ),
-            true
-        );
-
-        $message = isset($page['error']) ? $page['error']['message'] : '';
-        $this->assertFalse(isset($page['error']), $message);
+        $pageApi  = $this->getContext('pages');
+        $response = $pageApi->edit(10000, $this->testPayload, true);
+        $this->assertErrors($response);
 
         //now delete the page
-        $result = $pageApi->delete($page['page']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $pageApi->delete($response['page']['id']);
+        $this->assertErrors($response);
     }
 }

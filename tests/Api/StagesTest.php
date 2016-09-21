@@ -11,115 +11,73 @@ namespace Mautic\Tests\Api;
 
 class StagesTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'name' => 'test'
+    );
+
     public function testGet()
     {
         $stageApi = $this->getContext('stages');
-        $stage    = $stageApi->get(1);
-
-        $message = isset($stage['error']) ? $stage['error']['message'] : '';
-        $this->assertFalse(isset($stage['error']), $message);
+        $response = $stageApi->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $stageApi = $this->getContext('stages');
-        $stages   = $stageApi->getList();
-
-        $message = isset($stages['error']) ? $stages['error']['message'] : '';
-        $this->assertFalse(isset($stages['error']), $message);
+        $response = $stageApi->getList();
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
         $stageApi = $this->getContext('stages');
-        $stage    = $stageApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
-
-        $message = isset($stage['error']) ? $stage['error']['message'] : '';
-        $this->assertFalse(isset($stage['error']), $message);
+        $response = $stageApi->create($this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the stage
-        $result = $stageApi->delete($stage['stage']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $stageApi->delete($response['stage']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $stageApi = $this->getContext('stages');
-        $stage    = $stageApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            )
-        );
+        $response = $stageApi->edit(10000, $this->testPayload);
 
         //there should be an error as the stage shouldn't exist
-        $this->assertTrue(isset($stage['error']), $stage['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $stage = $stageApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
+        $response = $stageApi->create($this->testPayload);
+        $this->assertErrors($response);
 
-        $message = isset($stage['error']) ? $stage['error']['message'] : '';
-        $this->assertFalse(isset($stage['error']), $message);
-
-        $stage = $stageApi->edit(
-            $stage['stage']['id'],
-            array(
-                'name' => 'test2'
-            )
-        );
-
-        $message = isset($stage['error']) ? $stage['error']['message'] : '';
-        $this->assertFalse(isset($stage['error']), $message);
+        $response = $stageApi->edit($response['stage']['id'], $this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the stage
-        $result = $stageApi->delete($stage['stage']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $stageApi->delete($response['stage']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $stageApi = $this->getContext('stages');
-        $stage    = $stageApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            ),
-            true
-        );
-
-        $message = isset($stage['error']) ? $stage['error']['message'] : '';
-        $this->assertFalse(isset($stage['error']), $message);
+        $response    = $stageApi->edit(10000, $this->testPayload, true);
+        $this->assertErrors($response);
 
         //now delete the stage
-        $result = $stageApi->delete($stage['stage']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $stageApi->delete($response['stage']['id']);
+        $this->assertErrors($response);
     }
 
     public function testAddAndRemove()
     {
         $stageApi = $this->getContext('stages');
-        $result   = $stageApi->addContact(1, 1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $stageApi->addContact(1, 1);
+        $this->assertErrors($response);
 
         //now remove the lead from the stage
-        $result = $stageApi->removeContact(1, 1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $stageApi->removeContact(1, 1);
+        $this->assertErrors($response);
     }
 }

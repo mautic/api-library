@@ -11,108 +11,70 @@ namespace Mautic\Tests\Api;
 
 class NotificationsTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'name' => 'test',
+        'heading' => 'API test heading',
+        'message' => 'API test message'
+    );
+
     public function testGet()
     {
         $apiContext = $this->getContext('notifications');
-        $result     = $apiContext->get(1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('notifications');
-        $result     = $apiContext->getList();
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->getList();
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
         $notificationApi = $this->getContext('notifications');
-        $notification    = $notificationApi->create(
-            array(
-                'name' => 'test',
-                'heading' => 'API test heading',
-                'message' => 'API test message'
-            )
-        );
-
-        $message = isset($notification['error']) ? $notification['error']['message'] : '';
-        $this->assertFalse(isset($notification['error']), $message);
+        $response        = $notificationApi->create($this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the notification
-        $result = $notificationApi->delete($notification['notification']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $notificationApi->delete($response['notification']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $notificationApi = $this->getContext('notifications');
-        $notification    = $notificationApi->edit(
-            10000,
-            array(
-                'name' => 'test',
-                'heading' => 'API test heading',
-                'message' => 'API test message'
-            )
-        );
+        $response        = $notificationApi->edit(10000, $this->testPayload);
 
         //there should be an error as the notification shouldn't exist
-        $this->assertTrue(isset($notification['error']), $notification['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $notification = $notificationApi->create(
-            array(
-                'name' => 'test',
-                'heading' => 'API test heading',
-                'message' => 'API test message'
-            )
-        );
+        $response = $notificationApi->create($this->testPayload);
+        $this->assertErrors($response);
 
-        $message = isset($notification['error']) ? $notification['error']['message'] : '';
-        $this->assertFalse(isset($notification['error']), $message);
-
-        $notification = $notificationApi->edit(
-            $notification['notification']['id'],
+        $response = $notificationApi->edit(
+            $response['notification']['id'],
             array(
                 'name' => 'test2'
             )
         );
 
-        $message = isset($notification['error']) ? $notification['error']['message'] : '';
-        $this->assertFalse(isset($notification['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the notification
-        $result = $notificationApi->delete($notification['notification']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $notificationApi->delete($response['notification']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $notificationApi = $this->getContext('notifications');
-        $notification    = $notificationApi->edit(
-            10000,
-            array(
-                'name' => 'test',
-                'heading' => 'API test heading',
-                'message' => 'API test message'
-            ),
-            true
-        );
-
-        $message = isset($notification['error']) ? $notification['error']['message'] : '';
-        $this->assertFalse(isset($notification['error']), $message);
+        $response        = $notificationApi->edit(10000, $this->testPayload,true);
+        $this->assertErrors($response);
 
         //now delete the notification
-        $result = $notificationApi->delete($notification['notification']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $notificationApi->delete($response['notification']['id']);
+        $this->assertErrors($response);
     }
 }

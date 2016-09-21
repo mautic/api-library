@@ -13,91 +13,74 @@ class ContactsTest extends MauticApiTestCase
 {
     public function testGet()
     {
-        $contactApi = $this->getContext('contacts');
-        $contact    = $contactApi->get(1);
-
-        $message = isset($contact['error']) ? $contact['error']['message'] : '';
-        $this->assertFalse(isset($contact['error']), $message);
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
-        $contactApi = $this->getContext('contacts');
-        $contacts   = $contactApi->getList();
-
-        $message = isset($contacts['error']) ? $contacts['error']['message'] : '';
-        $this->assertFalse(isset($contacts['error']), $message);
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->getList();
+        $this->assertErrors($response);
     }
 
     public function testGetFieldList()
     {
-        $contactApi = $this->getContext('contacts');
-        $fields  = $contactApi->getFieldList();
-
-        $message = isset($fields['error']) ? $fields['error']['message'] : '';
-        $this->assertFalse(isset($fields['error']), $message);
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->getFieldList();
+        $this->assertErrors($response);
     }
 
     public function testGetSegmentsList()
     {
-        $contactApi = $this->getContext('contacts');
-        $lists   = $contactApi->getSegments();
-
-        $message = isset($lists['error']) ? $lists['error']['message'] : '';
-        $this->assertFalse(isset($lists['error']), $message);
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->getSegments();
+        $this->assertErrors($response);
     }
 
     public function testGetNotes()
     {
-        $contactApi = $this->getContext('contacts');
-        $contacts   = $contactApi->getContactNotes(1);
-
-        $message = isset($contacts['error']) ? $contacts['error']['message'] : '';
-        $this->assertFalse(isset($contacts['error']), $message);
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->getContactNotes(1);
+        $this->assertErrors($response);
     }
 
     public function testGetContactSegments()
     {
-        $contactApi = $this->getContext('contacts');
-        $contacts   = $contactApi->getContactSegments(1);
-
-        $message = isset($contacts['error']) ? $contacts['error']['message'] : '';
-        $this->assertFalse(isset($contacts['error']), $message);
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->getContactSegments(1);
+        $this->assertErrors($response);
     }
 
     public function testGetCampaigns()
     {
-        $contactApi = $this->getContext('contacts');
-        $contacts   = $contactApi->getContactCampaigns(1);
-
-        $message = isset($contacts['error']) ? $contacts['error']['message'] : '';
-        $this->assertFalse(isset($contacts['error']), $message);
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->getContactCampaigns(1);
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
-        $contactApi = $this->getContext('contacts');
-        $contact    = $contactApi->create(
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->create(
             array(
                 'firstname' => 'test',
                 'lastname'  => 'test'
             )
         );
 
-        $message = isset($contact['error']) ? $contact['error']['message'] : '';
-        $this->assertFalse(isset($contact['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the contact
-        $result = $contactApi->delete($contact['contact']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $responseApi->delete($response['contact']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $contactApi = $this->getContext('contacts');
-        $contact    = $contactApi->edit(
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->edit(
             10000,
             array(
                 'firstname' => 'test',
@@ -106,65 +89,60 @@ class ContactsTest extends MauticApiTestCase
         );
 
         //there should be an error as the contact shouldn't exist
-        $this->assertTrue(isset($contact['error']), $contact['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $contact = $contactApi->create(
+        $response = $responseApi->create(
             array(
                 'firstname' => 'test',
                 'lastname'  => 'test'
             )
         );
 
-        $message = isset($contact['error']) ? $contact['error']['message'] : '';
-        $this->assertFalse(isset($contact['error']), $message);
+        $this->assertErrors($response);
 
-        $contact = $contactApi->edit(
-            $contact['contact']['id'],
+        $response = $responseApi->edit(
+            $response['contact']['id'],
             array(
                 'firstname' => 'test2',
                 'lastname'  => 'test2'
             )
         );
 
-        $message = isset($contact['error']) ? $contact['error']['message'] : '';
-        $this->assertFalse(isset($contact['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the contact
-        $result = $contactApi->delete($contact['contact']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $responseApi->delete($response['contact']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatchFormError()
     {
-        $contactApi = $this->getContext('contacts');
+        $responseApi = $this->getContext('contacts');
 
-        $contact = $contactApi->create(
+        $response = $responseApi->create(
             array(
                 'firstname' => 'country',
                 'lastname'  => 'test'
             )
         );
 
-        $message = isset($contact['error']) ? $contact['error']['message'] : '';
-        $this->assertFalse(isset($contact['error']), $message);
+        $this->assertErrors($response);
 
-        $contact = $contactApi->edit(
-            $contact['contact']['id'],
+        $response = $responseApi->edit(
+            $response['contact']['id'],
             array(
                 'country' => 'not existing country'
             )
         );
 
         //there should be an error as the country does not exist
-        $this->assertTrue(isset($contact['error']), $contact['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
     }
 
     public function testEditPut()
     {
-        $contactApi = $this->getContext('contacts');
-        $contact    = $contactApi->edit(
+        $responseApi = $this->getContext('contacts');
+        $response    = $responseApi->edit(
             10000,
             array(
                 'firstname' => 'test',
@@ -173,13 +151,10 @@ class ContactsTest extends MauticApiTestCase
             true
         );
 
-        $message = isset($contact['error']) ? $contact['error']['message'] : '';
-        $this->assertFalse(isset($contact['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the contact
-        $result = $contactApi->delete($contact['contact']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $responseApi->delete($response['contact']['id']);
+        $this->assertErrors($response);
     }
 }

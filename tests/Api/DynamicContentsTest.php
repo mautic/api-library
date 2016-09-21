@@ -11,100 +11,68 @@ namespace Mautic\Tests\Api;
 
 class DynamicContentsTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'name' => 'test'
+    );
+
     public function testGet()
     {
         $dynamiccontentApi = $this->getContext('DynamicContents');
-        $dynamiccontent    = $dynamiccontentApi->get(1);
-
-        $message = isset($dynamiccontent['error']) ? $dynamiccontent['error']['message'] : '';
-        $this->assertFalse(isset($dynamiccontent['error']), $message);
+        $response          = $dynamiccontentApi->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $dynamiccontentApi = $this->getContext('DynamicContents');
-        $dynamiccontents   = $dynamiccontentApi->getList();
-
-        $message = isset($dynamiccontents['error']) ? $dynamiccontents['error']['message'] : '';
-        $this->assertFalse(isset($dynamiccontents['error']), $message);
+        $response          = $dynamiccontentApi->getList();
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
         $dynamiccontentApi = $this->getContext('DynamicContents');
-        $dynamiccontent    = $dynamiccontentApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
-
-        $message = isset($dynamiccontent['error']) ? $dynamiccontent['error']['message'] : '';
-        $this->assertFalse(isset($dynamiccontent['error']), $message);
+        $response          = $dynamiccontentApi->create($this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the dynamiccontent
-        $result = $dynamiccontentApi->delete($dynamiccontent['dynamicContent']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $dynamiccontentApi->delete($response['dynamicContent']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $dynamiccontentApi = $this->getContext('DynamicContents');
-        $dynamiccontent    = $dynamiccontentApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            )
-        );
+        $response          = $dynamiccontentApi->edit(10000, $this->testPayload);
 
         //there should be an error as the dynamiccontent shouldn't exist
-        $this->assertTrue(isset($dynamiccontent['error']), $dynamiccontent['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $dynamiccontent = $dynamiccontentApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
+        $response = $dynamiccontentApi->create($this->testPayload);
+        $this->assertErrors($response);
 
-        $message = isset($dynamiccontent['error']) ? $dynamiccontent['error']['message'] : '';
-        $this->assertFalse(isset($dynamiccontent['error']), $message);
-
-        $dynamiccontent = $dynamiccontentApi->edit(
-            $dynamiccontent['dynamicContent']['id'],
+        $response = $dynamiccontentApi->edit(
+            $response['dynamicContent']['id'],
             array(
                 'name' => 'test2'
             )
         );
 
-        $message = isset($dynamiccontent['error']) ? $dynamiccontent['error']['message'] : '';
-        $this->assertFalse(isset($dynamiccontent['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the dynamiccontent
-        $result = $dynamiccontentApi->delete($dynamiccontent['dynamicContent']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $dynamiccontentApi->delete($response['dynamicContent']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $dynamiccontentApi = $this->getContext('DynamicContents');
-        $dynamiccontent    = $dynamiccontentApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            ),
-            true
-        );
-
-        $message = isset($dynamiccontent['error']) ? $dynamiccontent['error']['message'] : '';
-        $this->assertFalse(isset($dynamiccontent['error']), $message);
+        $response          = $dynamiccontentApi->edit(10000, $this->testPayload, true);
+        $this->assertErrors($response);
 
         //now delete the dynamiccontent
-        $result = $dynamiccontentApi->delete($dynamiccontent['dynamicContent']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $dynamiccontentApi->delete($response['dynamicContent']['id']);
+        $this->assertErrors($response);
     }
 }

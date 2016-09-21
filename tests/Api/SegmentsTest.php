@@ -11,115 +11,79 @@ namespace Mautic\Tests\Api;
 
 class SegmentsTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'name' => 'test'
+    );
+
     public function testGet()
     {
         $segmentApi = $this->getContext('segments');
-        $segment    = $segmentApi->get(1);
-
-        $message = isset($segment['error']) ? $segment['error']['message'] : '';
-        $this->assertFalse(isset($segment['error']), $message);
+        $response   = $segmentApi->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $segmentApi = $this->getContext('segments');
-        $segments   = $segmentApi->getList();
-
-        $message = isset($segments['error']) ? $segments['error']['message'] : '';
-        $this->assertFalse(isset($segments['error']), $message);
+        $response   = $segmentApi->getList();
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
         $segmentApi = $this->getContext('segments');
-        $segment    = $segmentApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
-
-        $message = isset($segment['error']) ? $segment['error']['message'] : '';
-        $this->assertFalse(isset($segment['error']), $message);
+        $response   = $segmentApi->create($this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the segment
-        $result = $segmentApi->delete($segment['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $segmentApi->delete($response['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $segmentApi = $this->getContext('segments');
-        $segment    = $segmentApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            )
-        );
+        $response   = $segmentApi->edit(10000, $this->testPayload);
 
         //there should be an error as the segment shouldn't exist
-        $this->assertTrue(isset($segment['error']), $segment['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $segment = $segmentApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
+        $response = $segmentApi->create($this->testPayload);
+        $this->assertErrors($response);
 
-        $message = isset($segment['error']) ? $segment['error']['message'] : '';
-        $this->assertFalse(isset($segment['error']), $message);
-
-        $segment = $segmentApi->edit(
-            $segment['list']['id'], // 'list' will be changed to 'segment' in Mautic 3
+        $response = $segmentApi->edit(
+            $response['list']['id'], // 'list' will be changed to 'segment' in Mautic 3
             array(
                 'name' => 'test2'
             )
         );
 
-        $message = isset($segment['error']) ? $segment['error']['message'] : '';
-        $this->assertFalse(isset($segment['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the segment
-        $result = $segmentApi->delete($segment['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $segmentApi->delete($response['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $segmentApi = $this->getContext('segments');
-        $segment    = $segmentApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            ),
-            true
-        );
-
-        $message = isset($segment['error']) ? $segment['error']['message'] : '';
-        $this->assertFalse(isset($segment['error']), $message);
+        $response   = $segmentApi->edit(10000, $this->testPayload, true);
+        $this->assertErrors($response);
 
         //now delete the segment
-        $result = $segmentApi->delete($segment['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $segmentApi->delete($response['list']['id']); // 'list' will be changed to 'segment' in Mautic 3
+        $this->assertErrors($response);
     }
 
     public function testAddAndRemove()
     {
         $segmentApi = $this->getContext('segments');
-        $result     = $segmentApi->addContact(1, 1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $segmentApi->addContact(1, 1);
+        $this->assertErrors($response);
 
         //now remove the lead from the segment
-        $result = $segmentApi->removeContact(1, 1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $segmentApi->removeContact(1, 1);
+        $this->assertErrors($response);
     }
 }

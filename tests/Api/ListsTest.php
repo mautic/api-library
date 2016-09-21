@@ -14,15 +14,11 @@ class ListsTest extends MauticApiTestCase
     public function testAddAndRemove()
     {
         $listApi = $this->getContext('lists');
-        $result  = $listApi->addLead(1, 1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response  = $listApi->addLead(1, 1);
+        $this->assertErrors($response);
 
         //now remove the lead from the segment
-        $result = $listApi->removeLead(1, 1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $listApi->removeLead(1, 1);
+        $this->assertErrors($response);
     }
 }

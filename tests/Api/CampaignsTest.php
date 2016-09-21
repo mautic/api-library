@@ -11,115 +11,81 @@ namespace Mautic\Tests\Api;
 
 class CampaignsTest extends MauticApiTestCase
 {
+    protected $testCampaign = array(
+        'name' => 'test'
+    );
+
     public function testGet()
     {
         $apiContext = $this->getContext('campaigns');
-        $result     = $apiContext->get(1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('campaigns');
-        $result     = $apiContext->getList();
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->getList();
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
         $campaignApi = $this->getContext('campaigns');
-        $campaign    = $campaignApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
-
-        $message = isset($campaign['error']) ? $campaign['error']['message'] : '';
-        $this->assertFalse(isset($campaign['error']), $message);
+        $response    = $campaignApi->create($this->testCampaign);
+        $this->assertErrors($response);
 
         //now delete the campaign
-        $result = $campaignApi->delete($campaign['campaign']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $campaignApi->delete($response['campaign']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $campaignApi = $this->getContext('campaigns');
-        $campaign    = $campaignApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            )
-        );
+        $response    = $campaignApi->edit(10000, $this->testCampaign);
 
         //there should be an error as the campaign shouldn't exist
-        $this->assertTrue(isset($campaign['error']), $campaign['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $campaign = $campaignApi->create(
-            array(
-                'name' => 'test'
-            )
-        );
+        $response = $campaignApi->create($this->testCampaign);
+        $this->assertErrors($response);
 
-        $message = isset($campaign['error']) ? $campaign['error']['message'] : '';
-        $this->assertFalse(isset($campaign['error']), $message);
-
-        $campaign = $campaignApi->edit(
-            $campaign['campaign']['id'],
+        $response = $campaignApi->edit(
+            $response['campaign']['id'],
             array(
                 'name' => 'test2'
             )
         );
 
-        $message = isset($campaign['error']) ? $campaign['error']['message'] : '';
-        $this->assertFalse(isset($campaign['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the campaign
-        $result = $campaignApi->delete($campaign['campaign']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $campaignApi->delete($response['campaign']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $campaignApi = $this->getContext('campaigns');
-        $campaign    = $campaignApi->edit(
-            10000,
-            array(
-                'name' => 'test'
-            ),
-            true
-        );
+        $response    = $campaignApi->edit(10000, $this->testCampaign, true);
 
-        $message = isset($campaign['error']) ? $campaign['error']['message'] : '';
-        $this->assertFalse(isset($campaign['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the campaign
-        $result = $campaignApi->delete($campaign['campaign']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $campaignApi->delete($response['campaign']['id']);
+        $this->assertErrors($response);
     }
 
     public function testAddAndRemove()
     {
         $campaignApi = $this->getContext('campaigns');
-        $result   = $campaignApi->addContact(1, 1);
+        $response    = $campaignApi->addContact(1, 1);
 
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $this->assertErrors($response);
 
         //now remove the lead from the campaign
-        $result = $campaignApi->removeContact(1, 1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $campaignApi->removeContact(1, 1);
+        $this->assertErrors($response);
     }
 }

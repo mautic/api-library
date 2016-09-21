@@ -11,105 +11,70 @@ namespace Mautic\Tests\Api;
 
 class CategoriesTest extends MauticApiTestCase
 {
+    protected $testPayload = array(
+        'title' => 'test',
+        'bundle' => 'asset'
+    );
+
     public function testGet()
     {
         $categoryApi = $this->getContext('categories');
-        $category    = $categoryApi->get(1);
-
-        $message = isset($category['error']) ? $category['error']['message'] : '';
-        $this->assertFalse(isset($category['error']), $message);
+        $response    = $categoryApi->get(1);
+        $this->assertErrors($response);
     }
 
     public function testGetList()
     {
         $categoryApi = $this->getContext('categories');
-        $categories   = $categoryApi->getList();
-
-        $message = isset($categories['error']) ? $categories['error']['message'] : '';
-        $this->assertFalse(isset($categories['error']), $message);
+        $response    = $categoryApi->getList();
+        $this->assertErrors($response);
     }
 
     public function testCreateAndDelete()
     {
         $categoryApi = $this->getContext('categories');
-        $category    = $categoryApi->create(
-            array(
-                'title' => 'test',
-                'bundle' => 'asset'
-            )
-        );
-
-        $message = isset($category['error']) ? $category['error']['message'] : '';
-        $this->assertFalse(isset($category['error']), $message);
+        $response    = $categoryApi->create($this->testPayload);
+        $this->assertErrors($response);
 
         //now delete the category
-        $result = $categoryApi->delete($category['category']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $categoryApi->delete($response['category']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $categoryApi = $this->getContext('categories');
-        $category    = $categoryApi->edit(
-            10000,
-            array(
-                'title' => 'test',
-                'bundle' => 'asset'
-            )
-        );
+        $response    = $categoryApi->edit(10000, $this->testPayload);
 
         //there should be an error as the category shouldn't exist
-        $this->assertTrue(isset($category['error']), $category['error']['message']);
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $category = $categoryApi->create(
-            array(
-                'title' => 'test',
-                'bundle' => 'asset'
-            )
-        );
+        $response = $categoryApi->create($this->testPayload);
+        $this->assertErrors($response);
 
-        $message = isset($category['error']) ? $category['error']['message'] : '';
-        $this->assertFalse(isset($category['error']), $message);
-
-        $category = $categoryApi->edit(
-            $category['category']['id'],
+        $response = $categoryApi->edit(
+            $response['category']['id'],
             array(
                 'title' => 'test2',
                 'bundle' => 'asset'
             )
         );
 
-        $message = isset($category['error']) ? $category['error']['message'] : '';
-        $this->assertFalse(isset($category['error']), $message);
+        $this->assertErrors($response);
 
         //now delete the category
-        $result = $categoryApi->delete($category['category']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $categoryApi->delete($response['category']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
         $categoryApi = $this->getContext('categories');
-        $category    = $categoryApi->edit(
-            10000,
-            array(
-                'title' => 'test',
-                'bundle' => 'asset'
-            ),
-            true
-        );
-
-        $message = isset($category['error']) ? $category['error']['message'] : '';
-        $this->assertFalse(isset($category['error']), $message);
+        $response    = $categoryApi->edit(10000, $this->testPayload, true);
+        $this->assertErrors($response);
 
         //now delete the category
-        $result = $categoryApi->delete($category['category']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $categoryApi->delete($response['category']['id']);
+        $this->assertErrors($response);
     }
 }
