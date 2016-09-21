@@ -31,4 +31,10 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
         return MauticApi::getContext($context, $auth, $apiUrl);
     }
+
+    protected function assertErrors($response)
+    {
+        $message = isset($response['error']) ? $response['error']['message'] : '';
+        $this->assertFalse(isset($response['error']), $message);
+    }
 }

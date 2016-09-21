@@ -11,7 +11,12 @@ namespace Mautic\Tests\Api;
 
 class FormsTest extends MauticApiTestCase
 {
-    protected $basicForm = array(
+    /**
+     * Payload of example form to test the endpoints with
+     *
+     * @var array
+     */
+    protected $testForm = array(
         'name' => 'test',
         'formType' => 'standalone',
         'description' => 'API test',
@@ -34,117 +39,109 @@ class FormsTest extends MauticApiTestCase
         )
     );
 
-    public function testGet()
+    /**
+     * Check if the response contains a form
+     *
+     * @param array $response
+     */
+    protected function assertForm($response)
     {
-        $apiContext = $this->getContext('forms');
-        $result     = $apiContext->get(1);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $this->assertErrors($response);
+        $this->assertFalse(empty($response['form']['fields']), 'The form field array is empty.');
+        $this->assertFalse(empty($response['form']['actions']), 'The form action array is empty.');
+        $this->assertSame($response['form']['name'], $this->testForm['name']);
+        $lastField = array_pop($response['form']['fields']);
+        $lastAction = array_pop($response['form']['actions']);
+        $this->assertSame($lastField['label'], $this->testForm['fields'][0]['label']);
+        $this->assertSame($lastAction['name'], $this->testForm['actions'][0]['name']);
     }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('forms');
-        $result     = $apiContext->getList();
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response   = $apiContext->getList();
+        $this->assertErrors($response);
     }
 
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $formApi  = $this->getContext('forms');
-        $response = $formApi->create($this->basicForm);
+        $apiContext  = $this->getContext('forms');
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
+        // Test Create
+        $response = $apiContext->create($this->testForm);
+        $this->assertForm($response);
 
-        $this->assertFalse(empty($response['form']['fields']), 'The form field was not created.');
-        $this->assertFalse(empty($response['form']['actions']), 'The form action was not created.');
-        $lastField = array_pop($response['form']['fields']);
-        $lastAction = array_pop($response['form']['actions']);
-        $this->assertTrue($lastField['label'] === $this->basicForm['fields'][0]['label'], 'The form field name does not match');
-        $this->assertTrue($lastAction['name'] === $this->basicForm['actions'][0]['name'], 'The form action name does not match');
+        // Test Get
+        $response = $apiContext->get($response['form']['id']);
+        $this->assertForm($response);
 
-        //now delete the form
-        $result = $formApi->delete($response['form']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        // Test Delete
+        $response = $apiContext->delete($response['form']['id']);
+        $this->assertForm($response);
     }
 
     public function testDeleteFields()
     {
-        $fieldIds = array();
-        $formApi  = $this->getContext('forms');
-        $response = $formApi->create($this->basicForm);
+        $fieldIds   = array();
+        $apiContext = $this->getContext('forms');
+        $response   = $apiContext->create($this->testForm);
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
+        $this->assertErrors($response);
 
         foreach ($response['form']['fields'] as $field) {
             $fieldIds[] = $field['id'];
         }
 
-        $response = $formApi->deleteFields($response['form']['id'], $fieldIds);
+        $response = $apiContext->deleteFields($response['form']['id'], $fieldIds);
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
+        $this->assertErrors($response);
         $this->assertTrue(empty($response['form']['fields']), 'Fields were not deleted');
 
         //now delete the form
-        $result = $formApi->delete($response['form']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $apiContext->delete($response['form']['id']);
+        $this->assertErrors($response);
     }
 
     public function testDeleteActions()
     {
-        $actionIds = array();
-        $formApi  = $this->getContext('forms');
-        $response = $formApi->create($this->basicForm);
+        $actionIds  = array();
+        $apiContext = $this->getContext('forms');
+        $response   = $apiContext->create($this->testForm);
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
+        $this->assertErrors($response);
 
         foreach ($response['form']['actions'] as $action) {
             $actionIds[] = $action['id'];
         }
 
-        $response = $formApi->deleteActions($response['form']['id'], $actionIds);
+        $response = $apiContext->deleteActions($response['form']['id'], $actionIds);
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
+        $this->assertErrors($response);
         $this->assertTrue(empty($response['form']['actions']), 'Actions were not deleted');
 
         //now delete the form
-        $result = $formApi->delete($response['form']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $apiContext->delete($response['form']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $formApi  = $this->getContext('forms');
-        $response = $formApi->edit(10000, $this->basicForm);
+        $apiContext = $this->getContext('forms');
+        $response   = $apiContext->edit(10000, $this->testForm);
 
         //there should be an error as the form shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $formApi->create($this->basicForm);
+        $response = $apiContext->create($this->testForm);
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
+        $this->assertErrors($response);
 
         $lastField = array_pop($response['form']['fields']);
         $lastAction = array_pop($response['form']['actions']);
         $lastField['label'] = 'edited field';
         $lastAction['name'] = 'edited action';
 
-        $response = $formApi->edit(
+        $response = $apiContext->edit(
             $response['form']['id'],
             array(
                 'name' => 'test2',
@@ -158,67 +155,57 @@ class FormsTest extends MauticApiTestCase
             )
         );
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
-
+        $this->assertErrors($response);
         $this->assertTrue(!empty($response['form']['fields']), 'The form field array is empty.');
         $this->assertTrue(!empty($response['form']['actions']), 'The form action array is empty.');
         $lastField = array_pop($response['form']['fields']);
         $lastAction = array_pop($response['form']['actions']);
-        $this->assertTrue($lastField['label'] === 'edited field', 'The form field name does not match');
-        $this->assertTrue($lastAction['name'] === 'edited action', 'The form action name does not match');
+        $this->assertSame($lastField['label'], 'edited field');
+        $this->assertSame($lastAction['name'], 'edited action');
 
         //now delete the form
-        $result = $formApi->delete($response['form']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $apiContext->delete($response['form']['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $formApi  = $this->getContext('forms');
-        $response = $formApi->edit(10000, $this->basicForm, true);
+        $apiContext = $this->getContext('forms');
+        $response   = $apiContext->edit(10000, $this->testForm, true);
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
-        $this->assertFalse(empty($response['form']['fields']), 'Fields were not added via PUT request');
-        $this->assertFalse(empty($response['form']['actions']), 'Actions were not added via PUT request');
+        $this->assertForm($response);
 
         //now delete the form
-        $result = $formApi->delete($response['form']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $apiContext->delete($response['form']['id']);
+        $this->assertErrors($response);
     }
 
     public function testFieldAndActionDeleteViaPut()
     {
-        $formApi  = $this->getContext('forms');
+        $apiContext = $this->getContext('forms');
 
         // Firstly create a form with fields
-        $response = $formApi->edit(10000, $this->basicForm, true);
+        $response = $apiContext->edit(10000, $this->testForm, true);
+
+        $this->assertErrors($response);
 
         // Remove fields and actions
         unset($response['form']['fields']);
         unset($response['form']['actions']);
 
         // Edit the same entitiy without the fields and actions
-        $response = $formApi->edit(
+        $response = $apiContext->edit(
             $response['form']['id'],
             $response['form'],
             true
         );
 
-        $message = isset($response['error']) ? $response['error']['message'] : '';
-        $this->assertFalse(isset($response['error']), $message);
+        $this->assertErrors($response);
         $this->assertTrue(empty($response['form']['fields']), 'Fields were not deleted via PUT request');
         $this->assertTrue(empty($response['form']['actions']), 'Actions were not deleted via PUT request');
 
         //now delete the form
-        $result = $formApi->delete($response['form']['id']);
-
-        $message = isset($result['error']) ? $result['error']['message'] : '';
-        $this->assertFalse(isset($result['error']), $message);
+        $response = $apiContext->delete($response['form']['id']);
+        $this->assertErrors($response);
     }
 }
