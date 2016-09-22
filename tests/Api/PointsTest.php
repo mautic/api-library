@@ -68,7 +68,7 @@ class PointsTest extends MauticApiTestCase
 
         $this->assertErrors($response);
         // $this->assertTrue(empty($response['point']['id']), 'The point id is empty.');
-        $this->assertSame($lastAction['name'], 'test2');
+        $this->assertSame($response['point']['name'], 'test2');
 
         //now delete the point
         $response = $apiContext->delete($response['point']['id']);
