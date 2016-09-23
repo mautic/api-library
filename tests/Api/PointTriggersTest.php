@@ -150,7 +150,7 @@ class PointTriggersTest extends MauticApiTestCase
             $eventIds[] = $event['id'];
         }
 
-        $response = $apiContext->deleteActions($response['trigger']['id'], $eventIds);
+        $response = $apiContext->deleteTriggerEvents($response['trigger']['id'], $eventIds);
 
         $this->assertErrors($response);
         $this->assertTrue(empty($response['trigger']['events']), 'Events were not deleted');
