@@ -6,4 +6,5 @@
     "users/list/roles",
     "users/self",
     "users/{id}/permissioncheck",
+    "users/add"
 ]
