@@ -11,10 +11,10 @@ namespace Mautic\Tests\Api;
 
 class UsersTest extends MauticApiTestCase
 {
-    public function testFetUser()
+    public function testGetUser()
     {
         $usersApi = $this->getContext('users');
-        $result     = $usersApi->getUser(1);
+        $result     = $usersApi->agetUser(1);
 
         $message = isset($result['error']) ? $result['error']['message'] : '';
         $this->assertFalse(isset($result['error']), $message);
