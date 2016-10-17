@@ -32,4 +32,14 @@ class PointTriggers extends Api
     {
         return $this->makeRequest($this->endpoint.'/'.$triggerId.'/events/delete', array('events' => $eventIds), 'DELETE');
     }
+
+    /**
+     * Get list of available event types
+     *
+     * @return array|mixed
+     */
+    public function getEventTypes()
+    {
+        return $this->makeRequest($this->endpoint.'/events/types');
+    }
 }

@@ -40,7 +40,8 @@ class PointTriggersTest extends MauticApiTestCase
         )
     );
 
-    protected function assertPayload($response) {
+    protected function assertPayload($response)
+    {
         $this->assertErrors($response);
         $this->assertFalse(empty($response['trigger']['id']), 'The point trigger id is empty.');
         $this->assertSame($response['trigger']['name'], $this->testPayload['name']);
@@ -158,5 +159,14 @@ class PointTriggersTest extends MauticApiTestCase
         //now delete the trigger
         $response = $apiContext->delete($response['trigger']['id']);
         $this->assertErrors($response);
+    }
+
+    public function testGetEventTypes()
+    {
+        $apiContext = $this->getContext('pointTriggers');
+        $response   = $apiContext->getEventTypes();
+
+        $this->assertErrors($response);
+        $this->assertFalse(empty($response['eventTypes']), 'The eventTypes array is empty.');
     }
 }
