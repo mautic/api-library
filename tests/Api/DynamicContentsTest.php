@@ -12,37 +12,41 @@ namespace Mautic\Tests\Api;
 class DynamicContentsTest extends MauticApiTestCase
 {
     protected $testPayload = array(
-        'name' => 'test'
+        'name' => 'test',
+        'content' => 'test'
     );
 
-    public function testGet()
-    {
-        $dynamiccontentApi = $this->getContext('DynamicContents');
-        $response          = $dynamiccontentApi->get(1);
-        $this->assertErrors($response);
-    }
+    protected $context = 'DynamicContents';
+
+    protected $itemName = 'dynamicContent';
 
     public function testGetList()
     {
-        $dynamiccontentApi = $this->getContext('DynamicContents');
+        $dynamiccontentApi = $this->getContext($this->context);
         $response          = $dynamiccontentApi->getList();
         $this->assertErrors($response);
     }
 
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $dynamiccontentApi = $this->getContext('DynamicContents');
-        $response          = $dynamiccontentApi->create($this->testPayload);
-        $this->assertErrors($response);
+        $apiContext = $this->getContext($this->context);
 
-        //now delete the dynamiccontent
-        $response = $dynamiccontentApi->delete($response['dynamicContent']['id']);
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertPayload($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $dynamiccontentApi = $this->getContext('DynamicContents');
+        $dynamiccontentApi = $this->getContext($this->context);
         $response          = $dynamiccontentApi->edit(10000, $this->testPayload);
 
         //there should be an error as the dynamiccontent shouldn't exist
@@ -52,7 +56,7 @@ class DynamicContentsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         $response = $dynamiccontentApi->edit(
-            $response['dynamicContent']['id'],
+            $response[$this->itemName]['id'],
             array(
                 'name' => 'test2'
             )
@@ -61,18 +65,18 @@ class DynamicContentsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the dynamiccontent
-        $response = $dynamiccontentApi->delete($response['dynamicContent']['id']);
+        $response = $dynamiccontentApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $dynamiccontentApi = $this->getContext('DynamicContents');
+        $dynamiccontentApi = $this->getContext($this->context);
         $response          = $dynamiccontentApi->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
 
         //now delete the dynamiccontent
-        $response = $dynamiccontentApi->delete($response['dynamicContent']['id']);
+        $response = $dynamiccontentApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }
