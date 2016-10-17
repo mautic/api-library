@@ -16,11 +16,12 @@ class SmsesTest extends MauticApiTestCase
         'message' => 'API test message'
     );
 
-    public function testGet()
+    protected function assertPayload($response)
     {
-        $apiContext = $this->getContext('smses');
-        $response   = $apiContext->get(1);
         $this->assertErrors($response);
+        $this->assertFalse(empty($response['sms']['id']), 'The SMS id is empty.');
+        $this->assertSame($response['sms']['name'], $this->testPayload['name']);
+        $this->assertFalse(empty($response['sms']['message']), 'The SMS message is empty.');
     }
 
     public function testGetList()
@@ -30,15 +31,20 @@ class SmsesTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
-
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $smsApi   = $this->getContext('smses');
-        $response = $smsApi->create($this->testPayload);
-        $this->assertErrors($response);
+        $apiContext = $this->getContext('smses');
 
-        //now delete the sms
-        $response = $smsApi->delete($response['sms']['id']);
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+
+        // Test Get
+        $response = $apiContext->get($response['sms']['id']);
+        $this->assertPayload($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response['sms']['id']);
         $this->assertErrors($response);
     }
 
