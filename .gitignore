@@ -1,4 +1,8 @@
 /.idea
+/.buildpath
+/.project
+/.settings
+/.phpintel
 /composer.lock
 /phpunit.xml
 /tests/local.config.php

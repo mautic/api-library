@@ -8,5 +8,8 @@
     "contacts/{id}/delete",
     "contacts/{id}/notes",
     "contacts/{id}/segments",
-    "contacts/{id}/campaigns"
+    "contacts/{id}/campaigns",
+    "/contacts/{id}/setpoints/{points}",
+    "/contacts/{id}/addpoints/{points}",
+    "/contacts/{id}/subtractpoints/{points}"
 ]

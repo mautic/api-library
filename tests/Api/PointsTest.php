@@ -93,4 +93,13 @@ class PointsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertFalse(empty($response['pointActionTypes']), 'The pointActionTypes array is empty.');
     }
+
+    public function testApplyRule()
+    {
+        $apiContext = $this->getContext('points');
+        $result     = $apiContext->applyRule(1, UnitTestConstant::LEAD_ID_TO_MODIFY);
+
+        $message = isset($result['error']) ? $result['error']['message'] : '';
+        $this->assertFalse(isset($result['error']), $message);
+    }
 }
