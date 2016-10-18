@@ -13,7 +13,8 @@ class ContactsTest extends MauticApiTestCase
 {
     protected $testPayload = array(
         'firstname' => 'test',
-        'lastname'  => 'test'
+        'lastname'  => 'test',
+        'points'    => 3
     );
 
     protected $context = 'contacts';
@@ -81,6 +82,7 @@ class ContactsTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
+        $pointsSet   = 5;
         $responseApi = $this->getContext($this->context);
         $response    = $responseApi->edit(10000, $this->testPayload);
 
@@ -94,11 +96,13 @@ class ContactsTest extends MauticApiTestCase
             $response[$this->itemName]['id'],
             array(
                 'firstname' => 'test2',
-                'lastname'  => 'test2'
+                'lastname'  => 'test2',
+                'points'    => $pointsSet,
             )
         );
 
         $this->assertErrors($response);
+        $this->assertSame($response[$this->itemName]['points'], $pointsSet, 'Points were not set correctly');
 
         //now delete the contact
         $response = $responseApi->delete($response[$this->itemName]['id']);
@@ -108,13 +112,7 @@ class ContactsTest extends MauticApiTestCase
     public function testEditPatchFormError()
     {
         $responseApi = $this->getContext($this->context);
-
-        $response = $responseApi->create(
-            array(
-                'firstname' => 'country',
-                'lastname'  => 'test'
-            )
-        );
+        $response = $responseApi->create($this->testPayload);
 
         $this->assertErrors($response);
 
