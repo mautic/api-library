@@ -77,7 +77,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a segment of smart segments the lead is in
+     * Get a segment of smart segments the contact is in
      *
      * @param $id
      * @return array|mixed
@@ -88,7 +88,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a segment of campaigns the lead is in
+     * Get a segment of campaigns the contact is in
      *
      * @param $id
      * @return array|mixed
@@ -99,38 +99,26 @@ class Contacts extends Api
     }
 
     /**
-     * Change the number of points a lead
+     * Add the points to a contact
      *
      * @param int $leadId
      * @param int $points
-     * @param array $parameters 'eventname' and 'actionname'
-     * @return mixed
-     */
-    public function setPoints($id, $points, array $parameters = array()) {
-        return $this->makeRequest('contacts/'.$id.'/setpoints/'.$points, $parameters, 'PATCH');
-    }
-
-    /**
-     * Add points a lead
-     *
-     * @param int $leadId
-     * @param int $points
-     * @param array $parameters 'eventname' and 'actionname'
+     * @param array $parameters 'eventName' and 'actionName'
      * @return mixed
      */
     public function addPoints($id, $points, array $parameters = array()) {
-        return $this->makeRequest('contacts/'.$id.'/addpoints/'.$points, $parameters, 'PATCH');
+        return $this->makeRequest('contacts/'.$id.'/points/plus/'.$points, $parameters, 'POST');
     }
 
     /**
-     * Remove points a lead
+     * Subtract points from a contact
      *
      * @param int $leadId
      * @param int $points
-     * @param array $parameters 'eventname' and 'actionname'
+     * @param array $parameters 'eventName' and 'actionName'
      * @return mixed
      */
     public function subtractPoints($id, $points, array $parameters = array()) {
-        return $this->makeRequest('contacts/'.$id.'/subtractpoints/'.$points, $parameters, 'PATCH');
+        return $this->makeRequest('contacts/'.$id.'/points/minus/'.$points, $parameters, 'POST');
     }
 }

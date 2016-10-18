@@ -29,17 +29,4 @@ class Points extends Api
     {
         return $this->makeRequest($this->endpoint.'/actions/types');
     }
-
-    /**
-     * only point rules "mautic.api_call" ca be applied throught this method
-     *
-     * @param [int] $pointsId
-     * @param [int] $leadId
-     * @param [array] $parameters No specific parameters configured
-     *
-     * @return []           []
-     */
-    public function applyRule($pointsId, $leadId, array $parameters = array()) {
-    	return $this->makeRequest('points/'.$pointsId.'/lead/'.$leadId, $parameters, 'PATCH');
-    }
 }

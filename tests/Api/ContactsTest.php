@@ -11,97 +11,87 @@ namespace Mautic\Tests\Api;
 
 class ContactsTest extends MauticApiTestCase
 {
-    public function testGet()
-    {
-        $responseApi = $this->getContext('contacts');
-        $response    = $responseApi->get(1);
-        $this->assertErrors($response);
-    }
+    protected $testPayload = array(
+        'firstname' => 'test',
+        'lastname'  => 'test'
+    );
+
+    protected $context = 'contacts';
+
+    protected $itemName = 'contact';
 
     public function testGetList()
     {
-        $responseApi = $this->getContext('contacts');
+        $responseApi = $this->getContext($this->context);
         $response    = $responseApi->getList();
         $this->assertErrors($response);
     }
 
     public function testGetFieldList()
     {
-        $responseApi = $this->getContext('contacts');
+        $responseApi = $this->getContext($this->context);
         $response    = $responseApi->getFieldList();
         $this->assertErrors($response);
     }
 
     public function testGetSegmentsList()
     {
-        $responseApi = $this->getContext('contacts');
+        $responseApi = $this->getContext($this->context);
         $response    = $responseApi->getSegments();
         $this->assertErrors($response);
     }
 
     public function testGetNotes()
     {
-        $responseApi = $this->getContext('contacts');
+        $responseApi = $this->getContext($this->context);
         $response    = $responseApi->getContactNotes(1);
         $this->assertErrors($response);
     }
 
     public function testGetContactSegments()
     {
-        $responseApi = $this->getContext('contacts');
+        $responseApi = $this->getContext($this->context);
         $response    = $responseApi->getContactSegments(1);
         $this->assertErrors($response);
     }
 
     public function testGetCampaigns()
     {
-        $responseApi = $this->getContext('contacts');
+        $responseApi = $this->getContext($this->context);
         $response    = $responseApi->getContactCampaigns(1);
         $this->assertErrors($response);
     }
 
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $responseApi = $this->getContext('contacts');
-        $response    = $responseApi->create(
-            array(
-                'firstname' => 'test',
-                'lastname'  => 'test'
-            )
-        );
+        $apiContext = $this->getContext($this->context);
 
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
-        //now delete the contact
-        $response = $responseApi->delete($response['contact']['id']);
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $responseApi = $this->getContext('contacts');
-        $response    = $responseApi->edit(
-            10000,
-            array(
-                'firstname' => 'test',
-                'lastname'  => 'test'
-            )
-        );
+        $responseApi = $this->getContext($this->context);
+        $response    = $responseApi->edit(10000, $this->testPayload);
 
         //there should be an error as the contact shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $responseApi->create(
-            array(
-                'firstname' => 'test',
-                'lastname'  => 'test'
-            )
-        );
-
+        $response = $responseApi->create($this->testPayload);
         $this->assertErrors($response);
 
         $response = $responseApi->edit(
-            $response['contact']['id'],
+            $response[$this->itemName]['id'],
             array(
                 'firstname' => 'test2',
                 'lastname'  => 'test2'
@@ -111,13 +101,13 @@ class ContactsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the contact
-        $response = $responseApi->delete($response['contact']['id']);
+        $response = $responseApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatchFormError()
     {
-        $responseApi = $this->getContext('contacts');
+        $responseApi = $this->getContext($this->context);
 
         $response = $responseApi->create(
             array(
@@ -129,7 +119,7 @@ class ContactsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         $response = $responseApi->edit(
-            $response['contact']['id'],
+            $response[$this->itemName]['id'],
             array(
                 'country' => 'not existing country'
             )
@@ -141,93 +131,55 @@ class ContactsTest extends MauticApiTestCase
 
     public function testEditPut()
     {
-        $responseApi = $this->getContext('contacts');
-        $response    = $responseApi->edit(
-            10000,
-            array(
-                'firstname' => 'test',
-                'lastname'  => 'test'
-            ),
-            true
-        );
+        $responseApi = $this->getContext($this->context);
+        $response    = $responseApi->edit(10000, $this->testPayload, true);
 
         $this->assertErrors($response);
 
         //now delete the contact
-        $response = $responseApi->delete($response['contact']['id']);
+        $response = $responseApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
-    }
-
-    public function testSetPoints()
-    {
-        $newPointsValue = 28;
-        $contactApi = $this->getContext('contacts');
-
-        $leadBefore = $contactApi->get(UnitTestConstant::LEAD_ID_TO_MODIFY);
-        $pointsBefore = $leadBefore['contact']['points'];
-        if ($pointsBefore === $newPointsValue) {
-            $newPointsValue = $newPointsValue-1;
-        }
-
-        $result = $contactApi->setPoints(UnitTestConstant::LEAD_ID_TO_MODIFY, $newPointsValue);
-        $resultMessage = (isset($result['success']) && !$result['success'] && isset($result['message']))?$result['message']:'';
-        $this->assertEquals((isset($result['success']) && $result['success']), TRUE, 'Error while setting Points to lead ID : ' . UnitTestConstant::LEAD_ID_TO_MODIFY . '. Message : ' . $resultMessage);
-
-        $lead = $contactApi->get(UnitTestConstant::LEAD_ID_TO_MODIFY);
-        $this->assertEquals($newPointsValue, $lead['contact']['points'], 'Points not modified correctly');
-
-        // rollback point modification for lead
-        $leadRollback = $contactApi->setpoints(UnitTestConstant::LEAD_ID_TO_MODIFY, $pointsBefore);
-        $message = isset($leadRollback['error']) ? $leadRollback['error']['message'] : '';
-        $this->assertFalse(isset($leadRollback['error']), $message);
     }
 
     public function testAddPoints()
     {
         $pointToAdd = 5;
-        $contactApi = $this->getContext('contacts');
+        $apiContext = $this->getContext($this->context);
 
-        $leadBefore = $contactApi->get(UnitTestConstant::LEAD_ID_TO_MODIFY);
-        $pointsBefore = $leadBefore['contact']['points'];
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->itemName];
 
-        $result = $contactApi->addPoints(UnitTestConstant::LEAD_ID_TO_MODIFY, $pointToAdd);
-        $resultMessage = (isset($result['success']) && !$result['success'] && isset($result['message']))?$result['message']:'';
-        $this->assertEquals((isset($result['success']) && $result['success']), TRUE, 'Error while adding Points to lead ID : ' . UnitTestConstant::LEAD_ID_TO_MODIFY . '. Message : ' . $resultMessage);
+        $response = $apiContext->addPoints($contact['id'], $pointToAdd);
+        $this->assertErrors($response);
+        $this->assertTrue(!empty($response['success']), 'Adding point to a contact with ID ='.$contact['id'].' was not successful');
 
-        $lead = $contactApi->get(UnitTestConstant::LEAD_ID_TO_MODIFY);
-        $this->assertEquals($pointsBefore + $pointToAdd, $lead['contact']['points'], 'Points not successfuly added');
+        $response = $apiContext->get($contact['id']);
+        $this->assertErrors($response);
+        $this->assertSame($response[$this->itemName]['points'], ($contact['points'] + $pointToAdd), 'Points were not added correctly');
 
-        $message = isset($lead['error']) ? $lead['contact']['error']['message'] : '';
-        $this->assertFalse(isset($lead['error']), $message);
-
-        // rollback point modification for lead
-        $leadRollback = $contactApi->setpoints(UnitTestConstant::LEAD_ID_TO_MODIFY, $pointsBefore);
-        $message = isset($leadRollback['error']) ? $leadRollback['error']['message'] : '';
-        $this->assertFalse(isset($leadRollback['error']), $message);
+        $response = $apiContext->delete($contact['id']);
+        $this->assertErrors($response);
     }
 
     public function testSubtractPoints()
     {
-        $pointToRemove = 3;
-        $contactApi = $this->getContext('contacts');
+        $pointToSub = 5;
+        $apiContext = $this->getContext($this->context);
 
-        $leadBefore = $contactApi->get(UnitTestConstant::LEAD_ID_TO_MODIFY);
-        $pointsBefore = $leadBefore['contact']['points'];
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->itemName];
 
-        $result = $contactApi->subtractPoints(UnitTestConstant::LEAD_ID_TO_MODIFY, $pointToRemove);
-        $resultMessage = (isset($result['success']) && !$result['success'] && isset($result['message']))?$result['message']:'';
-        $this->assertEquals((isset($result['success']) && $result['success']), TRUE, 'Error while removing Points to lead ID : ' . UnitTestConstant::LEAD_ID_TO_MODIFY . '. Message : ' . $resultMessage);
+        $response = $apiContext->subtractPoints($contact['id'], $pointToSub);
+        $this->assertErrors($response);
+        $this->assertTrue(!empty($response['success']), 'Subtracting point to a contact with ID ='.$contact['id'].' was not successful');
 
-        $lead = $contactApi->get(UnitTestConstant::LEAD_ID_TO_MODIFY);
-        $message = isset($leadRollback['error']) ? $leadRollback['error']['message'] : '';
-        $this->assertEquals($pointsBefore - $pointToRemove, $lead['contact']['points'], 'Points not subed correctly');
+        $response = $apiContext->get($contact['id']);
+        $this->assertErrors($response);
+        $this->assertSame($response[$this->itemName]['points'], ($contact['points'] - $pointToSub), 'Points were not subtracted correctly');
 
-        $message = isset($lead['error']) ? $lead['error']['message'] : '';
-        $this->assertFalse(isset($lead['error']), $message);
-
-        // rollback point modification for lead
-        $leadRollback = $contactApi->setpoints(UnitTestConstant::LEAD_ID_TO_MODIFY, $pointsBefore);
-        $message = isset($leadRollback['error']) ? $leadRollback['error']['message'] : '';
-        $this->assertFalse(isset($leadRollback['error']), $message);
+        $response = $apiContext->delete($contact['id']);
+        $this->assertErrors($response);
     }
 }

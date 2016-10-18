@@ -9,7 +9,8 @@
     "contacts/{id}/notes",
     "contacts/{id}/segments",
     "contacts/{id}/campaigns",
-    "/contacts/{id}/setpoints/{points}",
-    "/contacts/{id}/addpoints/{points}",
-    "/contacts/{id}/subtractpoints/{points}"
+    "contacts/{id}/points/plus/{points}",
+    "contacts/{id}/points/minus/{points}",
+    "contacts/{id}/points/times/{points}",
+    "contacts/{id}/points/divide/{points}"
 ]
