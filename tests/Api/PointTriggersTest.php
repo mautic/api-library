@@ -40,43 +40,47 @@ class PointTriggersTest extends MauticApiTestCase
         )
     );
 
+    protected $context = 'pointTriggers';
+
+    protected $itemName = 'trigger';
+
     protected function assertPayload($response)
     {
         $this->assertErrors($response);
-        $this->assertFalse(empty($response['trigger']['id']), 'The point trigger id is empty.');
-        $this->assertSame($response['trigger']['name'], $this->testPayload['name']);
-        $this->assertFalse(empty($response['trigger']['events']), 'The point trigger event array is empty.');
-        $lastEvent = array_pop($response['trigger']['events']);
+        $this->assertFalse(empty($response[$this->itemName]['id']), 'The point trigger id is empty.');
+        $this->assertSame($response[$this->itemName]['name'], $this->testPayload['name']);
+        $this->assertFalse(empty($response[$this->itemName]['events']), 'The point trigger event array is empty.');
+        $lastEvent = array_pop($response[$this->itemName]['events']);
         $this->assertSame($lastEvent['name'], $this->testPayload['events'][1]['name']);
     }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext('pointTriggers');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->getList();
         $this->assertErrors($response);
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext('pointTriggers');
+        $apiContext = $this->getContext($this->context);
 
         // Test Create
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
 
         // Test Get
-        $response = $apiContext->get($response['trigger']['id']);
+        $response = $apiContext->get($response[$this->itemName]['id']);
         $this->assertPayload($response);
 
         // Test Delete
-        $response = $apiContext->delete($response['trigger']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext('pointTriggers');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the point shouldn't exist
@@ -86,84 +90,81 @@ class PointTriggersTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         $response = $apiContext->edit(
-            $response['trigger']['id'],
+            $response[$this->itemName]['id'],
             array(
                 'name' => 'test2',
             )
         );
 
         $this->assertErrors($response);
-        // $this->assertTrue(empty($response['trigger']['id']), 'The point id is empty.');
-        $this->assertSame($response['trigger']['name'], 'test2');
+        // $this->assertTrue(empty($response[$this->itemName]['id']), 'The point id is empty.');
+        $this->assertSame($response[$this->itemName]['name'], 'test2');
 
         //now delete the point
-        $response = $apiContext->delete($response['trigger']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext('pointTriggers');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->edit(10000, $this->testPayload, true);
         $this->assertPayload($response);
 
         //now delete the point
-        $response = $apiContext->delete($response['trigger']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
-    public function testActionDeleteViaPut()
+    public function testEventDeleteViaPut()
     {
-        $apiContext = $this->getContext('pointTriggers');
-
-        // Firstly create a form with fields
+        $apiContext = $this->getContext($this->context);
         $response = $apiContext->edit(10000, $this->testPayload, true);
-
         $this->assertErrors($response);
 
         // Remove the trigger events
-        unset($response['trigger']['events']);
+        unset($response[$this->itemName]['events']);
 
         // Edit the same entitiy without the fields and actions
         $response = $apiContext->edit(
-            $response['trigger']['id'],
-            $response['trigger'],
+            $response[$this->itemName]['id'],
+            $response[$this->itemName],
             true
         );
 
         $this->assertErrors($response);
-        $this->assertTrue(empty($response['trigger']['events']), 'Trigger events were not deleted via PUT request');
+        $this->assertTrue(empty($response[$this->itemName]['events']), 'Trigger events were not deleted via PUT request');
 
         //now delete the form
-        $response = $apiContext->delete($response['trigger']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testDeleteEvents()
     {
         $eventIds  = array();
-        $apiContext = $this->getContext('pointTriggers');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->create($this->testPayload);
 
         $this->assertErrors($response);
 
-        foreach ($response['trigger']['events'] as $event) {
+        foreach ($response[$this->itemName]['events'] as $event) {
             $eventIds[] = $event['id'];
         }
 
-        $response = $apiContext->deleteTriggerEvents($response['trigger']['id'], $eventIds);
+        $response = $apiContext->deleteTriggerEvents($response[$this->itemName]['id'], $eventIds);
 
         $this->assertErrors($response);
-        $this->assertTrue(empty($response['trigger']['events']), 'Events were not deleted');
+        $this->assertTrue(empty($response[$this->itemName]['events']), 'Events were not deleted');
 
         //now delete the trigger
-        $response = $apiContext->delete($response['trigger']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testGetEventTypes()
     {
-        $apiContext = $this->getContext('pointTriggers');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->getEventTypes();
 
         $this->assertErrors($response);

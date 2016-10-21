@@ -93,11 +93,23 @@ class CompaniesTest extends MauticApiTestCase
     {
         $apiContext = $this->getContext($this->context);
         $response   = $apiContext->edit(10000, $this->testPayload, true);
-
         $this->assertPayload($response);
 
         //now delete the form
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
+    }
+
+    public function testAddAndRemove()
+    {
+        $segmentApi = $this->getContext($this->context);
+        $response   = $segmentApi->addContact(1, 1);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
+
+        //now remove the lead from the segment
+        $response = $segmentApi->removeContact(1, 1);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
     }
 }

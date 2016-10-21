@@ -38,6 +38,11 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $this->assertFalse(isset($response['error']), $message);
     }
 
+    protected function assertSuccess($response)
+    {
+        $this->assertFalse(empty($response['success']), 'Response does not contain success => true');
+    }
+
     protected function assertPayload($response)
     {
         $this->assertErrors($response);

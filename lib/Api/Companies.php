@@ -21,28 +21,28 @@ class Companies extends Api
     protected $endpoint = 'companies';
 
     /**
-     * Add a contact to the segment
+     * Add a contact to the company
      *
-     * @param int $id        Segment ID
+     * @param int $id        Company ID
      * @param int $contactId Contact ID
      *
      * @return array|mixed
      */
-    // public function addContact($id, $contactId)
-    // {
-    //     return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$contactId, array(), 'POST');
-    // }
+    public function addContact($id, $contactId)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$contactId, array(), 'POST');
+    }
 
     /**
-     * Remove a contact from the segment
+     * Remove a contact from the company
      *
-     * @param int $id        Segment ID
+     * @param int $id        Company ID
      * @param int $contactId Contact ID
      *
      * @return array|mixed
      */
-    // public function removeContact($id, $contactId)
-    // {
-    //     return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
-    // }
+    public function removeContact($id, $contactId)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
+    }
 }
