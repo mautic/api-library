@@ -14,15 +14,17 @@ use Mautic\MauticApi;
 
 abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 {
+    protected $config = null;
+
     protected function getAuth()
     {
-        $parameters = include __DIR__.'/../local.config.php';
+        $this->config = include __DIR__.'/../local.config.php';
 
-        $auth = ApiAuth::initiate($parameters);
+        $auth = ApiAuth::initiate($this->config);
 
         $this->assertTrue($auth->isAuthorized(), 'Authorization failed. Check credentials in local.config.php.');
 
-        return array($auth, $parameters['apiUrl']);
+        return array($auth, $this->config['apiUrl']);
     }
 
     protected function getContext($context)

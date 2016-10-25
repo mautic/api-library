@@ -13,35 +13,39 @@ class EmailsTest extends MauticApiTestCase
 {
     protected $testPayload = array(
         'name' => 'test',
-        'subject' => 'test',
-        'customHtml' => '<h1>test</h1>'
+        'subject' => 'API test email',
+        'customHtml' => '<h1>Hi there!</h1>',
+        'emailType' => 'list'
     );
 
     protected $context = 'emails';
 
     protected $itemName = 'email';
 
-    public function testGet()
-    {
-        $emailApi = $this->getContext($this->context);
-        $response = $emailApi->get(1);
-        $this->assertErrors($response);
-    }
-
     public function testGetList()
     {
-        $emailApi = $this->getContext($this->context);
-        $response = $emailApi->getList();
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getList();
         $this->assertErrors($response);
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext  = $this->getContext($this->context);
+        $apiContext = $this->getContext($this->context);
+        $segmentApi = $this->getContext('segments');
+        $response   = $segmentApi->create(array('name' => 'test'));
+        $this->assertErrors($response);
+        $segment    = $response['list'];
+
+        // Add testing segment to the email
+        $testPayload = $this->testPayload;
+        $testPayload['lists'] = array($segment['id']);
 
         // Test Create
-        $response = $apiContext->create($this->testPayload);
+        $response = $apiContext->create($testPayload);
         $this->assertPayload($response);
+        $this->assertSame($response[$this->itemName]['lists'][0]['id'], $segment['id']);
+        $this->assertequals(count($response[$this->itemName]['lists']), 1);
 
         // Test Get
         $response = $apiContext->get($response[$this->itemName]['id']);
@@ -50,20 +54,26 @@ class EmailsTest extends MauticApiTestCase
         // Test Delete
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
+        $response = $segmentApi->delete($segment['id']);
+        $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $emailApi = $this->getContext($this->context);
-        $response = $emailApi->edit(10000, $this->testPayload);
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the email shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
+        
+        // Change the type to template so we don't have to create a list
+        $testPayload = $this->testPayload;
+        $testPayload['emailType'] = 'template';
 
-        $response = $emailApi->create($this->testPayload);
+        $response = $apiContext->create($testPayload);
         $this->assertErrors($response);
 
-        $response = $emailApi->edit(
+        $response = $apiContext->edit(
             $response[$this->itemName]['id'],
             array(
                 'name' => 'test2',
@@ -74,18 +84,86 @@ class EmailsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the email
-        $response = $emailApi->delete($response[$this->itemName]['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $emailApi = $this->getContext($this->context);
-        $response = $emailApi->edit(10000, $this->testPayload, true);
+        $apiContext = $this->getContext($this->context);
+        $segmentApi = $this->getContext('segments');
+        $response   = $segmentApi->create(array('name' => 'test'));
         $this->assertErrors($response);
+        $segment1   = $response['list'];
+
+        // Add testing segment to the email
+        $testPayload = $this->testPayload;
+        $testPayload['lists'] = array($segment1['id']);
+
+        $response = $apiContext->create($testPayload);
+        $this->assertErrors($response);
+        $email = $response['email'];
+
+        $response   = $segmentApi->create(array('name' => 'test2'));
+        $this->assertErrors($response);
+        $segment2   = $response['list'];
+        $email['lists'] = array($segment2['id']);
+        
+        $response = $apiContext->edit($email['id'], $email, true);
+        $this->assertPayload($response);
+        $this->assertSame($response[$this->itemName]['lists'][0]['id'], $segment2['id']);
+        $this->assertequals(count($response[$this->itemName]['lists']), 1);
 
         //now delete the email
-        $response = $emailApi->delete($response[$this->itemName]['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+        $response = $segmentApi->delete($segment1['id']);
+        $this->assertErrors($response);
+        $response = $segmentApi->delete($segment2['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testSendToSegment()
+    {
+        $apiContext = $this->getContext($this->context);
+        $segmentApi = $this->getContext('segments');
+        $contactApi = $this->getContext('contacts');
+
+        // Create a test segment
+        $response   = $segmentApi->create(array('name' => 'test'));
+        $this->assertErrors($response);
+        $segment    = $response['list'];
+
+        // Add testing segment to the email
+        $testPayload = $this->testPayload;
+        $testPayload['lists'] = array($segment['id']);
+
+        // Create a test email with the test segment
+        $response   = $apiContext->create($testPayload);
+        $this->assertErrors($response);
+        $email      = $response['email'];
+        
+        // Create a test contact
+        $response   = $contactApi->create(array('email' => $this->config['testEmail']));
+        $this->assertErrors($response);
+        $contact    = $response['contact'];
+
+        // Add contact to the segment
+        $segmentApi->addContact($segment['id'], $contact['id']);
+        $this->assertErrors($response);
+
+        // Finally send the email to the segment
+        $response = $apiContext->send($email['id']);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
+        $this->assertequals($response['sentCount'], 1);
+
+        // Clean
+        $response = $apiContext->delete($email['id']);
+        $this->assertErrors($response);
+        $response = $segmentApi->delete($segment['id']);
+        $this->assertErrors($response);
+        $response = $contactApi->delete($contact['id']);
         $this->assertErrors($response);
     }
 }
