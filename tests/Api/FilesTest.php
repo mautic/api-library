@@ -37,27 +37,26 @@ class FilesTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
-//     public function testCreateAndDelete()
-//     {
-//         $apiContext = $this->getContext('files');
-//         $testFile   = dirname(__DIR__).'/'.'mauticlogo.png';
+     public function testCreateAndDelete()
+     {
+         $apiContext = $this->getContext('files');
+         $testFile   = dirname(__DIR__).'/'.'mauticlogo.png';
 
-//         $this->assertTrue(file_exists($testFile), 'A file for test at '.$testFile.' does not exist.');
+         $this->assertTrue(file_exists($testFile), 'A file for test at '.$testFile.' does not exist.');
 
-//         $file = $apiContext->create(
-//             array(
-//                 'file'  => $testFile
-//             )
-//         );
-// echo "<pre>";var_dump($file);die("</pre>");
+         $file = $apiContext->create(
+             array(
+                 'file'  => $testFile
+             )
+         );
 
-//         $message = isset($file['error']) ? $file['error']['message'] : '';
-//         $this->assertFalse(isset($file['error']), $message);
+         $message = isset($file['error']) ? $file['error']['message'] : '';
+         $this->assertFalse(isset($file['error']), $message);
 
-//         //now delete the file
-//         $response = $apiContext->delete($file['file']['id']);
+         //now delete the file
+         $response = $apiContext->delete($file['file']);
 
-//         $message = isset($response['error']) ? $response['error']['message'] : '';
-//         $this->assertFalse(isset($response['error']), $message);
-//     }
+         $message = isset($response['error']) ? $response['error']['message'] : '';
+         $this->assertFalse(isset($response['error']), $message);
+     }
 }
