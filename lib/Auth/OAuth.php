@@ -711,15 +711,8 @@ class OAuth extends ApiAuth implements AuthInterface
             $parameters['access_token'] = $this->_access_token;
         }
 
-        //Create a querystring for GET/DELETE requests
-        if (count($parameters) > 0 && in_array($method, array('GET', 'DELETE')) && strpos($url, '?') === false) {
-            $url = $url.'?'.http_build_query($parameters);
-            $this->log('URL updated to '.$url);
-        }
-
         //Set default CURL options
         $options = array(
-            CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_HEADER         => true
@@ -732,14 +725,13 @@ class OAuth extends ApiAuth implements AuthInterface
             $options[CURLOPT_FOLLOWLOCATION] = true;
         }
 
-        
-
         //Set custom REST method if not GET or POST
         if (!in_array($method, array('GET', 'POST'))) {
             $options[CURLOPT_CUSTOMREQUEST] = $method;
         }
 
         //Set post fields for POST/PUT/PATCH requests
+        $query = [];
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
 
             //Set file to upload
@@ -754,6 +746,9 @@ class OAuth extends ApiAuth implements AuthInterface
                     array_merge($header, $uploadHeaders);
                 } else {
                     $header = $uploadHeaders;
+
+                    // Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
+                    $query['access_token'] = $parameters['access_token'];
                 }
             } else {
                 $parameters = http_build_query($parameters, '', '&');
@@ -761,13 +756,25 @@ class OAuth extends ApiAuth implements AuthInterface
 
             $options[CURLOPT_POST]       = true;
             $options[CURLOPT_POSTFIELDS] = $parameters;
-            
+
             if (is_array($parameters)) {
                 $parameters = print_r($parameters, true);
             }
 
             $this->log('Posted parameters = '.$parameters);
+        } else {
+            $query = $parameters;
         }
+
+        //Create a query string for GET/DELETE requests
+        if (count($query) > 0) {
+            $queryGlue = strpos($url, '?') === false ? '?' : '&';
+            $url       = $url.$queryGlue.http_build_query($query);
+            $this->log('URL updated to '.$url);
+        }
+
+        // Set the URL
+        $options[CURLOPT_URL] = $url;
 
         //Set CURL headers for oauth 1.0 requests
         if (!empty($header)) {
