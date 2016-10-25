@@ -11,16 +11,20 @@ namespace Mautic\Tests\Api;
 
 class EmailsTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'name' => 'test',
-        'subject' => 'API test email',
-        'customHtml' => '<h1>Hi there!</h1>',
-        'emailType' => 'list'
-    );
+    protected $testPayload;
 
     protected $context = 'emails';
 
     protected $itemName = 'email';
+
+    public function setUp() {
+        $this->testPayload = array(
+            'name' => 'test',
+            'subject' => 'API test email',
+            'customHtml' => '<h1>Hi there!</h1>',
+            'emailType' => 'list'
+        );
+    }
 
     public function testGetList()
     {
@@ -38,8 +42,7 @@ class EmailsTest extends MauticApiTestCase
         $segment    = $response['list'];
 
         // Add testing segment to the email
-        $testPayload = $this->testPayload;
-        $testPayload['lists'] = array($segment['id']);
+        $this->testPayload['lists'] = array($segment['id']);
 
         // Test Create
         $response = $apiContext->create($testPayload);
@@ -67,8 +70,7 @@ class EmailsTest extends MauticApiTestCase
         $this->assertTrue(isset($response['error']), $response['error']['message']);
         
         // Change the type to template so we don't have to create a list
-        $testPayload = $this->testPayload;
-        $testPayload['emailType'] = 'template';
+        $this->testPayload['emailType'] = 'template';
 
         $response = $apiContext->create($testPayload);
         $this->assertErrors($response);
@@ -97,8 +99,7 @@ class EmailsTest extends MauticApiTestCase
         $segment1   = $response['list'];
 
         // Add testing segment to the email
-        $testPayload = $this->testPayload;
-        $testPayload['lists'] = array($segment1['id']);
+        $this->testPayload['lists'] = array($segment1['id']);
 
         $response = $apiContext->create($testPayload);
         $this->assertErrors($response);
@@ -135,8 +136,8 @@ class EmailsTest extends MauticApiTestCase
         $segment    = $response['list'];
 
         // Add testing segment to the email
-        $testPayload = $this->testPayload;
-        $testPayload['lists'] = array($segment['id']);
+        $this->testPayload['lists'] = array($segment['id']);
+        $this->testPayload['subject'] .= ' - SendToSegment test';
 
         // Create a test email with the test segment
         $response   = $apiContext->create($testPayload);
@@ -162,6 +163,37 @@ class EmailsTest extends MauticApiTestCase
         $response = $apiContext->delete($email['id']);
         $this->assertErrors($response);
         $response = $segmentApi->delete($segment['id']);
+        $this->assertErrors($response);
+        $response = $contactApi->delete($contact['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testSendToContact()
+    {
+        $apiContext = $this->getContext($this->context);
+        $contactApi = $this->getContext('contacts');
+
+        // Change the type to template so we don't have to create a list
+        $this->testPayload['emailType'] = 'template';
+        $this->testPayload['subject'] .= ' - SendToContact test';
+
+        // Create a test email
+        $response   = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $email      = $response['email'];
+        
+        // Create a test contact
+        $response   = $contactApi->create(array('email' => $this->config['testEmail']));
+        $this->assertErrors($response);
+        $contact    = $response['contact'];
+
+        // Finally send the email to the contact
+        $response = $apiContext->sendToContact($email['id'], $contact['id']);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
+
+        // Clean
+        $response = $apiContext->delete($email['id']);
         $this->assertErrors($response);
         $response = $contactApi->delete($contact['id']);
         $this->assertErrors($response);
