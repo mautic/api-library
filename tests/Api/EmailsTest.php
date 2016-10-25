@@ -13,49 +13,58 @@ class EmailsTest extends MauticApiTestCase
 {
     protected $testPayload = array(
         'name' => 'test',
-        'body' => 'test'
+        'subject' => 'test',
+        'customHtml' => '<h1>test</h1>'
     );
+
+    protected $context = 'emails';
+
+    protected $itemName = 'email';
 
     public function testGet()
     {
-        $emailApi = $this->getContext('emails');
+        $emailApi = $this->getContext($this->context);
         $response = $emailApi->get(1);
         $this->assertErrors($response);
     }
 
     public function testGetList()
     {
-        $emailApi = $this->getContext('emails');
+        $emailApi = $this->getContext($this->context);
         $response = $emailApi->getList();
         $this->assertErrors($response);
     }
 
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $emailApi = $this->getContext('emails');
-        $response = $emailApi->create($this->testPayload);
+        $apiContext  = $this->getContext($this->context);
 
-        $this->assertErrors($response);
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
 
-        //now delete the email
-        $response = $emailApi->delete($response['email']['id']);
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertPayload($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $emailApi = $this->getContext('emails');
+        $emailApi = $this->getContext($this->context);
         $response = $emailApi->edit(10000, $this->testPayload);
 
         //there should be an error as the email shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
         $response = $emailApi->create($this->testPayload);
-
         $this->assertErrors($response);
 
         $response = $emailApi->edit(
-            $response['email']['id'],
+            $response[$this->itemName]['id'],
             array(
                 'name' => 'test2',
                 'body' => 'test2'
@@ -65,19 +74,18 @@ class EmailsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the email
-        $response = $emailApi->delete($response['email']['id']);
+        $response = $emailApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $emailApi = $this->getContext('emails');
+        $emailApi = $this->getContext($this->context);
         $response = $emailApi->edit(10000, $this->testPayload, true);
-
         $this->assertErrors($response);
 
         //now delete the email
-        $response = $emailApi->delete($response['email']['id']);
+        $response = $emailApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }
