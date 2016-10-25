@@ -16,34 +16,37 @@ class CategoriesTest extends MauticApiTestCase
         'bundle' => 'asset'
     );
 
-    public function testGet()
-    {
-        $categoryApi = $this->getContext('categories');
-        $response    = $categoryApi->get(1);
-        $this->assertErrors($response);
-    }
+    protected $context = 'categories';
+
+    protected $itemName = 'category';
 
     public function testGetList()
     {
-        $categoryApi = $this->getContext('categories');
+        $categoryApi = $this->getContext($this->context);
         $response    = $categoryApi->getList();
         $this->assertErrors($response);
     }
 
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $categoryApi = $this->getContext('categories');
-        $response    = $categoryApi->create($this->testPayload);
-        $this->assertErrors($response);
+        $apiContext  = $this->getContext($this->context);
 
-        //now delete the category
-        $response = $categoryApi->delete($response['category']['id']);
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertPayload($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $categoryApi = $this->getContext('categories');
+        $categoryApi = $this->getContext($this->context);
         $response    = $categoryApi->edit(10000, $this->testPayload);
 
         //there should be an error as the category shouldn't exist
@@ -53,7 +56,7 @@ class CategoriesTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         $response = $categoryApi->edit(
-            $response['category']['id'],
+            $response[$this->itemName]['id'],
             array(
                 'title' => 'test2',
                 'bundle' => 'asset'
@@ -63,18 +66,18 @@ class CategoriesTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the category
-        $response = $categoryApi->delete($response['category']['id']);
+        $response = $categoryApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $categoryApi = $this->getContext('categories');
+        $categoryApi = $this->getContext($this->context);
         $response    = $categoryApi->edit(10000, $this->testPayload, true);
         $this->assertErrors($response);
 
         //now delete the category
-        $response = $categoryApi->delete($response['category']['id']);
+        $response = $categoryApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }
