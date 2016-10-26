@@ -17,6 +17,8 @@ class EmailsTest extends MauticApiTestCase
 
     protected $itemName = 'email';
 
+    protected $skipPayloadAssertion = array('lists');
+
     public function setUp() {
         $this->testPayload = array(
             'name' => 'test',
@@ -45,7 +47,7 @@ class EmailsTest extends MauticApiTestCase
         $this->testPayload['lists'] = array($segment['id']);
 
         // Test Create
-        $response = $apiContext->create($testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
         $this->assertSame($response[$this->itemName]['lists'][0]['id'], $segment['id']);
         $this->assertequals(count($response[$this->itemName]['lists']), 1);
@@ -72,7 +74,7 @@ class EmailsTest extends MauticApiTestCase
         // Change the type to template so we don't have to create a list
         $this->testPayload['emailType'] = 'template';
 
-        $response = $apiContext->create($testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
         $response = $apiContext->edit(
@@ -101,7 +103,7 @@ class EmailsTest extends MauticApiTestCase
         // Add testing segment to the email
         $this->testPayload['lists'] = array($segment1['id']);
 
-        $response = $apiContext->create($testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
         $email = $response['email'];
 
@@ -140,7 +142,7 @@ class EmailsTest extends MauticApiTestCase
         $this->testPayload['subject'] .= ' - SendToSegment test';
 
         // Create a test email with the test segment
-        $response   = $apiContext->create($testPayload);
+        $response   = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
         $email      = $response['email'];
         

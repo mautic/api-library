@@ -15,6 +15,7 @@ use Mautic\MauticApi;
 abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 {
     protected $config = null;
+    protected $skipPayloadAssertion = array();
 
     protected function getAuth()
     {
@@ -52,6 +53,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $this->assertFalse(empty($response[$this->itemName]['id']), 'The '.$this->itemName.' id is empty.');
 
         foreach ($this->testPayload as $itemProp => $itemVal) {
+            if (in_array($itemProp, $this->skipPayloadAssertion)) continue;
             $this->assertTrue(isset($response[$this->itemName][$itemProp]), 'The ["'.$this->itemName.'" => "'.$itemProp.'"] doesn\'t exist in the response.');
             $this->assertSame($response[$this->itemName][$itemProp], $itemVal);
         }
