@@ -11,20 +11,39 @@ namespace Mautic\Tests\Api;
 
 class FilesTest extends MauticApiTestCase
 {
-    // public function testGet()
-    // {
-    //     $apiContext = $this->getContext('files');
-    //     $response     = $apiContext->get(1);
+    protected $testPayload = array(
+        'file' => null
+    );
 
-    //     $message = isset($response['error']) ? $response['error']['message'] : '';
-    //     $this->assertFalse(isset($response['error']), $message);
-    // }
+    protected $itemName = 'file';
+
+    protected function assertPayload($response)
+    {
+        $this->assertErrors($response);
+        $this->assertFalse(empty($response[$this->itemName]['link']), 'The '.$this->itemName.' link is empty.');
+        $this->assertFalse(empty($response[$this->itemName]['name']), 'The '.$this->itemName.' file name is empty.');
+    }
+
+    public function setUp()
+    {
+        $this->testPayload['file'] = dirname(__DIR__).'/'.'mauticlogo.png';
+        $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
+    }
 
     public function testGetList()
     {
         $apiContext = $this->getContext('files');
-        $response     = $apiContext->getList();
+        $response = $apiContext->getList();
+        $this->assertTrue(isset($response['files']));
+        $this->assertErrors($response);
+    }
 
+    public function testGetListSubdir()
+    {
+        $apiContext = $this->getContext('files');
+        $apiContext->setFolder('images/flags');
+        $response = $apiContext->getList();
+        $this->assertTrue(isset($response['files']));
         $this->assertErrors($response);
     }
 
@@ -32,31 +51,42 @@ class FilesTest extends MauticApiTestCase
     {
         $apiContext = $this->getContext('files');
         $apiContext->setFolder('assets');
-        $response     = $apiContext->getList();
-
+        $response   = $apiContext->getList();
         $this->assertErrors($response);
     }
 
-     public function testCreateAndDelete()
-     {
-         $apiContext = $this->getContext('files');
-         $testFile   = dirname(__DIR__).'/'.'mauticlogo.png';
+    public function testCreateAndDeleteImage()
+    {
+        $apiContext = $this->getContext('files');
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
 
-         $this->assertTrue(file_exists($testFile), 'A file for test at '.$testFile.' does not exist.');
+        $response = $apiContext->delete($response['file']['name']);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
+    }
 
-         $file = $apiContext->create(
-             array(
-                 'file'  => $testFile
-             )
-         );
+    public function testCreateAndDeleteImageInSubdir()
+    {
+        $apiContext = $this->getContext('files');
+        $apiContext->setFolder('images/test_api_dir');
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
 
-         $message = isset($file['error']) ? $file['error']['message'] : '';
-         $this->assertFalse(isset($file['error']), $message);
+        $response = $apiContext->delete($response['file']['name']);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
+    }
 
-         //now delete the file
-         $response = $apiContext->delete($file['file']);
+    public function testCreateAndDeleteAsset()
+    {
+        $apiContext = $this->getContext('files');
+        $apiContext->setFolder('assets');
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
 
-         $message = isset($response['error']) ? $response['error']['message'] : '';
-         $this->assertFalse(isset($response['error']), $message);
-     }
+        $response = $apiContext->delete($response['file']['name']);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
+    }
 }

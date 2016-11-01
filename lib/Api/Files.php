@@ -27,6 +27,7 @@ class Files extends Api
      */
     public function setFolder($folder = 'assets')
     {
+        $folder = str_replace('/', '.', $folder);
         $this->endpoint = 'files/'.$folder;
     }
 
