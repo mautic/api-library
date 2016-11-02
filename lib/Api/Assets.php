@@ -19,12 +19,4 @@ class Assets extends Api
      * {@inheritdoc}
      */
     protected $endpoint = 'assets';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function edit($id, array $parameters, $createIfNotExists = false)
-    {
-        return $this->actionNotSupported('edit');
-    }
 }

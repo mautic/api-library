@@ -11,44 +11,64 @@ namespace Mautic\Tests\Api;
 
 class AssetsTest extends MauticApiTestCase
 {
-    public function testGet()
-    {
-        $apiContext = $this->getContext('assets');
-        $response     = $apiContext->get(1);
+    protected $testPayload = array(
+        'title' => 'Mautic Logo sent as a API request',
+        'storageLocation' => 'remote',
+        'file' => 'https://www.mautic.org/media/logos/logo/Mautic_Logo_DB.pdf'
+    );
 
-        $this->assertErrors($response);
-    }
+    protected $skipPayloadAssertion = array('file');
+
+    protected $context = 'assets';
+
+    protected $itemName = 'asset';
 
     public function testGetList()
     {
-        $apiContext = $this->getContext('assets');
-        $response     = $apiContext->getList();
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getList();
 
         $this->assertErrors($response);
     }
 
-//     public function testCreateAndDelete()
-//     {
-//         $apiContext = $this->getContext('assets');
-//         $testFile   = dirname(__DIR__).'/'.'mauticlogo.png';
+    public function testCreateWithLocalFileGetAndDelete()
+    {
+        $apiContext = $this->getContext($this->context);
 
-//         $this->assertTrue(file_exists($testFile), 'A file for test at '.$testFile.' does not exist.');
+        // Upload a testing file
+        $apiContextFiles = $this->getContext('files');
+        $apiContextFiles->setFolder('assets');
+        $fileRequest = array(
+            'file' => dirname(__DIR__).'/'.'mauticlogo.png'
+        );
+        $response = $apiContextFiles->create($fileRequest);
+        $this->assertErrors($response);
+        $file = $response['file'];
 
-//         $asset = $apiContext->create(
-//             array(
-//                 'title' => 'Mautic Logo',
-//                 'file'  => $testFile,
-//                 'storageLocation' => 'local'
-//             )
-//         );
+        // Build local file payload
+        $testPayload = $this->testPayload;
+        $testPayload['storageLocation'] = 'local';
+        $testPayload['file'] = $file['name'];
 
-//         $message = isset($asset['error']) ? $asset['error']['message'] : '';
-//         $this->assertFalse(isset($asset['error']), $message);
-// echo "<pre>";var_dump($asset);die("</pre>");
-//         //now delete the asset
-//         $response = $apiContext->delete($asset['asset']['id']);
+        // Create Asset
+        $response = $apiContext->create($testPayload);
+        $this->assertPayload($response, $testPayload);
+        
+        // Delete Asset
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+    }
 
-//         $message = isset($response['error']) ? $response['error']['message'] : '';
-//         $this->assertFalse(isset($response['error']), $message);
-//     }
+    public function testCreateWithRemoteFileGetAndDelete()
+    {
+        $apiContext = $this->getContext($this->context);
+
+        // Create Asset
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+        
+        // Delete Asset
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+    }
 }

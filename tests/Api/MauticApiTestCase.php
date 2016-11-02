@@ -46,13 +46,17 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $this->assertFalse(empty($response['success']), 'Response does not contain success => true');
     }
 
-    protected function assertPayload($response)
+    protected function assertPayload($response, array $payload = array())
     {
         $this->assertErrors($response);
 
         $this->assertFalse(empty($response[$this->itemName]['id']), 'The '.$this->itemName.' id is empty.');
 
-        foreach ($this->testPayload as $itemProp => $itemVal) {
+        if (empty($payload)) {
+            $payload = $this->testPayload;
+        }
+
+        foreach ($payload as $itemProp => $itemVal) {
             if (in_array($itemProp, $this->skipPayloadAssertion)) continue;
             $this->assertTrue(isset($response[$this->itemName][$itemProp]), 'The ["'.$this->itemName.'" => "'.$itemProp.'"] doesn\'t exist in the response.');
             $this->assertSame($response[$this->itemName][$itemProp], $itemVal);
