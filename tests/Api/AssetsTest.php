@@ -71,4 +71,38 @@ class AssetsTest extends MauticApiTestCase
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
+
+    public function testEditPatch()
+    {
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->edit(10000, $this->testPayload);
+
+        //there should be an error as the form shouldn't exist
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
+
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+
+        $updatePayload = array(
+            'title' => 'test2',
+        );
+
+        $response = $apiContext->edit($response[$this->itemName]['id'], $updatePayload);
+        $this->assertPayload($response, $updatePayload);
+
+        //now delete the form
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testEditPut()
+    {
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->edit(10000, $this->testPayload, true);
+        $this->assertPayload($response);
+
+        //now delete the form
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+    }
 }
