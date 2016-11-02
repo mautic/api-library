@@ -44,7 +44,7 @@ class PointTriggersTest extends MauticApiTestCase
 
     protected $itemName = 'trigger';
 
-    protected function assertPayload($response)
+    protected function assertPayload($response, array $payload = array())
     {
         $this->assertErrors($response);
         $this->assertFalse(empty($response[$this->itemName]['id']), 'The point trigger id is empty.');

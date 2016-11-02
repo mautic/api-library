@@ -13,7 +13,7 @@ class StatsTest extends MauticApiTestCase
 {
     protected $context = 'stats';
 
-    protected function assertPayload($response)
+    protected function assertPayload($response, array $payload = array())
     {
         $this->assertErrors($response);
         $this->assertTrue(isset($response[$this->context]), 'The '.$this->context.' array does not exist.');

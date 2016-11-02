@@ -26,7 +26,7 @@ class CompaniesTest extends MauticApiTestCase
 
     protected $itemName = 'company';
 
-    protected function assertPayload($response)
+    protected function assertPayload($response, array $payload = array())
     {
         $this->assertErrors($response);
 

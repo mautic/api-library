@@ -18,7 +18,7 @@ class PointsTest extends MauticApiTestCase
         'description' => 'created as a API test'
     );
 
-    protected function assertPayload($response) {
+    protected function assertPayload($response, array $payload = array()) {
         $this->assertErrors($response);
         $this->assertFalse(empty($response['point']['id']), 'The point id is empty.');
         $this->assertSame($response['point']['name'], $this->testPayload['name']);

@@ -17,10 +17,9 @@ class FilesTest extends MauticApiTestCase
 
     protected $itemName = 'file';
 
-    protected function assertPayload($response)
+    protected function assertPayload($response, array $payload = array())
     {
         $this->assertErrors($response);
-        $this->assertFalse(empty($response[$this->itemName]['link']), 'The '.$this->itemName.' link is empty.');
         $this->assertFalse(empty($response[$this->itemName]['name']), 'The '.$this->itemName.' file name is empty.');
     }
 
@@ -60,6 +59,7 @@ class FilesTest extends MauticApiTestCase
         $apiContext = $this->getContext('files');
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
+        $this->assertFalse(empty($response[$this->itemName]['link']), 'The '.$this->itemName.' link is empty.');
 
         $response = $apiContext->delete($response['file']['name']);
         $this->assertErrors($response);
@@ -72,6 +72,7 @@ class FilesTest extends MauticApiTestCase
         $apiContext->setFolder('images/test_api_dir');
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
+        $this->assertFalse(empty($response[$this->itemName]['link']), 'The '.$this->itemName.' link is empty.');
 
         $response = $apiContext->delete($response['file']['name']);
         $this->assertErrors($response);
