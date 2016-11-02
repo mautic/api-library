@@ -29,6 +29,13 @@ class SegmentsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testGetListMinimal()
+    {
+        $segmentApi = $this->getContext('segments');
+        $response   = $segmentApi->getList('', 0,  0, '', 'ASC', false, true);
+        $this->assertErrors($response);
+    }
+
     public function testCreateAndDelete()
     {
         $segmentApi = $this->getContext('segments');
