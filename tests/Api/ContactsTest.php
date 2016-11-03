@@ -33,6 +33,7 @@ class ContactsTest extends MauticApiTestCase
         $responseApi = $this->getContext($this->context);
         $response    = $responseApi->getFieldList();
         $this->assertErrors($response);
+        $this->assertGreaterThan(0, count($response));
     }
 
     public function testGetSegmentsList()
