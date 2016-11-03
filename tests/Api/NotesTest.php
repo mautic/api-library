@@ -30,6 +30,13 @@ class NotesTest extends MauticApiTestCase
         $this->testPayload['lead'] = $response['contact']['id'];
     }
 
+    public function tearDown() {
+        // Delete a contact from test
+        $apiContext = $this->getContext('contacts');
+        $response = $apiContext->delete($this->testPayload['lead']);
+        $this->assertErrors($response);
+    }
+
     public function testGetList()
     {
         $apiContext = $this->getContext($this->context);
