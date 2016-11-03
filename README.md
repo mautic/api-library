@@ -180,3 +180,13 @@ if (isset($result['error'])) {
     // do whatever with the info
 }
 ```
+
+## Unit tests
+
+Configure the unit tests config before running the unit tests. The tests fire real API requests to a Mautic instance.
+
+Copy `/tests/local.config.php.dist` to `/tests/local.config.php` and fill in the Oauth keys.
+
+Then run `phpunit` to run the tests.
+
+Modify this command to run a specific test: `phpunit --filter testCreateGetAndDelete NotesTest tests/Api/NotesTest.php`
