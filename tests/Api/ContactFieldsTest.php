@@ -9,7 +9,7 @@
 
 namespace Mautic\Tests\Api;
 
-class ContactFieldTest extends MauticApiTestCase
+class ContactFieldsTest extends MauticApiTestCase
 {
     /**
      * Payload of example form to test the endpoints with
@@ -29,8 +29,8 @@ class ContactFieldTest extends MauticApiTestCase
     {
         $apiContext = $this->getContext($this->context);
         $response   = $apiContext->getList();
-        $this->assertTrue(isset($response['fields']));
         $this->assertErrors($response);
+        $this->assertTrue(isset($response['fields']));
     }
 
     public function testCreateGetAndDelete()
