@@ -50,6 +50,34 @@ class ContactFieldsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testCreateGetAndDeleteOfLookupField()
+    {
+        $lookupField = array(
+            'label' => 'API test lookup field',
+            'type' => 'lookup',
+            'properties' => array(
+                'list' => array(
+                    array('label' => 'Mr', 'value' => 'mr'),
+                    array('label' => 'Mrs', 'value' => 'mrs'),
+                    array('label' => 'Miss', 'value' => 'miss'),
+                )
+            )
+        );
+        $apiContext  = $this->getContext($this->context);
+
+        // Test Create
+        $response = $apiContext->create($lookupField);
+        $this->assertPayload($response, $lookupField);
+
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertPayload($response, $lookupField);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+    }
+
     public function testEditPatch()
     {
         $apiContext = $this->getContext($this->context);
