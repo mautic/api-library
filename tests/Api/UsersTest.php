@@ -94,4 +94,37 @@ class UsersTest extends MauticApiTestCase
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
+
+    public function testGetSelf()
+    {
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->getSelf();
+        $this->assertErrors($response);
+    }
+
+    public function testGetSelfPermissionsString()
+    {
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->getSelf();
+        $this->assertErrors($response);
+
+        $permission = 'user:users:create';
+        $response   = $apiContext->checkPermission($response['id'], $permission);
+        $this->assertErrors($response);
+        $this->assertTrue(isset($response[$permission]));
+    }
+
+    public function testGetSelfPermissionsArray()
+    {
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->getSelf();
+        $this->assertErrors($response);
+
+        $permission = array('user:users:create', 'user:users:edit');
+        $response   = $apiContext->checkPermission($response['id'], $permission);
+        $this->assertErrors($response);
+        foreach ($permission as $p) {
+            $this->assertTrue(isset($response[$p]));
+        }
+    }
 }

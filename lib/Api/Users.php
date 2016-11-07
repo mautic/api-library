@@ -34,21 +34,12 @@ class Users extends Api
      * Get list of permissions for a user
      *
      * @param  int $id
+     * @param  string|array $permissions
      *
      * @return array|mixed
      */
-    public function checkPermission($id)
+    public function checkPermission($id, $permissions)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/permissioncheck');
-    }
-
-    /**
-     * Get list of available roles
-     *
-     * @return array|mixed
-     */
-    public function getListRoles()
-    {
-        return $this->makeRequest($this->endpoint.'/self');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/permissioncheck', array('permissions' => $permissions), 'POST');
     }
 }
