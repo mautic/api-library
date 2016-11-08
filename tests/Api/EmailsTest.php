@@ -11,8 +11,6 @@ namespace Mautic\Tests\Api;
 
 class EmailsTest extends MauticApiTestCase
 {
-    protected $testPayload;
-
     protected $context = 'emails';
 
     protected $itemName = 'email';
@@ -24,7 +22,66 @@ class EmailsTest extends MauticApiTestCase
             'name' => 'test',
             'subject' => 'API test email',
             'customHtml' => '<h1>Hi there!</h1>',
-            'emailType' => 'list'
+            'emailType' => 'list',
+            'dynamicContent' => array(
+                array(
+                    'tokenName' => 'test content name',
+                    'content' => 'Some default <strong>content</strong>',
+                    'filters' => array(
+                        array(
+                            'content' => 'Variation 1',
+                            'filters' => array()
+                        ),
+                        array(
+                            'content' => 'Variation 2',
+                            'filters' => array(
+                                array(
+                                    'glue' => 'and',
+                                    'field' => 'city',
+                                    'object' => 'lead',
+                                    'type' => 'text',
+                                    'filter' => 'Prague',
+                                    'display' => null,
+                                    'operator' => '=',
+                                ),
+                                array(
+                                    'glue' => 'and',
+                                    'field' => 'email',
+                                    'object' => 'lead',
+                                    'type' => 'email',
+                                    'filter' => 'Prague',
+                                    'display' => null,
+                                    'operator' => '!empty',
+                                )
+                            )
+                        )
+                    )
+                ),
+                array(
+                    'tokenName' => 'test content name2',
+                    'content' => 'Some default <strong>content2</strong>',
+                    'filters' => array(
+                        array(
+                            'content' => 'Variation 3',
+                            'filters' => array()
+                        ),
+                        array(
+                            'content' => 'Variation 4',
+                            'filters' => array(
+                                array(
+                                    'glue' => 'and',
+                                    'field' => 'city',
+                                    'object' => 'lead',
+                                    'type' => 'text',
+                                    'filter' => 'Raleigh',
+                                    'display' => null,
+                                    'operator' => '=',
+                                )
+                            )
+                        )
+                    )
+                )
+            )
         );
     }
 
