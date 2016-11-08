@@ -13,15 +13,18 @@ use Mautic\Api\Contacts;
 
 class ContactsTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'firstname' => 'test',
-        'lastname'  => 'test',
-        'points'    => 3
-    );
-
     protected $context = 'contacts';
 
     protected $itemName = 'contact';
+
+    public function setUp()
+    {
+        $this->testPayload = array(
+            'firstname' => 'test',
+            'lastname'  => 'test',
+            'points'    => 3
+        );
+    }
 
     public function testGetList()
     {
@@ -83,16 +86,35 @@ class ContactsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
-    public function testDnc()
+    public function testDncAddInCreate()
     {
         $apiContext = $this->getContext($this->context);
-        $channelId = 34;
+
+        // Add DNC to the payload
+        $this->testPayload['doNotContact'] = array(
+            array(
+                'channel' => 'email',
+                'reason' => Contacts::BOUNCED,
+            )
+        );
+
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $this->assertEquals(count($response[$this->itemName]['doNotContact']), 1);
+
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testDncAddRemoveEndpoints()
+    {
+        $apiContext = $this->getContext($this->context);
 
         $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
         // Test Add
-        $response = $apiContext->addDnc($response[$this->itemName]['id'], 'email', Contacts::BOUNCED, $channelId);
+        $response = $apiContext->addDnc($response[$this->itemName]['id'], 'email', Contacts::BOUNCED);
         $this->assertErrors($response);
         $this->assertEquals(count($response[$this->itemName]['doNotContact']), 1);
 
