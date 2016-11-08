@@ -9,6 +9,8 @@
 
 namespace Mautic\Tests\Api;
 
+use Mautic\Api\Contacts;
+
 class ContactsTest extends MauticApiTestCase
 {
     protected $testPayload = array(
@@ -77,6 +79,27 @@ class ContactsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testDnc()
+    {
+        $apiContext = $this->getContext($this->context);
+        $channelId = 34;
+
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+
+        // Test Add
+        $response = $apiContext->addDnc($response[$this->itemName]['id'], 'email', Contacts::BOUNCED, $channelId);
+        $this->assertErrors($response);
+        $this->assertEquals(count($response[$this->itemName]['doNotContact']), 1);
+
+        // Test Remove
+        $response = $apiContext->removeDnc($response[$this->itemName]['id'], $response[$this->itemName]['doNotContact'][0]['channel']);
+        $this->assertErrors($response);
+
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }

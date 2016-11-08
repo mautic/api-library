@@ -14,6 +14,22 @@ namespace Mautic\Api;
  */
 class Contacts extends Api
 {
+
+    /**
+     * Contact unsubscribed themselves.
+     */
+    const UNSUBSCRIBED = 1;
+
+    /**
+     * Contact was unsubscribed due to an unsuccessful send.
+     */
+    const BOUNCED = 2;
+
+    /**
+     * Contact was manually unsubscribed by user.
+     */
+    const MANUAL = 3;
+
     /**
      * {@inheritdoc}
      */
@@ -80,6 +96,7 @@ class Contacts extends Api
      * Get a segment of smart segments the contact is in
      *
      * @param $id
+     *
      * @return array|mixed
      */
     public function getContactSegments($id)
@@ -91,6 +108,7 @@ class Contacts extends Api
      * Get a segment of campaigns the contact is in
      *
      * @param $id
+     *
      * @return array|mixed
      */
     public function getContactCampaigns($id)
@@ -101,9 +119,10 @@ class Contacts extends Api
     /**
      * Add the points to a contact
      *
-     * @param int $leadId
+     * @param int $id
      * @param int $points
      * @param array $parameters 'eventName' and 'actionName'
+     *
      * @return mixed
      */
     public function addPoints($id, $points, array $parameters = array()) {
@@ -113,12 +132,50 @@ class Contacts extends Api
     /**
      * Subtract points from a contact
      *
-     * @param int $leadId
+     * @param int $id
      * @param int $points
      * @param array $parameters 'eventName' and 'actionName'
+     *
      * @return mixed
      */
     public function subtractPoints($id, $points, array $parameters = array()) {
         return $this->makeRequest('contacts/'.$id.'/points/minus/'.$points, $parameters, 'POST');
+    }
+
+    /**
+     * Adds Do Not Contact
+     *
+     * @param int    $id
+     * @param string $channel
+     *
+     * @return mixed
+     */
+    public function addDnc($id, $channel = 'email', $reason = Contact::MANUAL, $channelId = null, $comments = 'via API') {
+
+        return $this->makeRequest(
+            'contacts/'.$id.'/dnc/add/'.$channel,
+            array(
+                'reason' => $reason,
+                'channelId' => $channelId,
+                'comments' => $comments,
+            ),
+            'POST'
+        );
+    }
+
+    /**
+     * Removes Do Not Contact
+     *
+     * @param int    $id
+     * @param string $channel
+     *
+     * @return mixed
+     */
+    public function removeDnc($id, $channel) {
+        return $this->makeRequest(
+            'contacts/'.$id.'/dnc/remove/'.$channel,
+            array(),
+            'POST'
+        );
     }
 }
