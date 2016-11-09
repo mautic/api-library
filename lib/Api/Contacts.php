@@ -66,6 +66,40 @@ class Contacts extends Api
     }
 
     /**
+     * Get a list of a contact's engagement events
+     *
+     * @param int    $id Contact ID
+     * @param string $search
+     * @param array  $includeEvents
+     * @param array  $excludeEvents
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int    $page
+     *
+     * @return array|mixed
+     */
+    public function getEvents($id, $search = '', array $includeEvents = array(), array $excludeEvents = array(), $orderBy = '', $orderByDir = 'ASC', $page = 1)
+    {
+        $parameters = array(
+            'filters' => array(
+                'search' => $search,
+                'includeEvents' => $includeEvents,
+                'excludeEvents' => $excludeEvents,
+            ),
+            'order' => array(
+                $orderBy,
+                $orderByDir,
+            ),
+            'page' => $page
+        );
+
+        return $this->makeRequest(
+            $this->endpoint.'/'.$id.'/events',
+            $parameters
+        );
+    }
+
+    /**
      * Get a list of a contact's notes
      *
      * @param int    $id Contact ID

@@ -48,6 +48,36 @@ class ContactsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testGetEvents()
+    {
+        $responseApi = $this->getContext($this->context);
+        $response    = $responseApi->getEvents(1);
+        $this->assertErrors($response);
+        $this->assertTrue(isset($response['events']));
+        $this->assertTrue(isset($response['total']));
+        $this->assertTrue(isset($response['types']));
+        $this->assertTrue(isset($response['order']));
+        $this->assertTrue(isset($response['filters']));
+    }
+
+    public function testGetEventsAdvanced()
+    {
+        $responseApi = $this->getContext($this->context);
+        $response    = $responseApi->getEvents(1, '', array('lead.identified'));
+        $this->assertErrors($response);
+        $this->assertTrue(isset($response['events']));
+        $this->assertTrue(isset($response['total']));
+        $this->assertTrue(isset($response['types']));
+        $this->assertTrue(isset($response['order']));
+        $this->assertTrue(isset($response['filters']));
+
+        if ($response['events']) {
+            foreach ($response['events'] as $event) {
+                $this->assertEquals($event['event'], 'lead.identified');
+            }
+        }
+    }
+
     public function testGetNotes()
     {
         $responseApi = $this->getContext($this->context);
