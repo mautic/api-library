@@ -41,6 +41,13 @@ class StatsTest extends MauticApiTestCase
         }
     }
 
+    public function testGetTables()
+    {
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->get();
+        $this->assertTrue(!empty($response['availableTables']));
+    }
+
     public function testGetSimple()
     {
         $apiContext = $this->getContext($this->context);

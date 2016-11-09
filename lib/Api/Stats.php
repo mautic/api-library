@@ -75,7 +75,7 @@ class Stats extends Api
      */
     public function getPublishedList($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        return $this->actionNotSupported('create');
+        return $this->actionNotSupported('getPublishedList');
     }
 
     /**
@@ -83,6 +83,6 @@ class Stats extends Api
      */
     public function edit($id, array $parameters, $createIfNotExists = false)
     {
-        return $this->actionNotSupported('create');
+        return $this->actionNotSupported('edit');
     }
 }
