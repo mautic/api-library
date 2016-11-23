@@ -9,16 +9,9 @@
 
 namespace Mautic\Tests\Api;
 
-class ListsTest extends MauticApiTestCase
+class ListsTest extends SegmentsTest
 {
-    public function testAddAndRemove()
-    {
-        $listApi = $this->getContext('lists');
-        $response  = $listApi->addLead(1, 1);
-        $this->assertErrors($response);
+    protected $context = 'lists';
 
-        //now remove the lead from the segment
-        $response = $listApi->removeLead(1, 1);
-        $this->assertErrors($response);
-    }
+    // Use the methods from SegmentsTest, just make sure that BC for 'lists' context still work
 }
