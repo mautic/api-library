@@ -26,76 +26,91 @@ class ContactsTest extends MauticApiTestCase
         );
     }
 
+    protected function assertEventResponse($response, $expectedEvents = array())
+    {
+        $this->assertErrors($response);
+        $this->assertTrue(isset($response['events']));
+        $this->assertTrue(isset($response['total']));
+        $this->assertTrue(isset($response['types']));
+        $this->assertTrue(isset($response['order']));
+        $this->assertTrue(isset($response['filters']));
+        $this->assertEquals(count($response['events']), count($expectedEvents));
+
+        foreach ($expectedEvents as $key => $event) {
+            $this->assertEquals($response['events'][$key]['event'], $event);
+        }
+    }
+
     public function testGetList()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getList();
+        $apiContext = $this->getContext($this->context);
+        $response    = $apiContext->getList();
         $this->assertErrors($response);
     }
 
     public function testGetFieldList()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getFieldList();
+        $apiContext = $this->getContext($this->context);
+        $response    = $apiContext->getFieldList();
         $this->assertErrors($response);
         $this->assertGreaterThan(0, count($response));
     }
 
     public function testGetSegmentsList()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getSegments();
+        $apiContext = $this->getContext($this->context);
+        $response    = $apiContext->getSegments();
         $this->assertErrors($response);
     }
 
     public function testGetEvents()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getEvents(1);
+        $apiContext = $this->getContext($this->context);
+
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
-        $this->assertTrue(isset($response['events']));
-        $this->assertTrue(isset($response['total']));
-        $this->assertTrue(isset($response['types']));
-        $this->assertTrue(isset($response['order']));
-        $this->assertTrue(isset($response['filters']));
+        $contact = $response[$this->itemName];
+
+        $response = $apiContext->getEvents($contact['id']);
+        $this->assertEventResponse($response, array('lead.create', 'lead.identified'));
+
+        $response = $apiContext->delete($contact['id']);
+        $this->assertErrors($response);
     }
 
     public function testGetEventsAdvanced()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getEvents(1, '', array('lead.identified'));
-        $this->assertErrors($response);
-        $this->assertTrue(isset($response['events']));
-        $this->assertTrue(isset($response['total']));
-        $this->assertTrue(isset($response['types']));
-        $this->assertTrue(isset($response['order']));
-        $this->assertTrue(isset($response['filters']));
+        $apiContext = $this->getContext($this->context);
 
-        if ($response['events']) {
-            foreach ($response['events'] as $event) {
-                $this->assertEquals($event['event'], 'lead.identified');
-            }
-        }
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->itemName];
+
+        $response = $apiContext->getEvents($contact['id'], '', array('lead.identified'));
+        $this->assertEventResponse($response, array('lead.identified'));
+
+        $response = $apiContext->delete($contact['id']);
+        $this->assertErrors($response);
     }
 
     public function testGetNotes()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getContactNotes(1);
+        $apiContext = $this->getContext($this->context);
+        $response  = $apiContext->getContactNotes(1);
         $this->assertErrors($response);
     }
 
     public function testGetContactSegments()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getContactSegments(1);
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getContactSegments(1);
         $this->assertErrors($response);
     }
 
     public function testGetCampaigns()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->getContactCampaigns(1);
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getContactCampaigns(1);
         $this->assertErrors($response);
     }
 
@@ -159,16 +174,16 @@ class ContactsTest extends MauticApiTestCase
     public function testEditPatch()
     {
         $pointsSet   = 5;
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->edit(10000, $this->testPayload);
+        $apiContext = $this->getContext($this->context);
+        $response    = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the contact shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $responseApi->create($this->testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $responseApi->edit(
+        $response = $apiContext->edit(
             $response[$this->itemName]['id'],
             array(
                 'firstname' => 'test2',
@@ -181,18 +196,18 @@ class ContactsTest extends MauticApiTestCase
         $this->assertSame($response[$this->itemName]['points'], $pointsSet, 'Points were not set correctly');
 
         //now delete the contact
-        $response = $responseApi->delete($response[$this->itemName]['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatchFormError()
     {
-        $responseApi = $this->getContext($this->context);
-        $response = $responseApi->create($this->testPayload);
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->create($this->testPayload);
 
         $this->assertErrors($response);
 
-        $response = $responseApi->edit(
+        $response = $apiContext->edit(
             $response[$this->itemName]['id'],
             array(
                 'country' => 'not existing country'
@@ -205,13 +220,13 @@ class ContactsTest extends MauticApiTestCase
 
     public function testEditPut()
     {
-        $responseApi = $this->getContext($this->context);
-        $response    = $responseApi->edit(10000, $this->testPayload, true);
+        $apiContext = $this->getContext($this->context);
+        $response    = $apiContext->edit(10000, $this->testPayload, true);
 
         $this->assertErrors($response);
 
         //now delete the contact
-        $response = $responseApi->delete($response[$this->itemName]['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
