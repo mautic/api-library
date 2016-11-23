@@ -58,7 +58,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
         foreach ($payload as $itemProp => $itemVal) {
             if (in_array($itemProp, $this->skipPayloadAssertion)) continue;
-            $this->assertTrue(isset($response[$this->itemName][$itemProp]), 'The ["'.$this->itemName.'" => "'.$itemProp.'"] doesn\'t exist in the response.');
+            $this->assertTrue(array_key_exists($itemProp, $response[$this->itemName]), 'The ["'.$this->itemName.'" => "'.$itemProp.'"] doesn\'t exist in the response.');
             $this->assertSame($response[$this->itemName][$itemProp], $itemVal);
         }
     }
