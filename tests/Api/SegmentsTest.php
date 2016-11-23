@@ -70,16 +70,14 @@ class SegmentsTest extends MauticApiTestCase
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
         $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
 
-        $response = $apiContext->edit(
-            $response[$this->itemName]['id'],
-            array(
-                'name' => 'test2'
-            )
+        $update = array(
+            'name' => 'test2'
         );
 
-        $this->assertErrors($response);
+        $response = $apiContext->edit($response[$this->itemName]['id'], $update);
+        $this->assertPayload($response, $update);
 
         //now delete the segment
         $response = $apiContext->delete($response[$this->itemName]['id']);
@@ -90,7 +88,7 @@ class SegmentsTest extends MauticApiTestCase
     {
         $apiContext = $this->getContext($this->context);
         $response   = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
 
         //now delete the segment
         $response = $apiContext->delete($response[$this->itemName]['id']);
@@ -99,12 +97,30 @@ class SegmentsTest extends MauticApiTestCase
 
     public function testAddAndRemove()
     {
+        // Create contact
+        $contactsContext = $this->getContext('contacts');
+        $response = $contactsContext->create(array('firstname' => 'API segments test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create segment
         $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->addContact(1, 1);
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+        $segment = $response[$this->itemName];
+
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->addContact($segment['id'], $contact['id']);
         $this->assertErrors($response);
 
-        //now remove the lead from the segment
-        $response = $apiContext->removeContact(1, 1);
+        // Remove the contact from the segment
+        $response = $apiContext->removeContact($segment['id'], $contact['id']);
+        $this->assertErrors($response);
+
+        // Delete the contact and the segment
+        $response = $contactsContext->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $apiContext->delete($segment['id']);
         $this->assertErrors($response);
     }
 }

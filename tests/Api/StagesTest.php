@@ -52,10 +52,14 @@ class StagesTest extends MauticApiTestCase
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
         $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
 
-        $response = $apiContext->edit($response[$this->itemName]['id'], $this->testPayload);
-        $this->assertErrors($response);
+        $update = array(
+            'name' => 'test'
+        );
+
+        $response = $apiContext->edit($response[$this->itemName]['id'], $update);
+        $this->assertPayload($response, $update);
 
         //now delete the stage
         $response = $apiContext->delete($response[$this->itemName]['id']);
@@ -66,7 +70,7 @@ class StagesTest extends MauticApiTestCase
     {
         $apiContext = $this->getContext($this->context);
         $response = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
 
         //now delete the stage
         $response = $apiContext->delete($response[$this->itemName]['id']);
@@ -81,20 +85,23 @@ class StagesTest extends MauticApiTestCase
         $this->assertErrors($response);
         $contact = $response['contact'];
 
+        // Create stage
         $apiContext = $this->getContext($this->context);
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
         $stage = $response[$this->itemName];
 
+        // Add contact to the stage
         $response = $apiContext->addContact($stage['id'], $contact['id']);
         $this->assertErrors($response);
         $this->assertSuccess($response);
 
-        //now remove the lead from the stage
+        // Remove the contact from the stage
         $response = $apiContext->removeContact($stage['id'], $contact['id']);
         $this->assertErrors($response);
         $this->assertSuccess($response);
 
+        // Delete the contact and the stage
         $response = $contactsContext->delete($contact['id']);
         $this->assertErrors($response);
         $response = $apiContext->delete($stage['id']);
