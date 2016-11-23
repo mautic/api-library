@@ -109,6 +109,7 @@ class SegmentsTest extends MauticApiTestCase
         $this->assertPayload($response);
         $segment = $response[$this->itemName];
 
+        // Add the contact to the segment
         $apiContext = $this->getContext($this->context);
         $response   = $apiContext->addContact($segment['id'], $contact['id']);
         $this->assertErrors($response);

@@ -52,6 +52,13 @@ class NotesTest extends MauticApiTestCase
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
 
+        // Test get contact notes endpoint
+        $contactContext = $this->getContext('contacts');
+        $responseNotes  = $contactContext->getContactNotes($this->testPayload['lead']);
+        $this->assertErrors($responseNotes);
+        $this->assertEquals($responseNotes['total'], 1);
+        $this->assertFalse(empty($responseNotes['notes']));
+
         $response = $apiContext->get($response[$this->itemName]['id']);
         $this->assertPayload($response);
 

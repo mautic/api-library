@@ -93,13 +93,6 @@ class ContactsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
-    public function testGetNotes()
-    {
-        $apiContext = $this->getContext($this->context);
-        $response  = $apiContext->getContactNotes(1);
-        $this->assertErrors($response);
-    }
-
     public function testGetContactSegments()
     {
         $apiContext = $this->getContext($this->context);
