@@ -328,6 +328,13 @@ class CampaignsTest extends MauticApiTestCase
         $response = $apiContext->addContact($campaign['id'], $contact['id']);
         $this->assertErrors($response);
 
+        // Test get contact campaigns API endpoint
+        $contactContext = $this->getContext('contacts');
+        $response = $contactContext->getContactCampaigns($contact['id']);
+        $this->assertErrors($response);
+        $this->assertEquals($response['total'], 1);
+        $this->assertFalse(empty($response['campaigns']));
+
         // Remove the contact from the campaign
         $response = $apiContext->removeContact($campaign['id'], $contact['id']);
         $this->assertErrors($response);
