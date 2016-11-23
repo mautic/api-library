@@ -51,7 +51,7 @@ class CampaignsTest extends MauticApiTestCase
         )
     );
 
-    protected $payloadReady = false;
+    protected $skipPayloadAssertion = array('events', 'forms', 'lists', 'canvasSettings');
 
     public function setUp() {
         $this->testPayload = array(
@@ -235,7 +235,7 @@ class CampaignsTest extends MauticApiTestCase
 
         $this->setUpPayloadClass();
         $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
 
         // Modify the crated campaign
         $campaign = $response[$this->itemName];
@@ -246,8 +246,7 @@ class CampaignsTest extends MauticApiTestCase
         }
 
         $response = $apiContext->edit($campaign['id'], $campaign);
-        $this->assertErrors($response);
-        $this->assertEquals($campaign['name'], 'test2');
+        $this->assertPayload($response, $campaign);
 
         foreach ($response[$this->itemName]['events'] as $event) {
             $this->assertEquals($event['name'], 'Event Name Modified');
@@ -262,8 +261,8 @@ class CampaignsTest extends MauticApiTestCase
     public function testEditPut()
     {
         $apiContext = $this->getContext($this->context);
-        $response    = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
+        $response = $apiContext->edit(1000000, $this->testPayload, true);
+        $this->assertPayload($response);
 
         //now delete the campaign
         $response = $apiContext->delete($response[$this->itemName]['id']);
@@ -274,8 +273,8 @@ class CampaignsTest extends MauticApiTestCase
     {
         $apiContext = $this->getContext($this->context);
         $this->setUpPayloadClass();
-        $response = $apiContext->create($this->testPayload, true);
-        $this->assertErrors($response);
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
 
         // Remove the last event
         array_pop($response[$this->itemName]['events']);
@@ -298,7 +297,7 @@ class CampaignsTest extends MauticApiTestCase
             $response[$this->itemName],
             true
         );
-        $this->assertErrors($response);
+        $this->assertPayload($response);
         $this->assertEquals(count($response[$this->itemName]['events']), 2);
         $this->assertEquals(count($response[$this->itemName]['lists']), 1);
         $this->assertEquals($response[$this->itemName]['lists'][0]['id'], $newSegmentsArray[0]['id']);
@@ -312,11 +311,31 @@ class CampaignsTest extends MauticApiTestCase
 
     public function testAddAndRemove()
     {
+        // Create contact
+        $contactsContext = $this->getContext('contacts');
+        $response = $contactsContext->create(array('firstname' => 'API campagin test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create campaign
         $apiContext = $this->getContext($this->context);
-        $response    = $apiContext->addContact(1, 1);
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+        $campaign = $response[$this->itemName];
+
+        // Add the contact to the campaign
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->addContact($campaign['id'], $contact['id']);
         $this->assertErrors($response);
 
-        $response = $apiContext->removeContact(1, 1);
+        // Remove the contact from the campaign
+        $response = $apiContext->removeContact($campaign['id'], $contact['id']);
+        $this->assertErrors($response);
+
+        // Delete the contact and the campaign
+        $response = $contactsContext->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $apiContext->delete($campaign['id']);
         $this->assertErrors($response);
     }
 }
