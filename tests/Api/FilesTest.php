@@ -66,6 +66,18 @@ class FilesTest extends MauticApiTestCase
         $this->assertSuccess($response);
     }
 
+    public function testCreateAndDeletePhpScript()
+    {
+        $apiContext = $this->getContext('files');
+
+        // Get this PHP script to send
+        $this->testPayload['file'] = dirname(__DIR__).'/Api/FilesTest.php';
+        $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
+
+        $response = $apiContext->create($this->testPayload);
+        $this->assertFalse(empty($response['error']), 'The PHP script was uploaded! Danger! DANGER!');
+    }
+
     public function testCreateAndDeleteImageInSubdir()
     {
         $apiContext = $this->getContext('files');
