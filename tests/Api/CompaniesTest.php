@@ -75,14 +75,12 @@ class CompaniesTest extends MauticApiTestCase
 
         $this->assertErrors($response);
 
-        $response = $apiContext->edit(
-            $response[$this->itemName]['id'],
-            array(
-                'companyname' => 'test2',
-            )
+        $update = array(
+            'companyname' => 'test2',
         );
 
-        $this->assertErrors($response);
+        $response = $apiContext->edit($response[$this->itemName]['id'], $update);
+        $this->assertErrors($response, $update);
 
         //now delete the form
         $response = $apiContext->delete($response[$this->itemName]['id']);
@@ -102,14 +100,33 @@ class CompaniesTest extends MauticApiTestCase
 
     public function testAddAndRemove()
     {
-        $segmentApi = $this->getContext($this->context);
-        $response   = $segmentApi->addContact(1, 1);
+        // Create contact
+        $contactsContext = $this->getContext('contacts');
+        $response = $contactsContext->create(array('firstname' => 'API segments test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create company
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+        $company = $response[$this->itemName];
+
+        // Add the contact to the company
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->addContact($company['id'], $contact['id']);
         $this->assertErrors($response);
         $this->assertSuccess($response);
 
-        //now remove the lead from the segment
-        $response = $segmentApi->removeContact(1, 1);
+        // Remove the contact from the company
+        $response = $apiContext->removeContact($company['id'], $contact['id']);
         $this->assertErrors($response);
         $this->assertSuccess($response);
+
+        // Delete the contact and the segment
+        $response = $contactsContext->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $apiContext->delete($company['id']);
+        $this->assertErrors($response);
     }
 }
