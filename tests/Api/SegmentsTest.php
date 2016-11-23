@@ -114,6 +114,13 @@ class SegmentsTest extends MauticApiTestCase
         $response   = $apiContext->addContact($segment['id'], $contact['id']);
         $this->assertErrors($response);
 
+        // Test get contact segments API endpoint
+        $contactContext = $this->getContext('contacts');
+        $response = $contactContext->getContactSegments($contact['id']);
+        $this->assertErrors($response);
+        $this->assertEquals($response['total'], 1);
+        $this->assertFalse(empty($response['lists']));
+
         // Remove the contact from the segment
         $response = $apiContext->removeContact($segment['id'], $contact['id']);
         $this->assertErrors($response);
