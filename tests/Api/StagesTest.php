@@ -21,8 +21,8 @@ class StagesTest extends MauticApiTestCase
 
     public function testGetList()
     {
-        $stageApi = $this->getContext($this->context);
-        $response = $stageApi->getList();
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getList();
         $this->assertErrors($response);
     }
 
@@ -45,42 +45,59 @@ class StagesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $stageApi = $this->getContext($this->context);
-        $response = $stageApi->edit(10000, $this->testPayload);
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the stage shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $stageApi->create($this->testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $stageApi->edit($response[$this->itemName]['id'], $this->testPayload);
+        $response = $apiContext->edit($response[$this->itemName]['id'], $this->testPayload);
         $this->assertErrors($response);
 
         //now delete the stage
-        $response = $stageApi->delete($response[$this->itemName]['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $stageApi = $this->getContext($this->context);
-        $response = $stageApi->edit(10000, $this->testPayload, true);
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->edit(10000, $this->testPayload, true);
         $this->assertErrors($response);
 
         //now delete the stage
-        $response = $stageApi->delete($response[$this->itemName]['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testAddAndRemove()
     {
-        $stageApi = $this->getContext($this->context);
-        $response = $stageApi->addContact(1, 1);
+        // Create contact
+        $contactsContext = $this->getContext('contacts');
+        $response = $contactsContext->create(array('firstname' => 'API stages test'));
         $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+        $stage = $response[$this->itemName];
+
+        $response = $apiContext->addContact($stage['id'], $contact['id']);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
 
         //now remove the lead from the stage
-        $response = $stageApi->removeContact(1, 1);
+        $response = $apiContext->removeContact($stage['id'], $contact['id']);
+        $this->assertErrors($response);
+        $this->assertSuccess($response);
+
+        $response = $contactsContext->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $apiContext->delete($stage['id']);
         $this->assertErrors($response);
     }
 }

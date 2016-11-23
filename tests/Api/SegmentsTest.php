@@ -12,7 +12,7 @@ namespace Mautic\Tests\Api;
 class SegmentsTest extends MauticApiTestCase
 {
     protected $testPayload = array(
-        'name' => 'test'
+        'name' => 'API test'
     );
 
     protected $context = 'segments';
