@@ -16,79 +16,82 @@ class LeadsTest extends MauticApiTestCase
         'lastname'  => 'test'
     );
 
-    public function testGet()
-    {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->get(1);
-        $this->assertErrors($response);
-    }
+    protected $context = 'leads';
+
+    protected $itemName = 'contact';
 
     public function testGetList()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->getList();
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->getList();
         $this->assertErrors($response);
     }
 
     public function testGetFieldList()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->getFieldList();
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->getFieldList();
         $this->assertErrors($response);
     }
 
     public function testGetListList()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->getLists();
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->getLists();
         $this->assertErrors($response);
     }
 
     public function testGetNotes()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->getLeadNotes(1);
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->getLeadNotes(1);
         $this->assertErrors($response);
     }
 
     public function testGetLists()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->getLeadLists(1);
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->getLeadLists(1);
         $this->assertErrors($response);
     }
 
     public function testGetCampaigns()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->getLeadCampaigns(1);
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->getLeadCampaigns(1);
         $this->assertErrors($response);
     }
 
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->create($this->testPayload);
+        $apiContext = $this->getContext($this->context);
+
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
-        //now delete the lead
-        $response = $leadApi->delete($response['contact']['id']);
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertErrors($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->edit(10000, $this->testPayload);
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the lead shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $leadApi->create($this->testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $leadApi->edit(
-            $response['contact']['id'],
+        $response = $apiContext->edit(
+            $response[$this->itemName]['id'],
             array(
                 'firstname' => 'test2',
                 'lastname'  => 'test2'
@@ -98,18 +101,18 @@ class LeadsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the lead
-        $response = $leadApi->delete($response['contact']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $leadApi  = $this->getContext('leads');
-        $response = $leadApi->edit(10000, $this->testPayload, true);
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->edit(10000, $this->testPayload, true);
         $this->assertErrors($response);
 
         //now delete the lead
-        $response = $leadApi->delete($response['contact']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }

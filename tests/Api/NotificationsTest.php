@@ -17,44 +17,47 @@ class NotificationsTest extends MauticApiTestCase
         'message' => 'API test message'
     );
 
-    public function testGet()
-    {
-        $apiContext = $this->getContext('notifications');
-        $response   = $apiContext->get(1);
-        $this->assertErrors($response);
-    }
+    protected $context = 'notifications';
+
+    protected $itemName = 'notification';
 
     public function testGetList()
     {
-        $apiContext = $this->getContext('notifications');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->getList();
         $this->assertErrors($response);
     }
 
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $notificationApi = $this->getContext('notifications');
-        $response        = $notificationApi->create($this->testPayload);
-        $this->assertErrors($response);
+        $apiContext = $this->getContext($this->context);
 
-        //now delete the notification
-        $response = $notificationApi->delete($response['notification']['id']);
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertPayload($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $notificationApi = $this->getContext('notifications');
-        $response        = $notificationApi->edit(10000, $this->testPayload);
+        $apiContext = $this->getContext($this->context);
+        $response        = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the notification shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $notificationApi->create($this->testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $notificationApi->edit(
-            $response['notification']['id'],
+        $response = $apiContext->edit(
+            $response[$this->itemName]['id'],
             array(
                 'name' => 'test2'
             )
@@ -63,18 +66,18 @@ class NotificationsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the notification
-        $response = $notificationApi->delete($response['notification']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $notificationApi = $this->getContext('notifications');
-        $response        = $notificationApi->edit(10000, $this->testPayload,true);
+        $apiContext = $this->getContext($this->context);
+        $response        = $apiContext->edit(10000, $this->testPayload,true);
         $this->assertErrors($response);
 
         //now delete the notification
-        $response = $notificationApi->delete($response['notification']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }

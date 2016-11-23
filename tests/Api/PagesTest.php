@@ -15,45 +15,47 @@ class PagesTest extends MauticApiTestCase
         'title' => 'test'
     );
 
-    public function testGet()
-    {
-        $apiContext = $this->getContext('pages');
-        $response   = $apiContext->get(1);
-        $this->assertErrors($response);
-    }
+    protected $context = 'pages';
+
+    protected $itemName = 'page';
 
     public function testGetList()
     {
-        $apiContext = $this->getContext('pages');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->getList();
         $this->assertErrors($response);
     }
 
-
-    public function testCreateAndDelete()
+    public function testCreateGetAndDelete()
     {
-        $pageApi  = $this->getContext('pages');
-        $response = $pageApi->create($this->testPayload);
-        $this->assertErrors($response);
+        $apiContext = $this->getContext($this->context);
 
-        //now delete the page
-        $response = $pageApi->delete($response['page']['id']);
+        // Test Create
+        $response = $apiContext->create($this->testPayload);
+        $this->assertPayload($response);
+
+        // Test Get
+        $response = $apiContext->get($response[$this->itemName]['id']);
+        $this->assertPayload($response);
+
+        // Test Delete
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $pageApi  = $this->getContext('pages');
-        $response = $pageApi->edit(10000, $this->testPayload);
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the page shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $pageApi->create($this->testPayload);
+        $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $pageApi->edit(
-            $response['page']['id'],
+        $response = $apiContext->edit(
+            $response[$this->itemName]['id'],
             array(
                 'title' => 'test2'
             )
@@ -62,18 +64,18 @@ class PagesTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         //now delete the page
-        $response = $pageApi->delete($response['page']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $pageApi  = $this->getContext('pages');
-        $response = $pageApi->edit(10000, $this->testPayload, true);
+        $apiContext  = $this->getContext($this->context);
+        $response = $apiContext->edit(10000, $this->testPayload, true);
         $this->assertErrors($response);
 
         //now delete the page
-        $response = $pageApi->delete($response['page']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }
