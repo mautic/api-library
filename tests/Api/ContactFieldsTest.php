@@ -11,19 +11,19 @@ namespace Mautic\Tests\Api;
 
 class ContactFieldsTest extends MauticApiTestCase
 {
-    /**
-     * Payload of example form to test the endpoints with
-     *
-     * @var array
-     */
-    protected $testPayload = array(
-        'label' => 'API test field',
-        'type' => 'text',
-    );
+    protected $prefix = '';
 
     protected $context = 'contactFields';
 
     protected $itemName = 'field';
+
+    public function setUp()
+    {
+        $this->testPayload = array(
+            'label' => $this->prefix.'API test field',
+            'type' => 'text',
+        );
+    }
 
     public function testGetList()
     {
@@ -35,7 +35,7 @@ class ContactFieldsTest extends MauticApiTestCase
 
     public function testCreateGetAndDelete()
     {
-        $apiContext  = $this->getContext($this->context);
+        $apiContext = $this->getContext($this->context);
 
         // Test Create
         $response = $apiContext->create($this->testPayload);
@@ -53,7 +53,7 @@ class ContactFieldsTest extends MauticApiTestCase
     public function testCreateGetAndDeleteOfLookupField()
     {
         $lookupField = array(
-            'label' => 'API test lookup field',
+            'label' => $this->prefix.'API test lookup field',
             'type' => 'lookup',
             'properties' => array(
                 'list' => array(
@@ -89,7 +89,7 @@ class ContactFieldsTest extends MauticApiTestCase
         $apiContext = $this->getContext($this->context);
         $possibleValues = array(1 => 1, 0 => 0, 'yes' => 1, 'no' => 0, 'true' => 1, 'false' => 0);
         $boolField = array(
-            'label' => 'API test Boolean field',
+            'label' => $this->prefix.'API test Boolean field',
             'type' => 'boolean',
             'properties' => array(
                 'no' => 'No',

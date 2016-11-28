@@ -14,6 +14,19 @@ use Mautic\Tests\Api;
 class CompanyFieldTest extends ContactFieldsTest
 {
     protected $context = 'companyFields';
+    protected $prefix = 'Company ';
 
     // Methods inherited from ContactFieldsTest
+
+
+    // Except following, ignore them
+    public function testBooleanField()
+    {
+        return;
+    }
+
+    public function testDefaultFieldValue()
+    {
+        return;
+    }
 }
