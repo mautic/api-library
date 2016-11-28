@@ -185,8 +185,12 @@ if (isset($result['error'])) {
 
 Configure the unit tests config before running the unit tests. The tests fire real API requests to a Mautic instance.
 
-Copy `/tests/local.config.php.dist` to `/tests/local.config.php` and fill in the Oauth keys.
-
-Then run `phpunit` to run the tests.
+1. Copy `/tests/local.config.php.dist` to `/tests/local.config.php`.
+2. Open the API tester in the browser like http://localhost/api-library/apitester/index.php
+3. Fill in the URL of your Mautic instance.
+4. Click Submit to store the URL to the session.
+5. Fill in one of the OAuth credentials and authorize.
+6. Open the $_SESSION array and copy the 'access_token' to the local.config.php file.
+7. Then run `phpunit` to run the tests.
 
 Modify this command to run a specific test: `phpunit --filter testCreateGetAndDelete NotesTest tests/Api/NotesTest.php`
