@@ -80,36 +80,34 @@ class ContactFieldsTest extends MauticApiTestCase
 
     public function testBooleanField()
     {
-        // Create testing contact
+        // Create a testing contact
         $contactContext = $this->getContext('contacts');
         $response = $contactContext->create(array('firstname' => 'Boolean Field', 'lastname' => 'API test'));
         $this->assertErrors($response);
         $contact = $response['contact'];
 
         $apiContext = $this->getContext($this->context);
-        $possibleValues = array('1', '0', 'yes', 'no', 'true', 'false');
+        $possibleValues = array(1 => 1, 0 => 0, 'yes' => 1, 'no' => 0, 'true' => 1, 'false' => 0);
         $boolField = array(
             'label' => 'API test Boolean field',
             'type' => 'boolean',
             'properties' => array(
-                array(
-                    'no' => 'No',
-                    'yes' => 'Yes'
-                )
+                'no' => 'No',
+                'yes' => 'Yes'
             )
         );
 
         // Create the Boolean field
-        $response = $apiContext->create($this->testPayload);
-        $this->assertPayload($response);
+        $response = $apiContext->create($boolField);
+        $this->assertErrors($response);
         $field = $response[$this->itemName];
 
         // Test if the Boolean value gets updated with test values
-        foreach ($possibleValues as $value) {
+        foreach ($possibleValues as $value => $boolValue) {
             $response = $contactContext->edit($contact['id'], array($field['alias'] => $value));
             $this->assertErrors($response);
             $this->assertTrue(isset($response['contact']['fields']['all'][$field['alias']]), $field['alias'].' does not exist in the field list');
-            $this->assertEquals($response['contact']['fields']['all'][$field['alias']], $value);
+            $this->assertEquals($response['contact']['fields']['all'][$field['alias']], $boolValue);
         }
 
         // Clean after youself
