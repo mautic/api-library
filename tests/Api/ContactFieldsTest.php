@@ -117,6 +117,33 @@ class ContactFieldsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testDefaultFieldValue()
+    {
+        $defaultValue = 'little kitten';
+        $apiContext = $this->getContext($this->context);
+        $fieldPayload = $this->testPayload;
+        $fieldPayload['defaultValue'] = $defaultValue;
+
+        // Create the field
+        $response = $apiContext->create($fieldPayload);
+        $this->assertPayload($response);
+        $field = $response[$this->itemName];
+
+        // Create a testing contact
+        $contactContext = $this->getContext('contacts');
+        $response = $contactContext->create(array('firstname' => 'Default Value', 'lastname' => 'API test'));
+        $this->assertErrors($response);
+        $this->assertTrue(isset($response['contact']['fields']['all'][$field['alias']]), $field['alias'].' does not exist in the field list');
+        $this->assertEquals($response['contact']['fields']['all'][$field['alias']], $defaultValue);
+        $contact = $response['contact'];
+
+        // Clean after youself
+        $response = $apiContext->delete($field['id']);
+        $this->assertErrors($response);
+        $response = $contactContext->delete($contact['id']);
+        $this->assertErrors($response);
+    }
+
     public function testEditPatch()
     {
         $apiContext = $this->getContext($this->context);
