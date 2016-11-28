@@ -128,11 +128,12 @@ class EmailsTest extends MauticApiTestCase
         //there should be an error as the email shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
         
-        // Change the type to template so we don't have to create a list
-        $this->testPayload['emailType'] = 'template';
+        // Unset the emailType, 'template' must be the default value
+        unset($this->testPayload['emailType']);
 
         $response = $apiContext->create($this->testPayload);
         $this->assertErrors($response);
+        $this->assertSame($response[$this->itemName]['emailType'], 'template');
 
         $response = $apiContext->edit(
             $response[$this->itemName]['id'],
