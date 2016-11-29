@@ -268,6 +268,7 @@ class CampaignsTest extends MauticApiTestCase
         //now delete the campaign
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
+        $this->clearPayloadItems();
     }
 
     public function testEventAndSourceDeleteViaPut()
@@ -347,5 +348,6 @@ class CampaignsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $response = $apiContext->delete($campaign['id']);
         $this->assertErrors($response);
+        $this->clearPayloadItems();
     }
 }
