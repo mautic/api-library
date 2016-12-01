@@ -25,6 +25,8 @@ include __DIR__ . '/vendor/autoload.php';
 
 use Mautic\Auth\ApiAuth;
 
+session_start();
+
 $publicKey = ''; 
 $secretKey = ''; 
 $callback  = ''; 
@@ -47,8 +49,8 @@ $settings['refreshToken']       = $refreshToken;
 */
 
 // Initiate the auth object
-$auth = new ApiAuth();
-$auth->newAuth($settings);
+$initAuth = new ApiAuth();
+$auth = $initAuth->newAuth($settings);
 
 // Initiate process for obtaining an access token; this will redirect the user to the $authorizationUrl and/or
 // set the access_tokens when the user is redirected back after granting authorization
