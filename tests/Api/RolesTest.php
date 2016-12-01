@@ -9,15 +9,28 @@
 
 namespace Mautic\Tests\Api;
 
-class PagesTest extends MauticApiTestCase
+class RolesTest extends MauticApiTestCase
 {
+    /**
+     * Payload of example form to test the endpoints with
+     *
+     * @var array
+     */
     protected $testPayload = array(
-        'title' => 'test'
+        'name' => 'API test role',
+        'description' => 'created via AIP',
+        'rawPermissions' => array (
+            'email:emails' => 
+            array (
+                'viewown',
+                'viewother',
+            ),
+        )
     );
 
-    protected $context = 'pages';
+    protected $context = 'roles';
 
-    protected $itemName = 'page';
+    protected $itemName = 'role';
 
     public function testGetList()
     {
@@ -28,7 +41,7 @@ class PagesTest extends MauticApiTestCase
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
+        $apiContext  = $this->getContext($this->context);
 
         // Test Create
         $response = $apiContext->create($this->testPayload);
@@ -45,36 +58,37 @@ class PagesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload);
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->edit(10000, $this->testPayload);
 
-        //there should be an error as the page shouldn't exist
+        //there should be an error as the form shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
         $response = $apiContext->create($this->testPayload);
+
         $this->assertErrors($response);
 
         $response = $apiContext->edit(
             $response[$this->itemName]['id'],
             array(
-                'title' => 'test2'
+                'lastName' => 'test2',
             )
         );
 
         $this->assertErrors($response);
 
-        //now delete the page
+        //now delete the form
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
+        $apiContext = $this->getContext($this->context);
+        $response   = $apiContext->edit(10000, $this->testPayload, true);
+        $this->assertPayload($response);
 
-        //now delete the page
+        //now delete the form
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }

@@ -9,26 +9,27 @@
 
 namespace Mautic\Tests\Api;
 
-class PagesTest extends MauticApiTestCase
+class CategoriesTest extends MauticApiTestCase
 {
     protected $testPayload = array(
-        'title' => 'test'
+        'title' => 'test',
+        'bundle' => 'asset'
     );
 
-    protected $context = 'pages';
+    protected $context = 'categories';
 
-    protected $itemName = 'page';
+    protected $itemName = 'category';
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
+        $categoryApi = $this->getContext($this->context);
+        $response    = $categoryApi->getList();
         $this->assertErrors($response);
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
+        $apiContext  = $this->getContext($this->context);
 
         // Test Create
         $response = $apiContext->create($this->testPayload);
@@ -45,37 +46,38 @@ class PagesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload);
+        $categoryApi = $this->getContext($this->context);
+        $response    = $categoryApi->edit(10000, $this->testPayload);
 
-        //there should be an error as the page shouldn't exist
+        //there should be an error as the category shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $apiContext->create($this->testPayload);
+        $response = $categoryApi->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $apiContext->edit(
+        $response = $categoryApi->edit(
             $response[$this->itemName]['id'],
             array(
-                'title' => 'test2'
+                'title' => 'test2',
+                'bundle' => 'asset'
             )
         );
 
         $this->assertErrors($response);
 
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        //now delete the category
+        $response = $categoryApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload, true);
+        $categoryApi = $this->getContext($this->context);
+        $response    = $categoryApi->edit(10000, $this->testPayload, true);
         $this->assertErrors($response);
 
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        //now delete the category
+        $response = $categoryApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }

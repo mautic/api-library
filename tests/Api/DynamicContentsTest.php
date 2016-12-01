@@ -9,20 +9,21 @@
 
 namespace Mautic\Tests\Api;
 
-class PagesTest extends MauticApiTestCase
+class DynamicContentsTest extends MauticApiTestCase
 {
     protected $testPayload = array(
-        'title' => 'test'
+        'name' => 'test',
+        'content' => 'test'
     );
 
-    protected $context = 'pages';
+    protected $context = 'DynamicContents';
 
-    protected $itemName = 'page';
+    protected $itemName = 'dynamicContent';
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
+        $dynamiccontentApi = $this->getContext($this->context);
+        $response          = $dynamiccontentApi->getList();
         $this->assertErrors($response);
     }
 
@@ -45,37 +46,37 @@ class PagesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload);
+        $dynamiccontentApi = $this->getContext($this->context);
+        $response          = $dynamiccontentApi->edit(10000, $this->testPayload);
 
-        //there should be an error as the page shouldn't exist
+        //there should be an error as the dynamiccontent shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $apiContext->create($this->testPayload);
+        $response = $dynamiccontentApi->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $apiContext->edit(
+        $response = $dynamiccontentApi->edit(
             $response[$this->itemName]['id'],
             array(
-                'title' => 'test2'
+                'name' => 'test2'
             )
         );
 
         $this->assertErrors($response);
 
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        //now delete the dynamiccontent
+        $response = $dynamiccontentApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
+        $dynamiccontentApi = $this->getContext($this->context);
+        $response          = $dynamiccontentApi->edit(10000, $this->testPayload, true);
+        $this->assertPayload($response);
 
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        //now delete the dynamiccontent
+        $response = $dynamiccontentApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }

@@ -21,30 +21,6 @@ class Emails extends Api
     protected $endpoint = 'emails';
 
     /**
-     * {@inheritdoc}
-     */
-    public function create(array $parameters)
-    {
-        return $this->actionNotSupported('create');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function edit($id, array $parameters, $createIfNotExists = false)
-    {
-        return $this->actionNotSupported('edit');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        return $this->actionNotSupported('delete');
-    }
-
-    /**
      * Send email to the assigned lists
      *
      * @param int $id

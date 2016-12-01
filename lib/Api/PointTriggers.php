@@ -21,26 +21,25 @@ class PointTriggers extends Api
     protected $endpoint = 'points/triggers';
 
     /**
-     * {@inheritdoc}
+     * Remove events from a point trigger
+     *
+     * @param integer $triggerId
+     * @param array   $eventIds
+     *
+     * @return array|mixed
      */
-    public function create(array $parameters)
+    public function deleteTriggerEvents($triggerId, array $eventIds)
     {
-        return $this->actionNotSupported('create');
+        return $this->makeRequest($this->endpoint.'/'.$triggerId.'/events/delete', array('events' => $eventIds), 'DELETE');
     }
 
     /**
-     * {@inheritdoc}
+     * Get list of available event types
+     *
+     * @return array|mixed
      */
-    public function edit($id, array $parameters, $createIfNotExists = false)
+    public function getEventTypes()
     {
-        return $this->actionNotSupported('edit');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        return $this->actionNotSupported('delete');
+        return $this->makeRequest($this->endpoint.'/events/types');
     }
 }

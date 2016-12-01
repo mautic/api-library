@@ -9,71 +9,59 @@
 
 namespace Mautic\Tests\Api;
 
-class AssetsTest extends MauticApiTestCase
+class NotesTest extends MauticApiTestCase
 {
     protected $testPayload = array(
-        'title' => 'Mautic Logo sent as a API request',
-        'storageLocation' => 'remote',
-        'file' => 'https://www.mautic.org/media/logos/logo/Mautic_Logo_DB.pdf'
+        'text' => 'Contact note created via API request',
+        'type' => 'general',
     );
 
-    protected $skipPayloadAssertion = array('file');
+    protected $context = 'notes';
 
-    protected $context = 'assets';
+    protected $itemName = 'note';
 
-    protected $itemName = 'asset';
+    protected $skipPayloadAssertion = array('lead');
+
+    public function setUp() {
+        // Create a contact for test
+        $apiContext = $this->getContext('contacts');
+        $response = $apiContext->create(array('firstname' => 'Note API test'));
+        $this->assertErrors($response);
+        $this->testPayload['lead'] = $response['contact']['id'];
+    }
+
+    public function tearDown() {
+        // Delete a contact from test
+        $apiContext = $this->getContext('contacts');
+        $response = $apiContext->delete($this->testPayload['lead']);
+        $this->assertErrors($response);
+    }
 
     public function testGetList()
     {
         $apiContext = $this->getContext($this->context);
         $response = $apiContext->getList();
-
         $this->assertErrors($response);
+        $this->assertTrue(isset($response[$this->context]));
     }
 
-    public function testCreateWithLocalFileGetAndDelete()
+    public function testCreateGetAndDelete()
     {
         $apiContext = $this->getContext($this->context);
 
-        // Upload a testing file
-        $apiContextFiles = $this->getContext('files');
-        $apiContextFiles->setFolder('assets');
-        $fileRequest = array(
-            'file' => dirname(__DIR__).'/'.'mauticlogo.png'
-        );
-        $response = $apiContextFiles->create($fileRequest);
-        $this->assertErrors($response);
-        $file = $response['file'];
-
-        // Build local file payload
-        $testPayload = $this->testPayload;
-        $testPayload['storageLocation'] = 'local';
-        $testPayload['file'] = $file['name'];
-
-        // Create Asset
-        $response = $apiContext->create($testPayload);
-        $this->assertPayload($response, $testPayload);
-
-        $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertPayload($response, $testPayload);
-        
-        // Delete Asset
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
-    }
-
-    public function testCreateWithRemoteFileGetAndDelete()
-    {
-        $apiContext = $this->getContext($this->context);
-
-        // Create Asset
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
 
+        // Test get contact notes endpoint
+        $contactContext = $this->getContext('contacts');
+        $responseNotes  = $contactContext->getContactNotes($this->testPayload['lead']);
+        $this->assertErrors($responseNotes);
+        $this->assertEquals($responseNotes['total'], 1);
+        $this->assertFalse(empty($responseNotes['notes']));
+
         $response = $apiContext->get($response[$this->itemName]['id']);
         $this->assertPayload($response);
-        
-        // Delete Asset
+
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
@@ -90,7 +78,7 @@ class AssetsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         $updatePayload = array(
-            'title' => 'test2',
+            'text' => 'test2',
         );
 
         $response = $apiContext->edit($response[$this->itemName]['id'], $updatePayload);

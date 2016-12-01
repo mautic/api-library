@@ -14,6 +14,22 @@ namespace Mautic\Api;
  */
 class Contacts extends Api
 {
+
+    /**
+     * Contact unsubscribed themselves.
+     */
+    const UNSUBSCRIBED = 1;
+
+    /**
+     * Contact was unsubscribed due to an unsuccessful send.
+     */
+    const BOUNCED = 2;
+
+    /**
+     * Contact was manually unsubscribed by user.
+     */
+    const MANUAL = 3;
+
     /**
      * {@inheritdoc}
      */
@@ -50,6 +66,40 @@ class Contacts extends Api
     }
 
     /**
+     * Get a list of a contact's engagement events
+     *
+     * @param int    $id Contact ID
+     * @param string $search
+     * @param array  $includeEvents
+     * @param array  $excludeEvents
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int    $page
+     *
+     * @return array|mixed
+     */
+    public function getEvents($id, $search = '', array $includeEvents = array(), array $excludeEvents = array(), $orderBy = '', $orderByDir = 'ASC', $page = 1)
+    {
+        $parameters = array(
+            'filters' => array(
+                'search' => $search,
+                'includeEvents' => $includeEvents,
+                'excludeEvents' => $excludeEvents,
+            ),
+            'order' => array(
+                $orderBy,
+                $orderByDir,
+            ),
+            'page' => $page
+        );
+
+        return $this->makeRequest(
+            $this->endpoint.'/'.$id.'/events',
+            $parameters
+        );
+    }
+
+    /**
      * Get a list of a contact's notes
      *
      * @param int    $id Contact ID
@@ -77,9 +127,10 @@ class Contacts extends Api
     }
 
     /**
-     * Get a segment of smart segments the lead is in
+     * Get a segment of smart segments the contact is in
      *
      * @param $id
+     *
      * @return array|mixed
      */
     public function getContactSegments($id)
@@ -88,13 +139,77 @@ class Contacts extends Api
     }
 
     /**
-     * Get a segment of campaigns the lead is in
+     * Get a segment of campaigns the contact is in
      *
      * @param $id
+     *
      * @return array|mixed
      */
     public function getContactCampaigns($id)
     {
         return $this->makeRequest($this->endpoint.'/'.$id.'/campaigns');
+    }
+
+    /**
+     * Add the points to a contact
+     *
+     * @param int $id
+     * @param int $points
+     * @param array $parameters 'eventName' and 'actionName'
+     *
+     * @return mixed
+     */
+    public function addPoints($id, $points, array $parameters = array()) {
+        return $this->makeRequest('contacts/'.$id.'/points/plus/'.$points, $parameters, 'POST');
+    }
+
+    /**
+     * Subtract points from a contact
+     *
+     * @param int $id
+     * @param int $points
+     * @param array $parameters 'eventName' and 'actionName'
+     *
+     * @return mixed
+     */
+    public function subtractPoints($id, $points, array $parameters = array()) {
+        return $this->makeRequest('contacts/'.$id.'/points/minus/'.$points, $parameters, 'POST');
+    }
+
+    /**
+     * Adds Do Not Contact
+     *
+     * @param int    $id
+     * @param string $channel
+     *
+     * @return mixed
+     */
+    public function addDnc($id, $channel = 'email', $reason = Contact::MANUAL, $channelId = null, $comments = 'via API') {
+
+        return $this->makeRequest(
+            'contacts/'.$id.'/dnc/add/'.$channel,
+            array(
+                'reason' => $reason,
+                'channelId' => $channelId,
+                'comments' => $comments,
+            ),
+            'POST'
+        );
+    }
+
+    /**
+     * Removes Do Not Contact
+     *
+     * @param int    $id
+     * @param string $channel
+     *
+     * @return mixed
+     */
+    public function removeDnc($id, $channel) {
+        return $this->makeRequest(
+            'contacts/'.$id.'/dnc/remove/'.$channel,
+            array(),
+            'POST'
+        );
     }
 }

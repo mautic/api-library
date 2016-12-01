@@ -3,10 +3,14 @@ return array(
     // Required for both OAuth 1a and 2 testing
     'accessToken'     => '',
     'apiUrl'          => 'http://example.com/index_dev.php/api/',
+    'testEmail'       => 'notexisting@email.com',
 
     // Required only for OAuth 1a testing
     'requestTokenUrl' => '', // Set with any string to force the library to use the OAuth1.a spec; leave blank to use OAuth2
     'clientKey'       => '',
     'clientSecret'    => '',
-    'callback'        => ''
+    'callback'        => '',
+
+    // Usefull only for OAuth 2 testing
+    'refreshToken'     => ''
 );

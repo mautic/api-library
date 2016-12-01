@@ -711,15 +711,8 @@ class OAuth extends ApiAuth implements AuthInterface
             $parameters['access_token'] = $this->_access_token;
         }
 
-        //Create a querystring for GET/DELETE requests
-        if (count($parameters) > 0 && in_array($method, array('GET', 'DELETE')) && strpos($url, '?') === false) {
-            $url = $url.'?'.http_build_query($parameters);
-            $this->log('URL updated to '.$url);
-        }
-
         //Set default CURL options
         $options = array(
-            CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_HEADER         => true
@@ -732,21 +725,60 @@ class OAuth extends ApiAuth implements AuthInterface
             $options[CURLOPT_FOLLOWLOCATION] = true;
         }
 
-        //Set CURL headers for oauth 1.0 requests
-        if ($this->isOauth1()) {
-            $options[CURLOPT_HTTPHEADER] = $header;
-        }
-
         //Set custom REST method if not GET or POST
         if (!in_array($method, array('GET', 'POST'))) {
             $options[CURLOPT_CUSTOMREQUEST] = $method;
         }
 
         //Set post fields for POST/PUT/PATCH requests
+        $query = [];
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
+
+            //Set file to upload
+            // Sending file data requires an array to set
+            // the Content-Type header to multipart/form-data
+            if (!empty($parameters['file']) && file_exists($parameters['file'])) {
+                $options[CURLOPT_INFILESIZE] = filesize($parameters['file']);
+                $parameters['file'] = $this->crateCurlFile($parameters['file']);
+                $uploadHeaders = array("Content-Type:multipart/form-data");
+
+                if ($this->isOauth1()) {
+                    array_merge($header, $uploadHeaders);
+                } else {
+                    $header = $uploadHeaders;
+
+                    // Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
+                    $query['access_token'] = $parameters['access_token'];
+                }
+            } else {
+                $parameters = http_build_query($parameters, '', '&');
+            }
+
             $options[CURLOPT_POST]       = true;
-            $options[CURLOPT_POSTFIELDS] = http_build_query($parameters, '', '&');
-            $this->log('Posted parameters = '.$options[CURLOPT_POSTFIELDS]);
+            $options[CURLOPT_POSTFIELDS] = $parameters;
+
+            if (is_array($parameters)) {
+                $parameters = print_r($parameters, true);
+            }
+
+            $this->log('Posted parameters = '.$parameters);
+        } else {
+            $query = $parameters;
+        }
+
+        //Create a query string for GET/DELETE requests
+        if (count($query) > 0) {
+            $queryGlue = strpos($url, '?') === false ? '?' : '&';
+            $url       = $url.$queryGlue.http_build_query($query);
+            $this->log('URL updated to '.$url);
+        }
+
+        // Set the URL
+        $options[CURLOPT_URL] = $url;
+
+        //Set CURL headers for oauth 1.0 requests
+        if (!empty($header)) {
+            $options[CURLOPT_HTTPHEADER] = $header;
         }
 
         //Make CURL request
@@ -792,6 +824,28 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         return ($responseGood) ? $parsed : $body;
+    }
+
+    /**
+     * Build the CURL file based on PHP version
+     *
+     * @param  string $filename
+     * @param  string $mimetype
+     * @param  string $postname
+     *
+     * @return string|CURLFile
+     */
+    protected function crateCurlFile($filename, $mimetype = '', $postname = '')
+    {
+        if (!function_exists('curl_file_create')) {
+            // For PHP < 5.5
+            return "@$filename;filename="
+                . ($postname ?: basename($filename))
+                . ($mimetype ? ";type=$mimetype" : '');
+        }
+
+        // For PHP >= 5.5
+        return curl_file_create($filename, $mimetype, $postname);
     }
 
     /**

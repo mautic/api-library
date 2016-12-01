@@ -9,38 +9,20 @@
 
 namespace Mautic\Tests\Api;
 
-class SegmentsTest extends MauticApiTestCase
+class StagesTest extends MauticApiTestCase
 {
     protected $testPayload = array(
-        'name' => 'API test'
+        'name' => 'test'
     );
 
-    protected $context = 'segments';
+    protected $context = 'stages';
 
-    protected $itemName = 'list'; // this will be changed to 'segment' in Mautic 3
+    protected $itemName = 'stage';
 
     public function testGetList()
     {
         $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
-        $this->assertErrors($response);
-    }
-
-    public function testGetListMinimal()
-    {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList('', 0,  0, '', 'ASC', false, true);
-        $this->assertErrors($response);
-    }
-
-    public function testCreateAndDelete()
-    {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-
-        //now delete the segment
-        $response = $apiContext->delete($response[$this->itemName]['id']); 
+        $response = $apiContext->getList();
         $this->assertErrors($response);
     }
 
@@ -64,22 +46,22 @@ class SegmentsTest extends MauticApiTestCase
     public function testEditPatch()
     {
         $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload);
+        $response = $apiContext->edit(10000, $this->testPayload);
 
-        //there should be an error as the segment shouldn't exist
+        //there should be an error as the stage shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
 
         $update = array(
-            'name' => 'test2'
+            'name' => 'test'
         );
 
         $response = $apiContext->edit($response[$this->itemName]['id'], $update);
         $this->assertPayload($response, $update);
 
-        //now delete the segment
+        //now delete the stage
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
@@ -87,10 +69,10 @@ class SegmentsTest extends MauticApiTestCase
     public function testEditPut()
     {
         $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload, true);
+        $response = $apiContext->edit(10000, $this->testPayload, true);
         $this->assertPayload($response);
 
-        //now delete the segment
+        //now delete the stage
         $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
@@ -99,36 +81,30 @@ class SegmentsTest extends MauticApiTestCase
     {
         // Create contact
         $contactsContext = $this->getContext('contacts');
-        $response = $contactsContext->create(array('firstname' => 'API segments test'));
+        $response = $contactsContext->create(array('firstname' => 'API stages test'));
         $this->assertErrors($response);
         $contact = $response['contact'];
 
-        // Create segment
+        // Create stage
         $apiContext = $this->getContext($this->context);
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
-        $segment = $response[$this->itemName];
+        $stage = $response[$this->itemName];
 
-        // Add the contact to the segment
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->addContact($segment['id'], $contact['id']);
+        // Add contact to the stage
+        $response = $apiContext->addContact($stage['id'], $contact['id']);
         $this->assertErrors($response);
+        $this->assertSuccess($response);
 
-        // Test get contact segments API endpoint
-        $contactContext = $this->getContext('contacts');
-        $response = $contactContext->getContactSegments($contact['id']);
+        // Remove the contact from the stage
+        $response = $apiContext->removeContact($stage['id'], $contact['id']);
         $this->assertErrors($response);
-        $this->assertEquals($response['total'], 1);
-        $this->assertFalse(empty($response['lists']));
+        $this->assertSuccess($response);
 
-        // Remove the contact from the segment
-        $response = $apiContext->removeContact($segment['id'], $contact['id']);
-        $this->assertErrors($response);
-
-        // Delete the contact and the segment
+        // Delete the contact and the stage
         $response = $contactsContext->delete($contact['id']);
         $this->assertErrors($response);
-        $response = $apiContext->delete($segment['id']);
+        $response = $apiContext->delete($stage['id']);
         $this->assertErrors($response);
     }
 }

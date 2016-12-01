@@ -7,11 +7,16 @@
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
-namespace Mautic\Tests\Api;
+namespace Mautic\Api;
 
-class LeadsTest extends ContactsTest
+/**
+ * Notes Context
+ */
+class Notes extends Api
 {
-    protected $context = 'leads';
 
-    // Use the method from ContactsTest to test the 'leads' endpoint for BC
+    /**
+     * {@inheritdoc}
+     */
+    protected $endpoint = 'notes';
 }

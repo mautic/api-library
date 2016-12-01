@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Mautic
- * @copyright   2014 Mautic, NP. All rights reserved.
+ * @copyright   2016 Mautic, NP. All rights reserved.
  * @author      Mautic
  * @link        http://mautic.org
  * @license     MIT http://opensource.org/licenses/MIT
@@ -10,13 +10,13 @@
 namespace Mautic\Api;
 
 /**
- * Assets Context
+ * Dynamiccontents Context
  */
-class Assets extends Api
+class DynamicContents extends Api
 {
 
     /**
      * {@inheritdoc}
      */
-    protected $endpoint = 'assets';
+    protected $endpoint = 'dynamiccontents';
 }

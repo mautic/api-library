@@ -21,26 +21,28 @@ class Forms extends Api
     protected $endpoint = 'forms';
 
     /**
-     * {@inheritdoc}
+     * Remove fields from a form
+     *
+     * @param integer $formId
+     * @param array   $fieldIds
+     *
+     * @return array|mixed
      */
-    public function create(array $parameters)
+    public function deleteFields($formId, array $fieldIds)
     {
-        return $this->actionNotSupported('create');
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/fields/delete', array('fields' => $fieldIds), 'DELETE');
     }
 
     /**
-     * {@inheritdoc}
+     * Remove actions from a form
+     *
+     * @param integer $formId
+     * @param array   $actionIds
+     *
+     * @return array|mixed
      */
-    public function edit($id, array $parameters, $createIfNotExists = false)
+    public function deleteActions($formId, array $actionIds)
     {
-        return $this->actionNotSupported('edit');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        return $this->actionNotSupported('delete');
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/actions/delete', array('actions' => $actionIds), 'DELETE');
     }
 }

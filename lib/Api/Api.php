@@ -214,11 +214,11 @@ class Api implements LoggerAwareInterface
      *
      * @return array|mixed
      */
-    public function getList($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false)
+    public function getList($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
     {
         $parameters = array();
 
-        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir', 'publishedOnly');
+        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir', 'publishedOnly', 'minimal');
 
         foreach ($args as $arg) {
             if (!empty($$arg)) {

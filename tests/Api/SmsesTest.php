@@ -9,15 +9,16 @@
 
 namespace Mautic\Tests\Api;
 
-class PagesTest extends MauticApiTestCase
+class SmsesTest extends MauticApiTestCase
 {
     protected $testPayload = array(
-        'title' => 'test'
+        'name' => 'test',
+        'message' => 'API test message'
     );
 
-    protected $context = 'pages';
+    protected $context = 'smses';
 
-    protected $itemName = 'page';
+    protected $itemName = 'sms';
 
     public function testGetList()
     {
@@ -45,37 +46,37 @@ class PagesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload);
+        $smsApi   = $this->getContext($this->context);
+        $response = $smsApi->edit(10000, $this->testPayload);
 
-        //there should be an error as the page shouldn't exist
+        //there should be an error as the sms shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $apiContext->create($this->testPayload);
+        $response = $smsApi->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $apiContext->edit(
+        $response = $smsApi->edit(
             $response[$this->itemName]['id'],
             array(
-                'title' => 'test2'
+                'name' => 'test2'
             )
         );
 
         $this->assertErrors($response);
 
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        //now delete the sms
+        $response = $smsApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
+        $smsApi = $this->getContext($this->context);
+        $response    = $smsApi->edit(10000, $this->testPayload, true);
+        $this->assertPayload($response);
 
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        //now delete the sms
+        $response = $smsApi->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 }

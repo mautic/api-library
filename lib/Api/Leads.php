@@ -13,6 +13,8 @@ namespace Mautic\Api;
  * Leads Context
  *
  * This class is deprecated and will be removed in future versions! Use Contacts instead!
+ *
+ * @deprecated Use Contacts instead!
  */
 class Leads extends Contacts
 {
