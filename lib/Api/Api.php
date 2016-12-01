@@ -91,7 +91,7 @@ class Api implements LoggerAwareInterface
      */
     public function setBaseUrl($url)
     {
-        if (strpos($url, -1) != '/') {
+        if(substr($url, -1) != '/') {
             $url .= '/';
         }
         
