@@ -176,7 +176,7 @@ $result = $contactApi->delete($contactId);
 // $result returned by an API call should be checked for errors
 $result = $contactApi->delete($contactId);
 
-if (isset($result['error'])) {
+if (isset($result['errors'])) {
     echo $result['error']['code'] . ": " . $result['error']['message'];
 } else {
     // do whatever with the info
