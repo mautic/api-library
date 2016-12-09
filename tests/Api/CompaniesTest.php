@@ -118,6 +118,13 @@ class CompaniesTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertSuccess($response);
 
+        // Test get contact companies API endpoint
+        $contactContext = $this->getContext('contacts');
+        $response = $contactContext->getContactCompanies($contact['id']);
+        $this->assertErrors($response);
+        $this->assertEquals($response['total'], 1);
+        $this->assertFalse(empty($response['companies']));
+
         // Remove the contact from the company
         $response = $apiContext->removeContact($company['id'], $contact['id']);
         $this->assertErrors($response);
