@@ -124,6 +124,20 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_debug = false;
 
     /**
+     * Holds string of HTTP response headers
+     *
+     * @var string
+     */
+    protected $_httpResponseHeaders;
+
+    /**
+     * Holds array of HTTP response CURL info
+     *
+     * @var array
+     */
+    protected $_httpResponseInfo;
+
+    /**
      * @param string $baseUrl               URL of the Mautic instance
      * @param string $version               ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
      * @param string $clientKey
@@ -785,17 +799,17 @@ class OAuth extends ApiAuth implements AuthInterface
         $curl = curl_init();
         curl_setopt_array($curl, $options);
 
-        $response      = curl_exec($curl);
-        $responseArray = explode("\r\n\r\n", $response);
-        $body          = array_pop($responseArray);
-        $header        = implode("\r\n\r\n", $responseArray);
-        $info          = curl_getinfo($curl);
+        $response                   = curl_exec($curl);
+        $responseArray              = explode("\r\n\r\n", $response);
+        $body                       = array_pop($responseArray);
+        $this->_httpResponseHeaders = implode("\r\n\r\n", $responseArray);
+        $this->_httpResponseInfo    = curl_getinfo($curl);
 
         curl_close($curl);
 
         if ($this->_debug) {
-            $_SESSION['oauth']['debug']['info']            = $info;
-            $_SESSION['oauth']['debug']['returnedHeaders'] = $header;
+            $_SESSION['oauth']['debug']['info']            = $this->_httpResponseInfo;
+            $_SESSION['oauth']['debug']['returnedHeaders'] = $this->_httpResponseHeaders;
             $_SESSION['oauth']['debug']['returnedBody']    = $body;
         }
 
@@ -815,7 +829,7 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         //Show error when http_code is not appropriate
-        if (!in_array($info['http_code'], array(200, 201))) {
+        if (!in_array($this->_httpResponseInfo['http_code'], array(200, 201))) {
             if ($responseGood) {
                 return $parsed;
             }
@@ -824,6 +838,50 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         return ($responseGood) ? $parsed : $body;
+    }
+
+    /**
+     * Build the HTTP response array out of the headers string
+     *
+     * @param  string $headersStr
+     *
+     * @return array
+     */
+    protected function parseHeaders($headersStr)
+    {
+        $headersArr = array();
+        $headersHlpr = explode("\r\n", $headersStr);
+
+        foreach ($headersHlpr as $header) {
+            $pos = strpos($header, ':');
+            if ($pos === false) {
+                $headersArr[] = trim($header);
+            } else {
+                $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, ($pos + 1)));
+            }
+        }
+
+        return $headersArr;
+    }
+
+    /**
+     * Returns array of HTTP response headers
+     *
+     * @return array
+     */
+    public function getResponseHeaders()
+    {
+        return $this->parseHeaders($this->_httpResponseHeaders);
+    }
+
+    /**
+     * Returns array of HTTP response headers
+     *
+     * @return array
+     */
+    public function getResponseInfo()
+    {
+        return $this->_httpResponseInfo;
     }
 
     /**

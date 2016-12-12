@@ -191,6 +191,43 @@ class Api implements LoggerAwareInterface
     }
 
     /**
+     * Returns HTTP response info
+     *
+     * @return array
+     */
+    public function getResponseInfo()
+    {
+        return $this->auth->getResponseInfo();
+    }
+
+    /**
+     * Returns HTTP response headers
+     *
+     * @return array
+     */
+    public function getResponseHeaders()
+    {
+        return $this->auth->getResponseHeaders();
+    }
+
+    /**
+     * Returns Mautic version from the HTTP response headers
+     * (the header exists since Mautic 2.4.0)
+     *
+     * @return string|null if not known
+     */
+    public function getMauticVersion()
+    {
+        $headers = $this->auth->getResponseHeaders();
+
+        if (isset($headers['Mautic-Version'])) {
+            return $headers['Mautic-Version'];
+        }
+
+        return null;
+    }
+
+    /**
      * Get a single item
      *
      * @param int $id
