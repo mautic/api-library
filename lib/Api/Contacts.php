@@ -127,7 +127,34 @@ class Contacts extends Api
     }
 
     /**
-     * Get a segment of smart segments the contact is in
+     * Get a list of a contact's devices
+     *
+     * @param int    $id Contact ID
+     * @param string $search
+     * @param int    $start
+     * @param int    $limit
+     * @param string $orderBy
+     * @param string $orderByDir
+     *
+     * @return array|mixed
+     */
+    public function getContactDevices($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
+    {
+        $parameters = array();
+
+        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir');
+
+        foreach ($args as $arg) {
+            if (!empty($$arg)) {
+                $parameters[$arg] = $$arg;
+            }
+        }
+
+        return $this->makeRequest($this->endpoint.'/'.$id.'/devices', $parameters);
+    }
+
+    /**
+     * Get a list of smart segments the contact is in
      *
      * @param $id
      *
@@ -139,7 +166,19 @@ class Contacts extends Api
     }
 
     /**
-     * Get a segment of campaigns the contact is in
+     * Get a list of companies the contact is in
+     *
+     * @param $id
+     *
+     * @return array|mixed
+     */
+    public function getContactCompanies($id)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$id.'/companies');
+    }
+
+    /**
+     * Get a list of campaigns the contact is in
      *
      * @param $id
      *

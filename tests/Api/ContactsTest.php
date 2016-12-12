@@ -22,9 +22,16 @@ class ContactsTest extends MauticApiTestCase
         $this->testPayload = array(
             'firstname' => 'test',
             'lastname'  => 'test',
-            'points'    => 3
+            'points'    => 3,
+            'tags'      => array(
+                'APItag1',
+                'APItag2',
+            )
         );
     }
+
+    protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags');
+
 
     protected function assertEventResponse($response, $expectedEvents = array())
     {
@@ -99,11 +106,12 @@ class ContactsTest extends MauticApiTestCase
 
         // Test Create
         $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
+        $this->assertEquals(count($response[$this->itemName]['tags']), count($this->testPayload['tags']));
 
         // Test Get
         $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->assertPayload($response);
 
         // Test Delete
         $response = $apiContext->delete($response[$this->itemName]['id']);
