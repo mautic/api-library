@@ -16,7 +16,7 @@ class DynamicContentsTest extends MauticApiTestCase
         'content' => 'test'
     );
 
-    protected $context = 'DynamicContents';
+    protected $context = 'dynamicContents';
 
     protected $itemName = 'dynamicContent';
 
