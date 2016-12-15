@@ -41,6 +41,35 @@ class UsersTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testGetListOfSpecificIds()
+    {
+        $apiContext = $this->getContext($this->context);
+
+        // Create some items first
+        $itemIds = array();
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $itemIds[] = $response[$this->itemName]['id'];
+        $this->testPayload['username'] = 'apitest2';
+        $this->testPayload['email'] = 'apitest2@email.com';
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $itemIds[] = $response[$this->itemName]['id'];
+
+        $search = 'ids:'.implode(',', $itemIds);
+
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getList($search);
+        $this->assertErrors($response);
+        $this->assertEquals(count($itemIds), $response['total']);
+
+        foreach ($response[$this->context] as $item) {
+            $this->assertTrue(in_array($item['id'], $itemIds));
+            $apiContext->delete($item['id']);
+            $this->assertErrors($response);
+        }
+    }
+
     public function testCreateGetAndDelete()
     {
         $apiContext  = $this->getContext($this->context);

@@ -85,14 +85,7 @@ class EmailsTest extends MauticApiTestCase
         );
     }
 
-    public function testGetList()
-    {
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->getList();
-        $this->assertErrors($response);
-    }
-
-    public function testCreateGetAndDelete()
+    protected function preparePayloadForSegmentEmail()
     {
         $apiContext = $this->getContext($this->context);
         $segmentApi = $this->getContext('segments');
@@ -102,6 +95,24 @@ class EmailsTest extends MauticApiTestCase
 
         // Add testing segment to the email
         $this->testPayload['lists'] = array($segment['id']);
+    }
+
+    public function testGetList()
+    {
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getList();
+        $this->assertErrors($response);
+    }
+
+    public function testGetListOfSpecificIds()
+    {
+        $this->preparePayloadForSegmentEmail();
+        $this->standardTestGetListOfSpecificIds();
+    }
+
+    public function testCreateGetAndDelete()
+    {
+        $this->preparePayloadForSegmentEmail();
 
         // Test Create
         $response = $apiContext->create($this->testPayload);

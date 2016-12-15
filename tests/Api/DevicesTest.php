@@ -47,6 +47,11 @@ class DevicesTest extends MauticApiTestCase
         $this->assertTrue(isset($response[$this->context]));
     }
 
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
+    }
+
     public function testCreateGetAndDelete()
     {
         $apiContext = $this->getContext($this->context);

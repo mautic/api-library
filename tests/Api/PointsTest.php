@@ -18,39 +18,48 @@ class PointsTest extends MauticApiTestCase
         'description' => 'created as a API test'
     );
 
+    protected $context = 'points';
+
+    protected $itemName = 'point';
+
     protected function assertPayload($response, array $payload = array()) {
         $this->assertErrors($response);
-        $this->assertFalse(empty($response['point']['id']), 'The point id is empty.');
-        $this->assertSame($response['point']['name'], $this->testPayload['name']);
+        $this->assertFalse(empty($response[$this->itemName]['id']), 'The point id is empty.');
+        $this->assertSame($response[$this->itemName]['name'], $this->testPayload['name']);
     }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext('points');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->getList();
         $this->assertErrors($response);
     }
 
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
+    }
+
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext('points');
+        $apiContext = $this->getContext($this->context);
 
         // Test Create
         $response = $apiContext->create($this->testPayload);
         $this->assertPayload($response);
 
         // Test Get
-        $response = $apiContext->get($response['point']['id']);
+        $response = $apiContext->get($response[$this->itemName]['id']);
         $this->assertPayload($response);
 
         // Test Delete
-        $response = $apiContext->delete($response['point']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext('points');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->edit(10000, $this->testPayload);
 
         //there should be an error as the point shouldn't exist
@@ -60,35 +69,35 @@ class PointsTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         $response = $apiContext->edit(
-            $response['point']['id'],
+            $response[$this->itemName]['id'],
             array(
                 'name' => 'test2',
             )
         );
 
         $this->assertErrors($response);
-        // $this->assertTrue(empty($response['point']['id']), 'The point id is empty.');
-        $this->assertSame($response['point']['name'], 'test2');
+        // $this->assertTrue(empty($response[$this->itemName]['id']), 'The point id is empty.');
+        $this->assertSame($response[$this->itemName]['name'], 'test2');
 
         //now delete the point
-        $response = $apiContext->delete($response['point']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext('points');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->edit(10000, $this->testPayload, true);
         $this->assertPayload($response);
 
         //now delete the point
-        $response = $apiContext->delete($response['point']['id']);
+        $response = $apiContext->delete($response[$this->itemName]['id']);
         $this->assertErrors($response);
     }
 
     public function testGetPointActionTypes()
     {
-        $apiContext = $this->getContext('points');
+        $apiContext = $this->getContext($this->context);
         $response   = $apiContext->getPointActionTypes();
         $this->assertErrors($response);
         $this->assertFalse(empty($response['pointActionTypes']), 'The pointActionTypes array is empty.');

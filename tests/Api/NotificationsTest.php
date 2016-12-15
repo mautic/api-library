@@ -28,6 +28,11 @@ class NotificationsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
+    }
+
     public function testCreateGetAndDelete()
     {
         $apiContext = $this->getContext($this->context);

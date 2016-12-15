@@ -62,4 +62,31 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
             $this->assertSame($response[$this->itemName][$itemProp], $itemVal);
         }
     }
+
+    protected function standardTestGetListOfSpecificIds()
+    {
+        $apiContext = $this->getContext($this->context);
+
+        // Create some items first
+        $itemIds = array();
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $itemIds[] = $response[$this->itemName]['id'];
+        $response = $apiContext->create($this->testPayload);
+        $this->assertErrors($response);
+        $itemIds[] = $response[$this->itemName]['id'];
+
+        $search = 'ids:'.implode(',', $itemIds);
+
+        $apiContext = $this->getContext($this->context);
+        $response = $apiContext->getList($search);
+        $this->assertErrors($response);
+        $this->assertEquals(count($itemIds), $response['total']);
+
+        foreach ($response[$this->context] as $item) {
+            $this->assertTrue(in_array($item['id'], $itemIds));
+            $apiContext->delete($item['id']);
+            $this->assertErrors($response);
+        }
+    }
 }

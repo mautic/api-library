@@ -206,6 +206,11 @@ class CampaignsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
+    }
+
     public function testCreateGetAndDelete()
     {
         $this->setUpPayloadClass();

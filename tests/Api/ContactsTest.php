@@ -57,27 +57,7 @@ class ContactsTest extends MauticApiTestCase
 
     public function testGetListOfSpecificIds()
     {
-        $apiContext = $this->getContext($this->context);
-
-        // Create some contacts first
-        $contactIds = array();
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-        $contactIds[] = $response['contact']['id'];
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-        $contactIds[] = $response['contact']['id'];
-
-        $search = 'ids:'.implode(',', $contactIds);
-
-        $apiContext = $this->getContext($this->context);
-        $response    = $apiContext->getList($search);
-        $this->assertErrors($response);
-        $this->assertEquals($response['total'], count($contactIds));
-
-        foreach ($response['contacts'] as $contact) {
-            $this->assertTrue(in_array($contact['id'], $contactIds));
-        }
+        $this->standardTestGetListOfSpecificIds();
     }
 
     public function testGetFieldList()

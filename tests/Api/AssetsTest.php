@@ -31,6 +31,11 @@ class AssetsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
+    }
+
     public function testCreateWithLocalFileGetAndDelete()
     {
         $apiContext = $this->getContext($this->context);
