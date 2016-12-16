@@ -11,19 +11,16 @@ namespace Mautic\Tests\Api;
 
 class PagesTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'title' => 'test'
-    );
-
-    protected $context = 'pages';
-
-    protected $itemName = 'page';
+    public function setUp() {
+        $this->api = $this->getContext('pages');
+        $this->testPayload = array(
+            'title' => 'test',
+        );
+    }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
-        $this->assertErrors($response);
+        $this->standardTestGetList();
     }
 
     public function testGetListOfSpecificIds()
@@ -33,54 +30,19 @@ class PagesTest extends MauticApiTestCase
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
-        // Test Create
-        $response = $apiContext->create($this->testPayload);
-        $this->assertPayload($response);
-
-        // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertPayload($response);
-
-        // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestCreateGetAndDelete();
     }
 
     public function testEditPatch()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload);
-
-        //there should be an error as the page shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
-
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-
-        $response = $apiContext->edit(
-            $response[$this->itemName]['id'],
-            array(
-                'title' => 'test2'
-            )
+        $editTo = array(
+            'title' => 'test2',
         );
-
-        $this->assertErrors($response);
-
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPatch($editTo);
     }
 
     public function testEditPut()
     {
-        $apiContext  = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertErrors($response);
-
-        //now delete the page
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 }

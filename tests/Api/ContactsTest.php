@@ -13,12 +13,11 @@ use Mautic\Api\Contacts;
 
 class ContactsTest extends MauticApiTestCase
 {
-    protected $context = 'contacts';
-
-    protected $itemName = 'contact';
+    protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags');
 
     public function setUp()
     {
+        $this->api = $this->getContext('contacts');
         $this->testPayload = array(
             'firstname' => 'test',
             'lastname'  => 'test',
@@ -29,9 +28,6 @@ class ContactsTest extends MauticApiTestCase
             )
         );
     }
-
-    protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags');
-
 
     protected function assertEventResponse($response, $expectedEvents = array())
     {
@@ -50,9 +46,7 @@ class ContactsTest extends MauticApiTestCase
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
-        $this->assertErrors($response);
+        $this->standardTestGetList();
     }
 
     public function testGetListOfSpecificIds()
@@ -62,7 +56,7 @@ class ContactsTest extends MauticApiTestCase
 
     public function testGetListOfSpecificSegment()
     {
-        $apiContext = $this->getContext($this->context);
+        
         $segmentApi = $this->getContext('segments');
 
         // Create Segment
@@ -78,23 +72,23 @@ class ContactsTest extends MauticApiTestCase
         for ($i = 0; $i <= 2; $i++) {
 
             // Create some items
-            $response = $apiContext->create($this->testPayload);
+            $response = $this->api->create($this->testPayload);
             $this->assertErrors($response);
-            $itemIds[] = $response[$this->itemName]['id'];
+            $itemIds[] = $response[$this->api->itemName()]['id'];
 
             // Add contacts to the segment
-            $response = $segmentApi->addContact($segmentId, $response[$this->itemName]['id']);
+            $response = $segmentApi->addContact($segmentId, $response[$this->api->itemName()]['id']);
             $this->assertErrors($response);
         }
 
         $search = 'segment:'.$segmentAlias;
-        $response = $apiContext->getList($search);
+        $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
 
         foreach ($response[$this->context] as $item) {
             $this->assertTrue(in_array($item['id'], $itemIds));
-            $apiContext->delete($item['id']);
+            $this->api->delete($item['id']);
             $this->assertErrors($response);
         }
 
@@ -104,71 +98,61 @@ class ContactsTest extends MauticApiTestCase
 
     public function testGetFieldList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response    = $apiContext->getFieldList();
+        $response    = $this->api->getFieldList();
         $this->assertErrors($response);
         $this->assertGreaterThan(0, count($response));
     }
 
     public function testGetSegmentsList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response    = $apiContext->getSegments();
+        $response    = $this->api->getSegments();
         $this->assertErrors($response);
     }
 
     public function testGetEvents()
     {
-        $apiContext = $this->getContext($this->context);
-
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $contact = $response[$this->itemName];
+        $contact = $response[$this->api->itemName()];
 
-        $response = $apiContext->getEvents($contact['id']);
+        $response = $this->api->getEvents($contact['id']);
         $this->assertEventResponse($response, array('lead.create', 'lead.identified'));
 
-        $response = $apiContext->delete($contact['id']);
+        $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
     }
 
     public function testGetEventsAdvanced()
     {
-        $apiContext = $this->getContext($this->context);
-
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $contact = $response[$this->itemName];
+        $contact = $response[$this->api->itemName()];
 
-        $response = $apiContext->getEvents($contact['id'], '', array('lead.identified'));
+        $response = $this->api->getEvents($contact['id'], '', array('lead.identified'));
         $this->assertEventResponse($response, array('lead.identified'));
 
-        $response = $apiContext->delete($contact['id']);
+        $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
         // Test Create
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
-        $this->assertEquals(count($response[$this->itemName]['tags']), count($this->testPayload['tags']));
+        $this->assertEquals(count($response[$this->api->itemName()]['tags']), count($this->testPayload['tags']));
 
         // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
+        $response = $this->api->get($response[$this->api->itemName()]['id']);
         $this->assertPayload($response);
 
         // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testDncAddInCreate()
     {
-        $apiContext = $this->getContext($this->context);
-
         // Add DNC to the payload
         $this->testPayload['doNotContact'] = array(
             array(
@@ -177,48 +161,45 @@ class ContactsTest extends MauticApiTestCase
             )
         );
 
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $this->assertEquals(count($response[$this->itemName]['doNotContact']), 1);
+        $this->assertEquals(count($response[$this->api->itemName()]['doNotContact']), 1);
 
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testDncAddRemoveEndpoints()
     {
-        $apiContext = $this->getContext($this->context);
-
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
         // Test Add
-        $response = $apiContext->addDnc($response[$this->itemName]['id'], 'email', Contacts::BOUNCED);
+        $response = $this->api->addDnc($response[$this->api->itemName()]['id'], 'email', Contacts::BOUNCED);
         $this->assertErrors($response);
-        $this->assertEquals(count($response[$this->itemName]['doNotContact']), 1);
+        $this->assertEquals(count($response[$this->api->itemName()]['doNotContact']), 1);
 
         // Test Remove
-        $response = $apiContext->removeDnc($response[$this->itemName]['id'], $response[$this->itemName]['doNotContact'][0]['channel']);
+        $response = $this->api->removeDnc($response[$this->api->itemName()]['id'], $response[$this->api->itemName()]['doNotContact'][0]['channel']);
         $this->assertErrors($response);
 
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
         $pointsSet   = 5;
-        $apiContext = $this->getContext($this->context);
-        $response    = $apiContext->edit(10000, $this->testPayload);
+        $response    = $this->api->edit(10000, $this->testPayload);
 
         //there should be an error as the contact shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $apiContext->edit(
-            $response[$this->itemName]['id'],
+        $response = $this->api->edit(
+            $response[$this->api->itemName()]['id'],
             array(
                 'firstname' => 'test2',
                 'lastname'  => 'test2',
@@ -227,22 +208,20 @@ class ContactsTest extends MauticApiTestCase
         );
 
         $this->assertErrors($response);
-        $this->assertSame($response[$this->itemName]['points'], $pointsSet, 'Points were not set correctly');
+        $this->assertSame($response[$this->api->itemName()]['points'], $pointsSet, 'Points were not set correctly');
 
         //now delete the contact
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatchFormError()
     {
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->create($this->testPayload);
-
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
-        $response = $apiContext->edit(
-            $response[$this->itemName]['id'],
+        $response = $this->api->edit(
+            $response[$this->api->itemName()]['id'],
             array(
                 'country' => 'not existing country'
             )
@@ -254,55 +233,46 @@ class ContactsTest extends MauticApiTestCase
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext($this->context);
-        $response    = $apiContext->edit(10000, $this->testPayload, true);
-
-        $this->assertErrors($response);
-
-        //now delete the contact
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 
     public function testAddPoints()
     {
         $pointToAdd = 5;
-        $apiContext = $this->getContext($this->context);
 
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $contact = $response[$this->itemName];
+        $contact = $response[$this->api->itemName()];
 
-        $response = $apiContext->addPoints($contact['id'], $pointToAdd);
+        $response = $this->api->addPoints($contact['id'], $pointToAdd);
         $this->assertErrors($response);
         $this->assertTrue(!empty($response['success']), 'Adding point to a contact with ID ='.$contact['id'].' was not successful');
 
-        $response = $apiContext->get($contact['id']);
+        $response = $this->api->get($contact['id']);
         $this->assertErrors($response);
-        $this->assertSame($response[$this->itemName]['points'], ($contact['points'] + $pointToAdd), 'Points were not added correctly');
+        $this->assertSame($response[$this->api->itemName()]['points'], ($contact['points'] + $pointToAdd), 'Points were not added correctly');
 
-        $response = $apiContext->delete($contact['id']);
+        $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
     }
 
     public function testSubtractPoints()
     {
         $pointToSub = 5;
-        $apiContext = $this->getContext($this->context);
-
-        $response = $apiContext->create($this->testPayload);
+        
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $contact = $response[$this->itemName];
+        $contact = $response[$this->api->itemName()];
 
-        $response = $apiContext->subtractPoints($contact['id'], $pointToSub);
+        $response = $this->api->subtractPoints($contact['id'], $pointToSub);
         $this->assertErrors($response);
         $this->assertTrue(!empty($response['success']), 'Subtracting point to a contact with ID ='.$contact['id'].' was not successful');
 
-        $response = $apiContext->get($contact['id']);
+        $response = $this->api->get($contact['id']);
         $this->assertErrors($response);
-        $this->assertSame($response[$this->itemName]['points'], ($contact['points'] - $pointToSub), 'Points were not subtracted correctly');
+        $this->assertSame($response[$this->api->itemName()]['points'], ($contact['points'] - $pointToSub), 'Points were not subtracted correctly');
 
-        $response = $apiContext->delete($contact['id']);
+        $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
     }
 }

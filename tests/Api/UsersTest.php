@@ -11,146 +11,104 @@ namespace Mautic\Tests\Api;
 
 class UsersTest extends MauticApiTestCase
 {
-    /**
-     * Payload of example form to test the endpoints with
-     *
-     * @var array
-     */
-    protected $testPayload = array(
-        'username' => 'apitest',
-        'firstName' => 'API',
-        'lastName' => 'Test',
-        'email' => 'apitest@email.com',
-        'plainPassword' => array(
-            'password' => 'topSecret007',
-            'confirm' => 'topSecret007',
-        ),
-        'role' => 1,
-    );
-
     protected $skipPayloadAssertion = array('plainPassword', 'role');
 
-    protected $context = 'users';
+    public function setUp() {
+        $this->api = $this->getContext('users');
+        $this->testPayload = $this->getUniqueUser();
+    }
 
-    protected $itemName = 'user';
+    protected function generateRandomUsername($length = 8) {
+        $x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return 'API_'.substr(str_shuffle(str_repeat($x, ceil($length / strlen($x)))), 1, $length);
+    }
+
+    protected function getUniqueUser() {
+        $username = $this->generateRandomUsername();
+        return array(
+            'username' => $username,
+            'firstName' => 'API',
+            'lastName' => 'Test',
+            'email' => $username.'@email.com',
+            'plainPassword' => array(
+                'password' => 'topSecret007',
+                'confirm' => 'topSecret007',
+            ),
+            'role' => 1, // Should exist in every Mautic instance
+        );
+    }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
-        $this->assertErrors($response);
+        $this->standardTestGetList();
     }
 
     public function testGetListOfSpecificIds()
     {
-        $apiContext = $this->getContext($this->context);
-
         // Create some items first
         $itemIds = array();
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
-        $this->testPayload['username'] = 'apitest2';
-        $this->testPayload['email'] = 'apitest2@email.com';
-        $response = $apiContext->create($this->testPayload);
+        $itemIds[] = $response[$this->api->itemName()]['id'];
+        $user2 = $this->getUniqueUser();
+        $response = $this->api->create($user2);
         $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
+        $itemIds[] = $response[$this->api->itemName()]['id'];
 
         $search = 'ids:'.implode(',', $itemIds);
-
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->getList($search);
+        $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
 
-        foreach ($response[$this->context] as $item) {
+        foreach ($response[$this->api->listName()] as $item) {
             $this->assertTrue(in_array($item['id'], $itemIds));
-            $apiContext->delete($item['id']);
+            $this->api->delete($item['id']);
             $this->assertErrors($response);
         }
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext  = $this->getContext($this->context);
-
-        // Test Create
-        $response = $apiContext->create($this->testPayload);
-        $this->assertPayload($response);
-
-        // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertPayload($response);
-
-        // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestCreateGetAndDelete();
     }
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload);
-
-        //there should be an error as the form shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
-
-        $response = $apiContext->create($this->testPayload);
-
-        $this->assertErrors($response);
-
-        $response = $apiContext->edit(
-            $response[$this->itemName]['id'],
-            array(
-                'lastName' => 'test2',
-            )
+        $editTo = array(
+            'lastName' => 'test2',
         );
-
-        $this->assertErrors($response);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPatch($editTo);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertPayload($response);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 
     public function testGetSelf()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getSelf();
+        $response = $this->api->getSelf();
         $this->assertErrors($response);
     }
 
     public function testGetSelfPermissionsString()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getSelf();
+        $response = $this->api->getSelf();
         $this->assertErrors($response);
 
         $permission = 'user:users:create';
-        $response   = $apiContext->checkPermission($response['id'], $permission);
+        $response = $this->api->checkPermission($response['id'], $permission);
         $this->assertErrors($response);
         $this->assertTrue(isset($response[$permission]));
     }
 
     public function testGetSelfPermissionsArray()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getSelf();
+        $response = $this->api->getSelf();
         $this->assertErrors($response);
 
         $permission = array('user:users:create', 'user:users:edit');
-        $response   = $apiContext->checkPermission($response['id'], $permission);
+        $response = $this->api->checkPermission($response['id'], $permission);
         $this->assertErrors($response);
         foreach ($permission as $p) {
             $this->assertTrue(isset($response[$p]));

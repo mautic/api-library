@@ -11,38 +11,32 @@ namespace Mautic\Tests\Api;
 
 class NotesTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'text' => 'Contact note created via API request',
-        'type' => 'general',
-    );
-
-    protected $context = 'notes';
-
-    protected $itemName = 'note';
-
     protected $skipPayloadAssertion = array('lead');
 
     public function setUp() {
+        $this->api = $this->getContext('notes');
+        $this->testPayload = array(
+            'text' => 'Contact note created via API request',
+            'type' => 'general',
+        );
+
         // Create a contact for test
-        $apiContext = $this->getContext('contacts');
-        $response = $apiContext->create(array('firstname' => 'Note API test'));
+        $contactApi = $this->getContext('contacts');
+        $response = $contactApi->create(array('firstname' => 'Note API test'));
         $this->assertErrors($response);
         $this->testPayload['lead'] = $response['contact']['id'];
     }
 
     public function tearDown() {
         // Delete a contact from test
-        $apiContext = $this->getContext('contacts');
-        $response = $apiContext->delete($this->testPayload['lead']);
+        $this->api = $this->getContext('contacts');
+        $response = $this->api->delete($this->testPayload['lead']);
         $this->assertErrors($response);
     }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->getList();
-        $this->assertErrors($response);
-        $this->assertTrue(isset($response[$this->context]));
+        $this->standardTestGetList();
     }
 
     public function testGetListOfSpecificIds()
@@ -52,9 +46,7 @@ class NotesTest extends MauticApiTestCase
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
 
         // Test get contact notes endpoint
@@ -64,44 +56,23 @@ class NotesTest extends MauticApiTestCase
         $this->assertEquals($responseNotes['total'], 1);
         $this->assertFalse(empty($responseNotes['notes']));
 
-        $response = $apiContext->get($response[$this->itemName]['id']);
+        $response = $this->api->get($response[$this->api->itemName()]['id']);
         $this->assertPayload($response);
 
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload);
-
-        //there should be an error as the form shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
-
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-
-        $updatePayload = array(
+        $editTo = array(
             'text' => 'test2',
         );
-
-        $response = $apiContext->edit($response[$this->itemName]['id'], $updatePayload);
-        $this->assertPayload($response, $updatePayload);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPatch($editTo);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertPayload($response);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 }

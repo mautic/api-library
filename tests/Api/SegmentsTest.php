@@ -11,151 +11,127 @@ namespace Mautic\Tests\Api;
 
 class SegmentsTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'name' => 'API test'
-    );
-
-    protected $context = 'segments';
-
-    protected $itemName = 'list'; // this will be changed to 'segment' in Mautic 3
+    public function setUp() {
+        $this->api = $this->getContext('segments');
+        $this->testPayload = array(
+            'name' => 'API test'
+        );
+    }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
+        $response = $this->api->getList();
         $this->assertErrors($response);
     }
 
     public function testGetListOfSpecificIds()
     {
-        $apiContext = $this->getContext($this->context);
-
         // Create some items first
         $itemIds = array();
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
-        $response = $apiContext->create($this->testPayload);
+        $itemIds[] = $response[$this->api->itemName()]['id'];
+        $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
+        $itemIds[] = $response[$this->api->itemName()]['id'];
 
         $search = 'ids:'.implode(',', $itemIds);
 
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->getList($search);
+        $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
 
         foreach ($response['lists'] as $item) {
             $this->assertTrue(in_array($item['id'], $itemIds));
-            $apiContext->delete($item['id']);
+            $this->api->delete($item['id']);
             $this->assertErrors($response);
         }
     }
 
     public function testGetListMinimal()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList('', 0,  0, '', 'ASC', false, true);
-        $this->assertErrors($response);
-    }
-
-    public function testCreateAndDelete()
-    {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-
-        //now delete the segment
-        $response = $apiContext->delete($response[$this->itemName]['id']); 
+        $response = $this->api->getList('', 0,  0, '', 'ASC', false, true);
         $this->assertErrors($response);
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
         // Test Create
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
 
         // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
+        $response = $this->api->get($response[$this->api->itemName()]['id']);
         $this->assertPayload($response);
 
         // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload);
+        $response = $this->api->edit(10000, $this->testPayload);
 
         //there should be an error as the segment shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
 
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
 
         $update = array(
             'name' => 'test2'
         );
 
-        $response = $apiContext->edit($response[$this->itemName]['id'], $update);
+        $response = $this->api->edit($response[$this->api->itemName()]['id'], $update);
         $this->assertPayload($response, $update);
 
         //now delete the segment
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload, true);
+        $response = $this->api->edit(10000, $this->testPayload, true);
         $this->assertPayload($response);
 
         //now delete the segment
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testAddAndRemove()
     {
         // Create contact
-        $contactsContext = $this->getContext('contacts');
-        $response = $contactsContext->create(array('firstname' => 'API segments test'));
+        $contactApi = $this->getContext('contacts');
+        $response = $contactApi->create(array('firstname' => 'API segments test'));
         $this->assertErrors($response);
         $contact = $response['contact'];
 
         // Create segment
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
-        $segment = $response[$this->itemName];
+        $segment = $response[$this->api->itemName()];
 
         // Add the contact to the segment
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->addContact($segment['id'], $contact['id']);
+        $response   = $this->api->addContact($segment['id'], $contact['id']);
         $this->assertErrors($response);
 
         // Test get contact segments API endpoint
-        $contactContext = $this->getContext('contacts');
-        $response = $contactContext->getContactSegments($contact['id']);
+        $response = $contactApi->getContactSegments($contact['id']);
         $this->assertErrors($response);
         $this->assertEquals($response['total'], 1);
         $this->assertFalse(empty($response['lists']));
 
         // Remove the contact from the segment
-        $response = $apiContext->removeContact($segment['id'], $contact['id']);
+        $response = $this->api->removeContact($segment['id'], $contact['id']);
         $this->assertErrors($response);
 
         // Delete the contact and the segment
-        $response = $contactsContext->delete($contact['id']);
+        $response = $contactApi->delete($contact['id']);
         $this->assertErrors($response);
-        $response = $apiContext->delete($segment['id']);
+        $response = $this->api->delete($segment['id']);
         $this->assertErrors($response);
     }
 }

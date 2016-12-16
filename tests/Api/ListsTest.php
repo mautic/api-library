@@ -11,7 +11,12 @@ namespace Mautic\Tests\Api;
 
 class ListsTest extends SegmentsTest
 {
-    protected $context = 'lists';
+    public function setUp() {
+        $this->api = $this->getContext('lists');
+        $this->testPayload = array(
+            'name' => 'API test'
+        );
+    }
 
     // Use the methods from SegmentsTest, just make sure that BC for 'lists' context still work
 }

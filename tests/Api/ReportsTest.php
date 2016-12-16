@@ -11,17 +11,18 @@ namespace Mautic\Tests\Api;
 
 class ReportsTest extends MauticApiTestCase
 {
+    public function setUp() {
+        $this->api = $this->getContext('reports');
+    }
+
     public function testGet()
     {
-        $apiContext = $this->getContext('reports');
-        $response   = $apiContext->get(1);
+        $response = $this->api->get(1);
         $this->assertErrors($response);
     }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext('reports');
-        $response   = $apiContext->getList();
-        $this->assertErrors($response);
+        $this->standardTestGetList();
     }
 }
