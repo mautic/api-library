@@ -86,7 +86,7 @@ class ContactsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
 
-        foreach ($response[$this->context] as $item) {
+        foreach ($response[$this->api->listName()] as $item) {
             $this->assertTrue(in_array($item['id'], $itemIds));
             $this->api->delete($item['id']);
             $this->assertErrors($response);
