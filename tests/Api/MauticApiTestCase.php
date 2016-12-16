@@ -78,7 +78,6 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
         $search = 'ids:'.implode(',', $itemIds);
 
-        $apiContext = $this->getContext($this->context);
         $response = $apiContext->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
