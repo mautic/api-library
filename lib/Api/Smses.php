@@ -19,4 +19,14 @@ class Smses extends Api
      * {@inheritdoc}
      */
     protected $endpoint = 'smses';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'smses';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'sms';
 }

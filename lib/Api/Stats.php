@@ -21,6 +21,11 @@ class Stats extends Api
     protected $endpoint = 'stats';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'stats';
+
+    /**
      * Get a list of stat items
      *
      * @param string $table database table name

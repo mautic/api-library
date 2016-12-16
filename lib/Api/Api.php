@@ -27,6 +27,20 @@ class Api implements LoggerAwareInterface
     protected $endpoint;
 
     /**
+     * Name of the array element where the list of items is
+     *
+     * @var string
+     */
+    protected $listName;
+
+    /**
+     * Name of the array element where the item data is
+     *
+     * @var string
+     */
+    protected $itemName;
+
+    /**
      * Base URL for API endpoints
      *
      * @var string
@@ -80,6 +94,26 @@ class Api implements LoggerAwareInterface
         $this->logger = $logger;
 
         return $this;
+    }
+
+    /**
+     * Returns list name
+     *
+     * @return string
+     */
+    public function listName()
+    {
+        return $this->listName;
+    }
+
+    /**
+     * Returns item name
+     *
+     * @return string
+     */
+    public function itemName()
+    {
+        return $this->itemName;
     }
 
     /**

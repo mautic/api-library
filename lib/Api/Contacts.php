@@ -36,6 +36,16 @@ class Contacts extends Api
     protected $endpoint = 'contacts';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'contacts';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'contact';
+
+    /**
      * Get a list of users available as contact owners
      *
      * @return array|mixed
