@@ -69,15 +69,13 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
         // Create some items first
         $itemIds = array();
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
+        for ($i = 0; $i <= 2; $i++) {
+            $response = $apiContext->create($this->testPayload);
+            $this->assertErrors($response);
+            $itemIds[] = $response[$this->itemName]['id'];
+        }
 
-        $search = 'ids:'.implode(',', $itemIds);
-
+        $search   = 'ids:'.implode(',', $itemIds);
         $response = $apiContext->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);

@@ -63,27 +63,27 @@ class ContactsTest extends MauticApiTestCase
     public function testGetListOfSpecificSegment()
     {
         $apiContext = $this->getContext($this->context);
-
-        // Create some items first
-        $itemIds = array();
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-        $itemIds[] = $response[$this->itemName]['id'];
+        $segmentApi = $this->getContext('segments');
 
         // Create Segment
-        $segmentPayload = array('name' => 'Contact Segment Search API test');
-        $segmentApi = $this->getContext('segments');
+        $segmentPayload = array(
+            'name' => 'Contact Segment Search API test'
+        );
         $response = $segmentApi->create($segmentPayload);
         $this->assertErrors($response);
         $segmentId = $response['list']['id'];
         $segmentAlias = $response['list']['alias'];
 
-        // Add contacts to the segment
-        foreach ($itemIds as $itemId) {
-            $response = $segmentApi->addContact($segmentId, $itemId);
+        $itemIds = array();
+        for ($i = 0; $i <= 2; $i++) {
+
+            // Create some items
+            $response = $apiContext->create($this->testPayload);
+            $this->assertErrors($response);
+            $itemIds[] = $response[$this->itemName]['id'];
+
+            // Add contacts to the segment
+            $response = $segmentApi->addContact($segmentId, $response[$this->itemName]['id']);
             $this->assertErrors($response);
         }
 
@@ -97,6 +97,9 @@ class ContactsTest extends MauticApiTestCase
             $apiContext->delete($item['id']);
             $this->assertErrors($response);
         }
+
+        $segmentApi->delete($segmentId);
+        $this->assertErrors($response);
     }
 
     public function testGetFieldList()
