@@ -50,7 +50,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
     {
         $this->assertErrors($response);
 
-        $this->assertFalse(empty($response[$this->itemName]['id']), 'The '.$this->itemName.' id is empty.');
+        $this->assertFalse(empty($response[$this->api->itemName()]['id']), 'The '.$this->api->itemName().' id is empty.');
 
         if (empty($payload)) {
             $payload = $this->testPayload;
@@ -58,32 +58,84 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
         foreach ($payload as $itemProp => $itemVal) {
             if (in_array($itemProp, $this->skipPayloadAssertion)) continue;
-            $this->assertTrue(array_key_exists($itemProp, $response[$this->itemName]), 'The ["'.$this->itemName.'" => "'.$itemProp.'"] doesn\'t exist in the response.');
-            $this->assertSame($response[$this->itemName][$itemProp], $itemVal);
+            $this->assertTrue(array_key_exists($itemProp, $response[$this->api->itemName()]), 'The ["'.$this->api->itemName().'" => "'.$itemProp.'"] doesn\'t exist in the response.');
+            $this->assertSame($response[$this->api->itemName()][$itemProp], $itemVal);
         }
     }
 
     protected function standardTestGetListOfSpecificIds()
     {
-        $apiContext = $this->getContext($this->context);
-
         // Create some items first
         $itemIds = array();
         for ($i = 0; $i <= 2; $i++) {
-            $response = $apiContext->create($this->testPayload);
+            $response = $this->api->create($this->testPayload);
             $this->assertErrors($response);
-            $itemIds[] = $response[$this->itemName]['id'];
+            $itemIds[] = $response[$this->api->itemName()]['id'];
         }
 
         $search   = 'ids:'.implode(',', $itemIds);
-        $response = $apiContext->getList($search);
+        $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
 
-        foreach ($response[$this->context] as $item) {
+        foreach ($response[$this->api->listName()] as $item) {
             $this->assertTrue(in_array($item['id'], $itemIds));
-            $apiContext->delete($item['id']);
+            $this->api->delete($item['id']);
             $this->assertErrors($response);
         }
+    }
+
+    protected function standardTestGetList()
+    {
+        $response = $this->api->getList();
+        $this->assertErrors($response);
+        $this->assertTrue(isset($response['total']));
+        $this->assertTrue(isset($response[$this->api->listName()]));
+    }
+
+    protected function standardTestCreateGetAndDelete(array $payload = null)
+    {
+        if (empty($payload)) {
+            $payload = $this->testPayload;
+        }
+
+        // Create item
+        $response = $this->api->create($payload);
+        $this->assertPayload($response, $payload);
+
+        // GET item
+        $response = $this->api->get($response[$this->api->itemName()]['id']);
+        $this->assertPayload($response, $payload);
+        
+        // Delete item
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
+        $this->assertErrors($response);
+    }
+
+    public function standardTestEditPatch(array $editTo)
+    {
+        $response = $this->api->edit(10000, $this->testPayload);
+
+        //there should be an error as the item shouldn't exist
+        $this->assertTrue(isset($response['error']), $response['error']['message']);
+
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+
+        $response = $this->api->edit($response[$this->api->itemName()]['id'], $editTo);
+        $this->assertPayload($response, $editTo);
+
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
+        $this->assertErrors($response);
+    }
+
+    public function standardTestEditPut()
+    {
+        $response = $this->api->edit(10000, $this->testPayload, true);
+        $this->assertPayload($response);
+
+        //now delete the category
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
+        $this->assertErrors($response);
     }
 }
