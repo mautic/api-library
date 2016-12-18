@@ -195,4 +195,6 @@ Configure the unit tests config before running the unit tests. The tests fire re
 6. Open the $_SESSION array and copy the 'access_token' to the local.config.php file.
 7. Then run `phpunit` to run the tests.
 
-Modify this command to run a specific test: `phpunit --filter testCreateGetAndDelete NotesTest tests/Api/NotesTest.php`
+Modify this command to run a specific test: `phpunit --filter testCreateGetAndDelete tests/Api/NotesTest.php`
+
+Modify this command to run all tests in one class: `phpunit --filter test tests/Api/NotesTest.php`

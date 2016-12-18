@@ -19,4 +19,14 @@ class Categories extends Api
      * {@inheritdoc}
      */
     protected $endpoint = 'categories';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'categories';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'category';
 }

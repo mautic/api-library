@@ -11,27 +11,24 @@ namespace Mautic\Tests\Api;
 
 class ResponseInfoTest extends MauticApiTestCase
 {
-    public function testGetVersion() {
-        $apiContext = $this->getContext('contacts');
-        $response = $apiContext->getList('', 0, 1);
+    public function setUp() {
+        $this->api = $this->getContext('contacts');
+        $response = $this->api->getList('', 0, 1);
         $this->assertErrors($response);
-        $version = $apiContext->getMauticVersion();
+    }
+    
+    public function testGetVersion() {
+        $version = $this->api->getMauticVersion();
         $this->assertRegExp("/^(\d+\.)?(\d+\.)?(.+|\d+)$/", $version);
     }
 
     public function testResponseInfo() {
-        $apiContext = $this->getContext('contacts');
-        $response = $apiContext->getList('', 0, 1);
-        $this->assertErrors($response);
-        $info = $apiContext->getResponseInfo();
+        $info = $this->api->getResponseInfo();
         $this->assertEquals($info['content_type'], 'application/json');
     }
 
     public function testResponseHeaders() {
-        $apiContext = $this->getContext('contacts');
-        $response = $apiContext->getList('', 0, 1);
-        $this->assertErrors($response);
-        $headers = $apiContext->getResponseHeaders();
+        $headers = $this->api->getResponseHeaders();
         $this->assertEquals($headers[0], 'HTTP/1.1 200 OK');
     }
 }

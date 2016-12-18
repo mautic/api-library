@@ -13,11 +13,18 @@ use Mautic\Tests\Api;
 
 class CompanyFieldTest extends ContactFieldsTest
 {
-    protected $context = 'companyFields';
     protected $prefix = 'Company ';
 
-    // Methods inherited from ContactFieldsTest
+    public function setUp()
+    {
+        $this->api = $this->getContext('companyFields');
+        $this->testPayload = array(
+            'label' => $this->prefix.'API test field',
+            'type' => 'text',
+        );
+    }
 
+    // Methods inherited from ContactFieldsTest
 
     // Except following, ignore them
     public function testBooleanField()

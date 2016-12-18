@@ -23,6 +23,16 @@ class Reports extends Api
     /**
      * {@inheritdoc}
      */
+    protected $listName = 'reports';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'report';
+
+    /**
+     * {@inheritdoc}
+     */
     public function create(array $parameters)
     {
         return $this->actionNotSupported('create');

@@ -11,7 +11,19 @@ namespace Mautic\Tests\Api;
 
 class LeadsTest extends ContactsTest
 {
-    protected $context = 'leads';
+    public function setUp()
+    {
+        $this->api = $this->getContext('leads');
+        $this->testPayload = array(
+            'firstname' => 'test',
+            'lastname'  => 'test',
+            'points'    => 3,
+            'tags'      => array(
+                'APItag1',
+                'APItag2',
+            )
+        );
+    }
 
     // Use the method from ContactsTest to test the 'leads' endpoint for BC
 }

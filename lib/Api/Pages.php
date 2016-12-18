@@ -19,4 +19,14 @@ class Pages extends Api
      * {@inheritdoc}
      */
     protected $endpoint = 'pages';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'pages';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'page';
 }

@@ -14,9 +14,18 @@ namespace Mautic\Api;
  */
 class DynamicContents extends Api
 {
-
     /**
      * {@inheritdoc}
      */
     protected $endpoint = 'dynamiccontents';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'dynamicContents';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'dynamicContent';
 }

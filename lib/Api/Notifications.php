@@ -19,4 +19,14 @@ class Notifications extends Api
      * {@inheritdoc}
      */
     protected $endpoint = 'notifications';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'notifications';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'notification';
 }
