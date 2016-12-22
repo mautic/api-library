@@ -1,0 +1,24 @@
+<?php
+/**
+ * @package     Mautic
+ * @copyright   2014 Mautic, NP. All rights reserved.
+ * @author      Mautic
+ * @link        http://mautic.org
+ * @license     MIT http://opensource.org/licenses/MIT
+ */
+
+namespace Mautic\Exception;
+
+/**
+ * Exception representing a required parameter is missing for Basic Authentication
+ */
+class RequiredParameterMissingException extends \Exception
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($message = 'Required Parameter is missing.', $code = 500, \Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
+}
