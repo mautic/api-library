@@ -51,12 +51,13 @@ class DevicesTest extends MauticApiTestCase
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
 
-        // Test get contact notes endpoint
+        // Test get contact devices endpoint
         $contactContext = $this->getContext('contacts');
         $responseDevices = $contactContext->getContactDevices($this->testPayload['lead']);
         $this->assertErrors($responseDevices);
         $this->assertEquals($responseDevices['total'], 1);
-        $this->assertFalse(empty($responseDevices['devices']));
+        $this->assertFalse(empty($responseDevices['devices'][0]['id']));
+        $this->assertEquals($responseDevices['devices'][0]['id'], $response[$this->api->itemName()]['id']);
 
         $response = $this->api->get($response[$this->api->itemName()]['id']);
         $this->assertPayload($response);
