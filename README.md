@@ -150,7 +150,7 @@ $response = $contactApi->edit($contactId, $updatedData);
 $contact = $response[$contactApi->itemName()];
 
 // If you want to create a new contact in the case that $contactId no longer exists
-// $result will be populated with the new contact item
+// $response will be populated with the new contact item
 $response = $contactApi->edit($contactId, $updatedData, true);
 $contact = $response[$contactApi->itemName()];
 ```
@@ -169,11 +169,11 @@ $contact = $response[$contactApi->itemName()];
 ```php
 <?php
 
-// $result returned by an API call should be checked for errors
-$result = $contactApi->delete($contactId);
+// $response returned by an API call should be checked for errors
+$response = $contactApi->delete($contactId);
 
-if (isset($result['error'])) {
-    echo $result['error']['code'] . ": " . $result['error']['message'];
+if (isset($response['error'])) {
+    echo $response['error']['code'] . ": " . $response['error']['message'];
 } else {
     // do whatever with the info
 }
