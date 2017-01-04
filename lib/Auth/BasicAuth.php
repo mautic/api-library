@@ -12,31 +12,56 @@
 | Basic Authentication Flow
 |--------------------------------------------------------------------------
 |
+| use Mautic\Auth\ApiAuth;
+|
 | // ApiAuth->newAuth() will accept an array of Auth settings
 | $settings = array(
 |     'AuthMethod'       => 'BasicAuth' // Must be one of 'OAuth' or 'BasicAuth'
 |     'userName'         => '',         // The username for authentication; Best practise would be to set up a new user for each external site
 |     'password'         => '',         // Make this a Long passPhrase e.g. (Try.!wE4.And.*@ws4.Guess.!a4911.This.*-+1.Sucker.!)
-|     'baseUrl'          => '',         // Base URL of the Mautic instance
-|     'apiUrl'           => '',         // NOTE: Required for Unit tests; Either *must* contain a valid url
+|     'apiUrl'           => '',         // NOTE: Required for Unit tests; *must* contain a valid url
 | );
 |
 | // Initiate the auth object
 | $auth = (new ApiAuth())->newAuth($settings, $settings['AuthMethod']);
 |
-| // None of the following is required anymore but methods will respond approprietly if you use the old workflow
-| try {
-|     // BasicAuth will always return True if username and password supplied
-|     if ($auth->validateAccessToken()) {
-|         // This method will always return False!
-|         if ($auth->accessTokenUpdated()) {
-|             // There are NO access tokens; returns an empty array
-|             $accessTokenData = $auth->getAccessTokenData();
+| // None of the following is required anymore!
+| // However, class methods will respond approprietly if you use the old workflow
+| //
+| if ($usingOldWorkflow) {
+|     try {
+|         // BasicAuth will always return True if username and password supplied
+|         if ($auth->validateAccessToken()) {
+|             // This method will always return False!
+|             if ($auth->accessTokenUpdated()) {
+|                 // There are NO access tokens; returns an empty array
+|                 $accessTokenData = $auth->getAccessTokenData();
+|             }
 |         }
+|     } catch (Exception $e) {
+|         // Do Error handling
 |     }
-| } catch (Exception $e) {
-|     // Do Error handling
 | }
+|
+|--------------------------------------------------------------------------
+| Basic API Usage
+|--------------------------------------------------------------------------
+|
+| To use, just pass the auth object to the Api context you are creating.
+|
+| use Mautic\MauticApi;
+|
+| // Get a Contact context
+| $contactApi = (new MauticApi())->newApi('contacts', $auth, $settings['apiUrl']);
+|
+| // Get Contact list
+| $results = $contactApi->getList();
+|
+| Note: If the credentials are incorrect an error response will be returned:
+| ['error' => [
+|       'code'    => 403,
+|       'message' => 'access_denied: OAuth2 authentication required' ]
+| ]
 |
 */
 
@@ -66,13 +91,6 @@ class BasicAuth extends ApiAuth implements AuthInterface
     private $password;
 
     /**
-     * Base URL
-     *
-     * @var string
-     */
-    protected $baseUrl;
-
-    /**
      * If set to true, $_SESSION['debug'] will be populated
      *
      * @var bool
@@ -96,11 +114,10 @@ class BasicAuth extends ApiAuth implements AuthInterface
     /**
      * @param string $userName              The username to use for Authentication *Required*
      * @param string $password              The Password to use                    *Required*
-     * @param string $baseUrl               URL of the Mautic instance             *Optional*
      *
      * @throws RequiredParameterMissingException
      */
-    public function setup($userName, $password, $baseUrl = null) {
+    public function setup($userName, $password) {
         // we MUST have the username and password. No Blanks allowed!
         //
         // remove blanks else Empty doesn't work
@@ -115,31 +132,6 @@ class BasicAuth extends ApiAuth implements AuthInterface
 
         $this->userName = $userName;
         $this->password = $password;
-        $this->baseUrl  = $baseUrl;
-    }
-
-    /**
-     * Set Base URL
-     *
-     * @param $url
-     *
-     * @return $this
-     */
-    public function setBaseUrl($url)
-    {
-        $this->baseUrl = $url;
-
-        return $this;
-    }
-
-    /**
-     * Returns Base URL
-     *
-     * @return string
-     */
-    public function getBaseUrl()
-    {
-        return $this->baseUrl;
     }
 
     /**
@@ -173,7 +165,7 @@ class BasicAuth extends ApiAuth implements AuthInterface
             __FUNCTION__, 
             // As long as there are credentials; we consider it Authorized
             !empty($this->userName) && !empty($this->password),
-            'Not required for Basic Auth as username/password required at startup'
+            'Not required for Basic Auth as username/password required at setup'
         );
     }
 

@@ -79,8 +79,9 @@ try {
 ```
 
 ### Using Basic Authentication Instead
-Instead of messing around with OAuth, you may elect to use BasicAuth instead.
-Here is the Basic Auth version of the code above.
+Instead of messing around with OAuth, you may simply elect to use BasicAuth instead.
+
+Here is the BasicAuth version of the code above.
 
 ```php
 <?php
@@ -95,14 +96,23 @@ session_start();
 // ApiAuth->newAuth() will accept an array of Auth settings
 $settings = array(
     'userName'   => '',             // Create a new user       
-    'password'   => '',             // Make it a secure password
-    'baseUrl'    => ''              // Base URL of the Mautic instance
+    'password'   => ''              // Make it a secure password
 );
 
 // Initiate the auth object specifying to use BasicAuth
 $auth = (new ApiAuth())->newAuth($settings, 'BasicAuth');
 
 // Nothing else to do ... It's ready to use.
+// Just pass the auth object to the API context you are creating.
+```
+
+**Note:** If the credentials are incorrect an error response will be returned.
+
+```php
+ ['error' => [
+       'code'    => 403,
+       'message' => 'access_denied: OAuth2 authentication required' ]
+ ]
 ```
 
 ## API Requests
