@@ -19,4 +19,14 @@ class Assets extends Api
      * {@inheritdoc}
      */
     protected $endpoint = 'assets';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'assets';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'asset';
 }

@@ -21,6 +21,17 @@ class Emails extends Api
     protected $endpoint = 'emails';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'emails';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'email';
+
+
+    /**
      * Send email to the assigned lists
      *
      * @param int $id

@@ -11,70 +11,39 @@ namespace Mautic\Tests\Api;
 
 class StagesTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'name' => 'test'
-    );
-
-    protected $context = 'stages';
-
-    protected $itemName = 'stage';
+    public function setUp() {
+        $this->api = $this->getContext('stages');
+        $this->testPayload = array(
+            'name' => 'test',
+        );
+    }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->getList();
-        $this->assertErrors($response);
+        $this->standardTestGetList();
+    }
+
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
-        // Test Create
-        $response = $apiContext->create($this->testPayload);
-        $this->assertPayload($response);
-
-        // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertPayload($response);
-
-        // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestCreateGetAndDelete();
     }
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload);
-
-        //there should be an error as the stage shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
-
-        $response = $apiContext->create($this->testPayload);
-        $this->assertPayload($response);
-
-        $update = array(
-            'name' => 'test'
+        $editTo = array(
+            'name' => 'test2',
         );
-
-        $response = $apiContext->edit($response[$this->itemName]['id'], $update);
-        $this->assertPayload($response, $update);
-
-        //now delete the stage
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPatch($editTo);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertPayload($response);
-
-        //now delete the stage
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 
     public function testAddAndRemove()
@@ -86,25 +55,24 @@ class StagesTest extends MauticApiTestCase
         $contact = $response['contact'];
 
         // Create stage
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
-        $stage = $response[$this->itemName];
+        $stage = $response[$this->api->itemName()];
 
         // Add contact to the stage
-        $response = $apiContext->addContact($stage['id'], $contact['id']);
+        $response = $this->api->addContact($stage['id'], $contact['id']);
         $this->assertErrors($response);
         $this->assertSuccess($response);
 
         // Remove the contact from the stage
-        $response = $apiContext->removeContact($stage['id'], $contact['id']);
+        $response = $this->api->removeContact($stage['id'], $contact['id']);
         $this->assertErrors($response);
         $this->assertSuccess($response);
 
         // Delete the contact and the stage
         $response = $contactsContext->delete($contact['id']);
         $this->assertErrors($response);
-        $response = $apiContext->delete($stage['id']);
+        $response = $this->api->delete($stage['id']);
         $this->assertErrors($response);
     }
 }

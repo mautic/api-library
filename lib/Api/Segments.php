@@ -21,6 +21,16 @@ class Segments extends Api
     protected $endpoint = 'segments';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'lists';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'list';
+
+    /**
      * Add a contact to the segment
      *
      * @param int $segmentId Segment ID

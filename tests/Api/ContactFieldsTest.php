@@ -13,12 +13,9 @@ class ContactFieldsTest extends MauticApiTestCase
 {
     protected $prefix = '';
 
-    protected $context = 'contactFields';
-
-    protected $itemName = 'field';
-
     public function setUp()
     {
+        $this->api = $this->getContext('contactFields');
         $this->testPayload = array(
             'label' => $this->prefix.'API test field',
             'type' => 'text',
@@ -27,27 +24,12 @@ class ContactFieldsTest extends MauticApiTestCase
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->getList();
-        $this->assertErrors($response);
-        $this->assertTrue(isset($response['fields']));
+        $this->standardTestGetList();
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
-        // Test Create
-        $response = $apiContext->create($this->testPayload);
-        $this->assertPayload($response);
-
-        // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertPayload($response);
-
-        // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestCreateGetAndDelete();
     }
 
     public function testCreateGetAndDeleteOfLookupField()
@@ -63,19 +45,8 @@ class ContactFieldsTest extends MauticApiTestCase
                 )
             )
         );
-        $apiContext  = $this->getContext($this->context);
 
-        // Test Create
-        $response = $apiContext->create($lookupField);
-        $this->assertPayload($response, $lookupField);
-
-        // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertPayload($response, $lookupField);
-
-        // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestCreateGetAndDelete($lookupField);
     }
 
     public function testBooleanField()
@@ -86,7 +57,7 @@ class ContactFieldsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $contact = $response['contact'];
 
-        $apiContext = $this->getContext($this->context);
+        
         $possibleValues = array(1 => 1, 0 => 0, 'yes' => 1, 'no' => 0, 'true' => 1, 'false' => 0);
         $boolField = array(
             'label' => $this->prefix.'API test Boolean field',
@@ -98,9 +69,9 @@ class ContactFieldsTest extends MauticApiTestCase
         );
 
         // Create the Boolean field
-        $response = $apiContext->create($boolField);
+        $response = $this->api->create($boolField);
         $this->assertErrors($response);
-        $field = $response[$this->itemName];
+        $field = $response[$this->api->itemName()];
 
         // Test if the Boolean value gets updated with test values
         foreach ($possibleValues as $value => $boolValue) {
@@ -111,7 +82,7 @@ class ContactFieldsTest extends MauticApiTestCase
         }
 
         // Clean after youself
-        $response = $apiContext->delete($field['id']);
+        $response = $this->api->delete($field['id']);
         $this->assertErrors($response);
         $response = $contactContext->delete($contact['id']);
         $this->assertErrors($response);
@@ -120,14 +91,14 @@ class ContactFieldsTest extends MauticApiTestCase
     public function testDefaultFieldValue()
     {
         $defaultValue = 'little kitten';
-        $apiContext = $this->getContext($this->context);
+        
         $fieldPayload = $this->testPayload;
         $fieldPayload['defaultValue'] = $defaultValue;
 
         // Create the field
-        $response = $apiContext->create($fieldPayload);
+        $response = $this->api->create($fieldPayload);
         $this->assertPayload($response);
-        $field = $response[$this->itemName];
+        $field = $response[$this->api->itemName()];
 
         // Create a testing contact
         $contactContext = $this->getContext('contacts');
@@ -138,7 +109,7 @@ class ContactFieldsTest extends MauticApiTestCase
         $contact = $response['contact'];
 
         // Clean after youself
-        $response = $apiContext->delete($field['id']);
+        $response = $this->api->delete($field['id']);
         $this->assertErrors($response);
         $response = $contactContext->delete($contact['id']);
         $this->assertErrors($response);
@@ -146,35 +117,13 @@ class ContactFieldsTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload);
-
-        //there should be an error as the form shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
-
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-
-        $update = array(
+        $editTo = array(
             'label' => 'test2',
         );
-
-        $response = $apiContext->edit($response[$this->itemName]['id'], $update);
-        $this->assertPayload($response, $update);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertPayload($response);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 }

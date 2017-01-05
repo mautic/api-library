@@ -21,6 +21,16 @@ class Companies extends Api
     protected $endpoint = 'companies';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'companies';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'company';
+
+    /**
      * Add a contact to the company
      *
      * @param int $id        Company ID
