@@ -21,6 +21,16 @@ class Stages extends Api
     protected $endpoint = 'stages';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'stages';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'stage';
+
+    /**
      * Add a contact to the stage
      *
      * @param int $id        Stage ID

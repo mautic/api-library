@@ -21,6 +21,16 @@ class Campaigns extends Api
     protected $endpoint = 'campaigns';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'campaigns';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'campaign';
+
+    /**
      * Add a lead to the campaign
      *
      * @deprecated 2.0.1, use addContact instead

@@ -21,6 +21,16 @@ class Points extends Api
     protected $endpoint = 'points';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'points';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'point';
+
+    /**
      * Get list of available action types
      *
      * @return array|mixed

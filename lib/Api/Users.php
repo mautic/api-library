@@ -21,6 +21,16 @@ class Users extends Api
     protected $endpoint = 'users';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'users';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'user';
+
+    /**
      * Get your (API) user
      *
      * @return array|mixed

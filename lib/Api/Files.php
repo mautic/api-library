@@ -21,6 +21,16 @@ class Files extends Api
     protected $endpoint = 'files/images';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'files';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'file';
+
+    /**
      * Changes the file folder to look at
      *
      * @param string $folder [images, assets]

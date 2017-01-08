@@ -11,72 +11,39 @@ namespace Mautic\Tests\Api;
 
 class DynamicContentsTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'name' => 'test',
-        'content' => 'test'
-    );
-
-    protected $context = 'DynamicContents';
-
-    protected $itemName = 'dynamicContent';
+    public function setUp() {
+        $this->api = $this->getContext('dynamicContents');
+        $this->testPayload = array(
+            'name' => 'test',
+            'content' => 'test'
+        );
+    }
 
     public function testGetList()
     {
-        $dynamiccontentApi = $this->getContext($this->context);
-        $response          = $dynamiccontentApi->getList();
-        $this->assertErrors($response);
+        $this->standardTestGetList();
+    }
+
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
-        // Test Create
-        $response = $apiContext->create($this->testPayload);
-        $this->assertPayload($response);
-
-        // Test Get
-        $response = $apiContext->get($response[$this->itemName]['id']);
-        $this->assertPayload($response);
-
-        // Test Delete
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestCreateGetAndDelete();
     }
 
     public function testEditPatch()
     {
-        $dynamiccontentApi = $this->getContext($this->context);
-        $response          = $dynamiccontentApi->edit(10000, $this->testPayload);
-
-        //there should be an error as the dynamiccontent shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
-
-        $response = $dynamiccontentApi->create($this->testPayload);
-        $this->assertErrors($response);
-
-        $response = $dynamiccontentApi->edit(
-            $response[$this->itemName]['id'],
-            array(
-                'name' => 'test2'
-            )
+        $editTo = array(
+            'name' => 'test2'
         );
-
-        $this->assertErrors($response);
-
-        //now delete the dynamiccontent
-        $response = $dynamiccontentApi->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPatch($editTo);
     }
 
     public function testEditPut()
     {
-        $dynamiccontentApi = $this->getContext($this->context);
-        $response          = $dynamiccontentApi->edit(10000, $this->testPayload, true);
-        $this->assertPayload($response);
-
-        //now delete the dynamiccontent
-        $response = $dynamiccontentApi->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 }

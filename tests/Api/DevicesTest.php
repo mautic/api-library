@@ -11,94 +11,71 @@ namespace Mautic\Tests\Api;
 
 class DevicesTest extends MauticApiTestCase
 {
-    protected $testPayload = array(
-        'device' => 'desktop',
-        'deviceOsName' => 'Ubuntu',
-        'deviceOsShortName' => 'UBT',
-        'deviceOsPlatform' => 'x64',
-    );
-
-    protected $context = 'devices';
-
-    protected $itemName = 'device';
-
     protected $skipPayloadAssertion = array('lead');
 
     public function setUp() {
+        $this->api = $this->getContext('devices');
+        $this->testPayload = array(
+            'device' => 'desktop',
+            'deviceOsName' => 'Ubuntu',
+            'deviceOsShortName' => 'UBT',
+            'deviceOsPlatform' => 'x64',
+        );
+        
         // Create a contact for test
-        $apiContext = $this->getContext('contacts');
-        $response = $apiContext->create(array('firstname' => 'Device API test'));
+        $contactApi = $this->getContext('contacts');
+        $response = $contactApi->create(array('firstname' => 'Device API test'));
         $this->assertErrors($response);
         $this->testPayload['lead'] = $response['contact']['id'];
     }
 
     public function tearDown() {
         // Delete a contact from test
-        $apiContext = $this->getContext('contacts');
-        $response = $apiContext->delete($this->testPayload['lead']);
+        $this->api = $this->getContext('contacts');
+        $response = $this->api->delete($this->testPayload['lead']);
         $this->assertErrors($response);
     }
 
     public function testGetList()
     {
-        $apiContext = $this->getContext($this->context);
-        $response = $apiContext->getList();
-        $this->assertErrors($response);
-        $this->assertTrue(isset($response[$this->context]));
+        $this->standardTestGetList();
+    }
+
+    public function testGetListOfSpecificIds()
+    {
+        $this->standardTestGetListOfSpecificIds();
     }
 
     public function testCreateGetAndDelete()
     {
-        $apiContext = $this->getContext($this->context);
-
-        $response = $apiContext->create($this->testPayload);
+        $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
 
-        // Test get contact notes endpoint
+        // Test get contact devices endpoint
         $contactContext = $this->getContext('contacts');
         $responseDevices = $contactContext->getContactDevices($this->testPayload['lead']);
         $this->assertErrors($responseDevices);
         $this->assertEquals($responseDevices['total'], 1);
-        $this->assertFalse(empty($responseDevices['devices']));
+        $this->assertFalse(empty($responseDevices['devices'][0]['id']));
+        $this->assertEquals($responseDevices['devices'][0]['id'], $response[$this->api->itemName()]['id']);
 
-        $response = $apiContext->get($response[$this->itemName]['id']);
+        $response = $this->api->get($response[$this->api->itemName()]['id']);
         $this->assertPayload($response);
 
-        $response = $apiContext->delete($response[$this->itemName]['id']);
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
 
     public function testEditPatch()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload);
-
-        //there should be an error as the form shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
-
-        $response = $apiContext->create($this->testPayload);
-        $this->assertErrors($response);
-
-        $updatePayload = array(
+        $editTo = array(
             'deviceOsName' => 'Edubuntu',
         );
-
-        $response = $apiContext->edit($response[$this->itemName]['id'], $updatePayload);
-        $this->assertPayload($response, $updatePayload);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPatch($editTo);
     }
 
     public function testEditPut()
     {
-        $apiContext = $this->getContext($this->context);
-        $response   = $apiContext->edit(10000, $this->testPayload, true);
-        $this->assertPayload($response);
-
-        //now delete the form
-        $response = $apiContext->delete($response[$this->itemName]['id']);
-        $this->assertErrors($response);
+        $this->standardTestEditPut();
     }
 }

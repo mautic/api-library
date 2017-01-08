@@ -21,6 +21,16 @@ class Forms extends Api
     protected $endpoint = 'forms';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $listName = 'forms';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $itemName = 'form';
+
+    /**
      * Remove fields from a form
      *
      * @param integer $formId
