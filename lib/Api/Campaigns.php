@@ -55,7 +55,7 @@ class Campaigns extends Api
      */
     public function addContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', array(), 'POST');
     }
 
     /**
@@ -83,6 +83,6 @@ class Campaigns extends Api
      */
     public function removeContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', array(), 'POST');
     }
 }

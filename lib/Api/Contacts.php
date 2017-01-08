@@ -123,15 +123,15 @@ class Contacts extends Api
      */
     public function getContactNotes($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        $parameters = array();
+        $parameters = array(
+            'search'        => $search,
+            'start'         => $start,
+            'limit'         => $limit,
+            'orderBy'       => $orderBy,
+            'orderByDir'    => $orderByDir,
+        );
 
-        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir');
-
-        foreach ($args as $arg) {
-            if (!empty($$arg)) {
-                $parameters[$arg] = $$arg;
-            }
-        }
+        $parameters = array_filter($parameters);
 
         return $this->makeRequest($this->endpoint.'/'.$id.'/notes', $parameters);
     }
@@ -150,15 +150,15 @@ class Contacts extends Api
      */
     public function getContactDevices($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        $parameters = array();
+        $parameters = array(
+            'search'        => $search,
+            'start'         => $start,
+            'limit'         => $limit,
+            'orderBy'       => $orderBy,
+            'orderByDir'    => $orderByDir,
+        );
 
-        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir');
-
-        foreach ($args as $arg) {
-            if (!empty($$arg)) {
-                $parameters[$arg] = $$arg;
-            }
-        }
+        $parameters = array_filter($parameters);
 
         return $this->makeRequest($this->endpoint.'/'.$id.'/devices', $parameters);
     }
@@ -228,15 +228,18 @@ class Contacts extends Api
     /**
      * Adds Do Not Contact
      *
-     * @param int    $id
+     * @param        $id
      * @param string $channel
+     * @param        $reason
+     * @param null   $channelId
+     * @param string $comments
      *
-     * @return mixed
+     * @return array|mixed
      */
     public function addDnc($id, $channel = 'email', $reason = Contact::MANUAL, $channelId = null, $comments = 'via API') {
 
         return $this->makeRequest(
-            'contacts/'.$id.'/dnc/add/'.$channel,
+            'contacts/'.$id.'/dnc/'.$channel.'/add',
             array(
                 'reason' => $reason,
                 'channelId' => $channelId,
@@ -256,7 +259,7 @@ class Contacts extends Api
      */
     public function removeDnc($id, $channel) {
         return $this->makeRequest(
-            'contacts/'.$id.'/dnc/remove/'.$channel,
+            'contacts/'.$id.'/dnc/'.$channel.'/remove',
             array(),
             'POST'
         );

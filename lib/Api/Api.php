@@ -397,6 +397,6 @@ class Api implements LoggerAwareInterface
      */
     public function deleteBatch(array $ids)
     {
-        return $this->makeRequest($this->endpoint.'/batch/delete', $ids, 'DELETE');
+        return $this->makeRequest($this->endpoint.'/batch/delete', array('ids' => $ids), 'DELETE');
     }
 }

@@ -8,5 +8,5 @@
     "emails/{id}/edit",
     "emails/{id}/delete",
     "emails/{id}/send",
-    "emails/{id}/send/lead/{leadId}"
+    "emails/{id}/contact/{contactId}/send"
 ]

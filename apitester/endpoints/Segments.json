@@ -6,6 +6,6 @@
     "segments/batch/delete",
     "segments/{id}/edit",
     "segments/{id}/delete",
-    "segments/contact/{id}/add/{leadId}",
-    "segments/contact/{id}/remove/{leadId}"
+    "segments/{id}/contact/{contactId}/add",
+    "segments/{id}/contact/{contactId}/remove"
 ]

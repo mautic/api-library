@@ -762,9 +762,9 @@ class OAuth extends ApiAuth implements AuthInterface
             $options[CURLOPT_CUSTOMREQUEST] = $method;
         }
 
-        //Set post fields for POST/PUT/PATCH requests
+        //Set post fields for POST/PUT/PATCH/DELETE requests
         $query = array();
-        if (in_array($method, array('POST', 'PUT', 'PATCH', 'DELETE'))) {
+        if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
 
             //Set file to upload
             // Sending file data requires an array to set

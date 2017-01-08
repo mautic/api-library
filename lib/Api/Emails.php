@@ -53,7 +53,7 @@ class Emails extends Api
      */
     public function sendToContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/send/contact/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', array(), 'POST');
     }
 
     /**

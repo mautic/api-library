@@ -7,8 +7,8 @@
     "campaigns/batch/delete",
     "campaigns/{id}/edit",
     "campaigns/{id}/delete",
-    "campaigns/contact/{id}/add/{leadId}",
-    "campaigns/contact/{id}/remove/{leadId}",
+    "campaigns/{id}/contact/{contactId}/add",
+    "campaigns/{id}/contact/{contactId}/remove",
     "campaigns/events",
     "campaigns/events/{id}"
 ]
