@@ -15,7 +15,7 @@ class StatsTest extends MauticApiTestCase
         $this->api = $this->getContext('stats');
     }
 
-    protected function assertPayload($response, array $payload = array())
+    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
     {
         $this->assertErrors($response);
         $this->assertTrue(isset($response[$this->api->listName()]), 'The '.$this->api->listName().' array does not exist.');
@@ -169,7 +169,7 @@ class StatsTest extends MauticApiTestCase
                 'val' => 3,
             )
         );
-        
+
         $response = $this->api->get('asset_downloads', 0, 2, array(), $where);
         $this->assertPayload($response);
 

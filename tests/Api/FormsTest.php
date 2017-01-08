@@ -37,20 +37,30 @@ class FormsTest extends MauticApiTestCase
         );
     }
 
-    protected function assertPayload($response, array $payload = array())
+    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
     {
-        if (empty($payload)) {
-            $payload = $this->testPayload;
-        }
+        parent::assertPayload($response, $payload, $isBatch, $idColumn, array($this, 'validateComponentsPayload'));
+    }
 
-        $this->assertErrors($response);
-        $this->assertFalse(empty($response[$this->api->itemName()]['fields']), 'The form field array is empty.');
-        $this->assertFalse(empty($response[$this->api->itemName()]['actions']), 'The form action array is empty.');
-        $this->assertSame($response[$this->api->itemName()]['name'], $payload['name']);
-        $lastField = array_pop($response[$this->api->itemName()]['fields']);
-        $lastAction = array_pop($response[$this->api->itemName()]['actions']);
-        $this->assertSame($lastField['label'], $payload['fields'][0]['label']);
-        $this->assertSame($lastAction['name'], $payload['actions'][0]['name']);
+    protected function validateComponentsPayload($itemProp, $itemVal, $item)
+    {
+        $this->assertFalse(empty($item['fields']), 'The form field array is empty: '.var_export($item, true));
+        $this->assertFalse(empty($item['actions']), 'The form action array is empty: '.var_export($item, true));
+
+        switch ($itemProp) {
+            case 'fields':
+                end($itemVal);
+                $key = key($itemVal);
+                $this->assertSame($itemVal[$key]['label'], $item['fields'][$key]['label']);
+                break;
+            case 'actions':
+                end($itemVal);
+                $key = key($itemVal);
+                $this->assertSame($itemVal[$key]['name'], $item['actions'][$key]['name']);
+                break;
+            default:
+                $this->assertSame($item[$itemProp], $itemVal);
+        }
     }
 
     public function testGetList()
@@ -112,7 +122,7 @@ class FormsTest extends MauticApiTestCase
 
         //there should be an error as the form shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
-        
+
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
@@ -177,5 +187,18 @@ class FormsTest extends MauticApiTestCase
         //now delete the form
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action) {
+            switch ($action) {
+                case 'create':
+                    foreach ($batch as &$item) {
+                        unset($item['fields'], $item['actions']);
+                    }
+                    break;
+            }
+        });
     }
 }

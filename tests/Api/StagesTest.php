@@ -75,4 +75,9 @@ class StagesTest extends MauticApiTestCase
         $response = $this->api->delete($stage['id']);
         $this->assertErrors($response);
     }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
 }

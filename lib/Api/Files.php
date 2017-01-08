@@ -48,4 +48,28 @@ class Files extends Api
     {
         return $this->actionNotSupported('edit');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createBatch(array $parameters)
+    {
+        return $this->actionNotSupported('createBatch');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function editBatch(array $parameters, $createIfNotExists = false)
+    {
+        return $this->actionNotSupported('editBatch');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteBatch(array $ids)
+    {
+        return $this->actionNotSupported('deleteBatch');
+    }
 }

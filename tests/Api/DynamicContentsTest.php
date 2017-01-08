@@ -46,4 +46,9 @@ class DynamicContentsTest extends MauticApiTestCase
     {
         $this->standardTestEditPut();
     }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
 }

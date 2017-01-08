@@ -138,8 +138,8 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_httpResponseInfo;
 
     /**
-     * @param string $baseUrl               URL of the Mautic instance
-     * @param string $version               ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
+     * @param string $baseUrl URL of the Mautic instance
+     * @param string $version ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
      * @param string $clientKey
      * @param string $clientSecret
      * @param string $accessToken
@@ -170,20 +170,20 @@ class OAuth extends ApiAuth implements AuthInterface
         if ($baseUrl) {
             if ($version == 'OAuth1a') {
                 if (!$this->_access_token_url) {
-                    $this->_access_token_url = $baseUrl . '/oauth/v1/access_token';
+                    $this->_access_token_url = $baseUrl.'/oauth/v1/access_token';
                 }
                 if (!$this->_request_token_url) {
-                    $this->_request_token_url = $baseUrl . '/oauth/v1/request_token';
+                    $this->_request_token_url = $baseUrl.'/oauth/v1/request_token';
                 }
                 if (!$this->_authorize_url) {
-                    $this->_authorize_url = $baseUrl . '/oauth/v1/authorize';
+                    $this->_authorize_url = $baseUrl.'/oauth/v1/authorize';
                 }
             } else {
                 if (!$this->_access_token_url) {
-                    $this->_access_token_url = $baseUrl . '/oauth/v2/token';
+                    $this->_access_token_url = $baseUrl.'/oauth/v2/token';
                 }
                 if (!$this->_authorize_url) {
-                    $this->_authorize_url = $baseUrl . '/oauth/v2/authorize';
+                    $this->_authorize_url = $baseUrl.'/oauth/v2/authorize';
                 }
             }
         }
@@ -363,7 +363,7 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         //Check to see if token in session has expired
-        if (!empty($this->_expires) && $this->_expires < time()) {
+        if (true || !empty($this->_expires) && $this->_expires < time()) {
             return false;
         }
 
@@ -465,13 +465,14 @@ class OAuth extends ApiAuth implements AuthInterface
 
             return true;
         }
+
+        return false;
     }
 
     /**
      * Request token for OAuth1
      *
      * @param string $responseType
-     * @param array  $values
      *
      * @throws IncorrectParametersReturnedException
      */
@@ -622,10 +623,27 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         if (is_array($params)) {
-            if (isset($params['error'])) {
-                $response = $params['error'];
+            if (isset($params['errors'])) {
+                $errors = array();
+                foreach ($params['errors'] as $error) {
+                    $errors[] = $error['message'];
+                }
+                $response = implode("; ", $errors);
+            } elseif (isset($params['error'])) {
+                // @deprecated support for pre Mautic 2.6.0
+                if (is_array($params['error'])) {
+                    if (isset($params['error']['message'])) {
+                        $response = $params['error']['message'];
+                    } else {
+                        $response = print_r($params['error'], true);
+                    }
+                } elseif (isset($params['error_description'])) {
+                    $response = $params['error_description'];
+                } else {
+                    $response = $params['error'];
+                }
             } else {
-                $response = '???';
+                $response = print_r($params, true);
             }
         } else {
             $response = $params;
@@ -651,7 +669,7 @@ class OAuth extends ApiAuth implements AuthInterface
             $authUrl .= '?oauth_token='.$_SESSION['oauth']['token'];
 
             if (!empty($this->_callback)) {
-                $authUrl .= '&oauth_callback=' . urlencode($this->_callback);
+                $authUrl .= '&oauth_callback='.urlencode($this->_callback);
             }
 
         } else {
@@ -690,7 +708,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         //make sure $method is capitalized for congruency
         $method = strtoupper($method);
-
+        $header = array();
         //Set OAuth parameters/headers
         if ($this->isOauth1()) {
             //OAuth 1.0
@@ -745,16 +763,16 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         //Set post fields for POST/PUT/PATCH requests
-        $query = [];
-        if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
+        $query = array();
+        if (in_array($method, array('POST', 'PUT', 'PATCH', 'DELETE'))) {
 
             //Set file to upload
             // Sending file data requires an array to set
             // the Content-Type header to multipart/form-data
             if (!empty($parameters['file']) && file_exists($parameters['file'])) {
                 $options[CURLOPT_INFILESIZE] = filesize($parameters['file']);
-                $parameters['file'] = $this->crateCurlFile($parameters['file']);
-                $uploadHeaders = array("Content-Type:multipart/form-data");
+                $parameters['file']          = $this->crateCurlFile($parameters['file']);
+                $uploadHeaders               = array("Content-Type:multipart/form-data");
 
                 if ($this->isOauth1()) {
                     array_merge($header, $uploadHeaders);
@@ -849,7 +867,7 @@ class OAuth extends ApiAuth implements AuthInterface
      */
     protected function parseHeaders($headersStr)
     {
-        $headersArr = array();
+        $headersArr  = array();
         $headersHlpr = explode("\r\n", $headersStr);
 
         foreach ($headersHlpr as $header) {
@@ -891,15 +909,15 @@ class OAuth extends ApiAuth implements AuthInterface
      * @param  string $mimetype
      * @param  string $postname
      *
-     * @return string|CURLFile
+     * @return string|\CURLFile
      */
     protected function crateCurlFile($filename, $mimetype = '', $postname = '')
     {
         if (!function_exists('curl_file_create')) {
             // For PHP < 5.5
             return "@$filename;filename="
-                . ($postname ?: basename($filename))
-                . ($mimetype ? ";type=$mimetype" : '');
+                .($postname ?: basename($filename))
+                .($mimetype ? ";type=$mimetype" : '');
         }
 
         // For PHP >= 5.5
@@ -995,7 +1013,7 @@ class OAuth extends ApiAuth implements AuthInterface
      * @param array  $normalized
      * @param string $key
      *
-     * @return string
+     * @return array|string
      */
     private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
     {
@@ -1094,6 +1112,9 @@ class OAuth extends ApiAuth implements AuthInterface
     /**
      * Separates parameters from base URL
      *
+     * @param $url
+     * @param $params
+     *
      * @return array
      */
     protected function separateUrlParams($url, $params)
@@ -1102,11 +1123,13 @@ class OAuth extends ApiAuth implements AuthInterface
 
         if (!empty($a['query'])) {
             parse_str($a['query'], $qparts);
+            $cleanParams = array();
             foreach ($qparts as $k => $v) {
                 $cleanParams[$k] = $v ? $v : '';
             }
             $params = array_merge($params, $cleanParams);
-            $url = explode('?', $url, 2)[0];
+            $parts  = explode('?', $url, 2);
+            $url    = $parts[0];
         }
 
         return array($url, $params);

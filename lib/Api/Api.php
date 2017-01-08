@@ -128,11 +128,11 @@ class Api implements LoggerAwareInterface
         if(substr($url, -1) != '/') {
             $url .= '/';
         }
-        
+
         if(substr($url,-4,4) != 'api/'){
             $url .= 'api/';
         }
-        
+
         $this->baseUrl = $url;
 
         return $this;
@@ -169,58 +169,60 @@ class Api implements LoggerAwareInterface
         $url = $this->baseUrl.$endpoint;
 
         if (strpos($url, 'http') === false) {
-            return array(
-                'error' => array(
-                    'code'    => 500,
-                    'message' => sprintf(
-                        'URL is incomplete.  Please use %s, set the base URL as the third argument to MauticApi::getContext(), or make $endpoint a complete URL.',
-                        __CLASS__.'setBaseUrl()'
-                    )
+            $error = array(
+                'code'    => 500,
+                'message' => sprintf(
+                    'URL is incomplete.  Please use %s, set the base URL as the third argument to MauticApi::getContext(), or make $endpoint a complete URL.',
+                    __CLASS__.'setBaseUrl()'
                 )
             );
-        }
+        } else {
+            try {
+                $response = $this->auth->makeRequest($url, $parameters, $method);
 
-        try {
-            $response = $this->auth->makeRequest($url, $parameters, $method);
+                $this->getLogger()->debug('API Response', array('response' => $response));
 
-            $this->getLogger()->debug('API Response', array('response' => $response));
+                if (!is_array($response)) {
+                    $this->getLogger()->warning($response);
 
-            if (!is_array($response)) {
-                $this->getLogger()->warning($response);
-
-                //assume an error
-                return array(
-                    'error' => array(
+                    //assume an error
+                    $error = array(
                         'code'    => 500,
                         'message' => $response
-                    )
-                );
-            }
+                    );
+                }
 
-            if (isset($response['error']) && isset($response['error_description'])) {
-                $message = $response['error'].': '.$response['error_description'];
+                // @deprecated support for 2.6.0 to be removed in 3.0
+                if (!isset($response['errors']) && isset($response['error']) && isset($response['error_description'])) {
+                    $message = $response['error'].': '.$response['error_description'];
 
-                $this->getLogger()->warning($message);
+                    $this->getLogger()->warning($message);
 
-                return array(
-                    'error' => array(
+                    $error = array(
                         'code'    => 403,
                         'message' => $message
-                    )
-                );
-            }
-        } catch (\Exception $e) {
-            $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
+                    );
+                }
+            } catch (\Exception $e) {
+                $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
 
-            return array(
-                'error' => array(
+                $error = array(
                     'code'    => $e->getCode(),
                     'message' => $e->getMessage()
-                )
-            );
+                );
+            }
         }
 
-        //return the response if no error condition is met
+        if (!empty($error)) {
+            return array(
+                'errors' => array($error),
+                // @deprecated 2.6.0 to be removed 3.0
+                'error'  => $error
+            );
+        } elseif (!empty($response['errors'])) {
+            $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors']));
+        }
+
         return $response;
     }
 
@@ -282,20 +284,23 @@ class Api implements LoggerAwareInterface
      * @param string $orderBy
      * @param string $orderByDir
      * @param bool   $publishedOnly
+     * @param bool   $minimal
      *
      * @return array|mixed
      */
     public function getList($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
     {
-        $parameters = array();
+        $parameters = array(
+            'search'        => $search,
+            'start'         => $start,
+            'limit'         => $limit,
+            'orderBy'       => $orderBy,
+            'orderByDir'    => $orderByDir,
+            'publishedOnly' => $publishedOnly,
+            'minimal'       => $minimal
+        );
 
-        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir', 'publishedOnly', 'minimal');
-
-        foreach ($args as $arg) {
-            if (!empty($$arg)) {
-                $parameters[$arg] = $$arg;
-            }
-        }
+        $parameters = array_filter($parameters);
 
         return $this->makeRequest($this->endpoint, $parameters);
     }
@@ -329,6 +334,18 @@ class Api implements LoggerAwareInterface
     }
 
     /**
+     * Create a batch of new items
+     *
+     * @param array $parameters
+     *
+     * @return array|mixed
+     */
+    public function createBatch(array $parameters)
+    {
+        return $this->makeRequest($this->endpoint.'/batch/new', $parameters, 'POST');
+    }
+
+    /**
      * Edit an item with option to create if it doesn't exist
      *
      * @param int   $id
@@ -345,6 +362,21 @@ class Api implements LoggerAwareInterface
     }
 
     /**
+     * Edit a batch of items
+     *
+     * @param array $parameters
+     * @param bool  $createIfNotExists
+     *
+     * @return array|mixed
+     */
+    public function editBatch(array $parameters, $createIfNotExists = false)
+    {
+        $method = $createIfNotExists ? 'PUT' : 'PATCH';
+
+        return $this->makeRequest($this->endpoint.'/batch/edit', $parameters, $method);
+    }
+
+    /**
      * Delete an item
      *
      * @param $id
@@ -354,5 +386,17 @@ class Api implements LoggerAwareInterface
     public function delete($id)
     {
         return $this->makeRequest($this->endpoint.'/'.$id.'/delete', array(), 'DELETE');
+    }
+
+    /**
+     * Delete a batch of items
+     *
+     * @param $ids
+     *
+     * @return array|mixed
+     */
+    public function deleteBatch(array $ids)
+    {
+        return $this->makeRequest($this->endpoint.'/batch/delete', $ids, 'DELETE');
     }
 }

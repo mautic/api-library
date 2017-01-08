@@ -134,4 +134,9 @@ class SegmentsTest extends MauticApiTestCase
         $response = $this->api->delete($segment['id']);
         $this->assertErrors($response);
     }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
 }

@@ -82,7 +82,7 @@ class EmailsTest extends MauticApiTestCase
         );
     }
 
-    protected function preparePayloadForSegmentEmail()
+    protected function setUpPayloadClass()
     {
         $segmentApi = $this->getContext('segments');
         $response   = $segmentApi->create(array('name' => 'test'));
@@ -93,7 +93,7 @@ class EmailsTest extends MauticApiTestCase
         $this->testPayload['lists'] = array($segment['id']);
     }
 
-    protected function cleanAfterPayloadForSegmentEmail()
+    protected function clearPayloadItems()
     {
         $segmentApi = $this->getContext('segments');
         $response   = $segmentApi->delete($this->testPayload['lists'][0]);
@@ -107,14 +107,14 @@ class EmailsTest extends MauticApiTestCase
 
     public function testGetListOfSpecificIds()
     {
-        $this->preparePayloadForSegmentEmail();
+        $this->setUpPayloadClass();
         $this->standardTestGetListOfSpecificIds();
-        $this->cleanAfterPayloadForSegmentEmail();
+        $this->clearPayloadItems();
     }
 
     public function testCreateGetAndDelete()
     {
-        $this->preparePayloadForSegmentEmail();
+        $this->setUpPayloadClass();
 
         // Test Create
         $response = $this->api->create($this->testPayload);
@@ -129,7 +129,7 @@ class EmailsTest extends MauticApiTestCase
         // Test Delete
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
-        $this->cleanAfterPayloadForSegmentEmail();
+        $this->clearPayloadItems();
     }
 
     public function testEditPatch()
@@ -138,7 +138,7 @@ class EmailsTest extends MauticApiTestCase
 
         //there should be an error as the email shouldn't exist
         $this->assertTrue(isset($response['error']), $response['error']['message']);
-        
+
         // Unset the emailType, 'template' must be the default value
         unset($this->testPayload['emailType']);
 
@@ -179,7 +179,7 @@ class EmailsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $segment2   = $response['list'];
         $email['lists'] = array($segment2['id']);
-        
+
         $response = $this->api->edit($email['id'], $email, true);
         $this->assertPayload($response);
         $this->assertSame($response[$this->api->itemName()]['lists'][0]['id'], $segment2['id']);
@@ -212,7 +212,7 @@ class EmailsTest extends MauticApiTestCase
         $response   = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $email      = $response['email'];
-        
+
         // Create a test contact
         $response   = $contactApi->create(array('email' => $this->config['testEmail']));
         $this->assertErrors($response);
@@ -249,7 +249,7 @@ class EmailsTest extends MauticApiTestCase
         $response   = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $email      = $response['email'];
-        
+
         // Create a test contact
         $response   = $contactApi->create(array('email' => $this->config['testEmail']));
         $this->assertErrors($response);
@@ -265,5 +265,10 @@ class EmailsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $response = $contactApi->delete($contact['id']);
         $this->assertErrors($response);
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
     }
 }

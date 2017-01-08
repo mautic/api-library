@@ -11,7 +11,7 @@ namespace Mautic\Tests\Api;
 
 use Mautic\Api\Contacts;
 
-class ContactsTest extends MauticApiTestCase
+class ContactsTest extends AbstractCustomFieldsTest
 {
     protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags');
 
@@ -56,7 +56,7 @@ class ContactsTest extends MauticApiTestCase
 
     public function testGetListOfSpecificSegment()
     {
-        
+
         $segmentApi = $this->getContext('segments');
 
         // Create Segment
@@ -259,7 +259,7 @@ class ContactsTest extends MauticApiTestCase
     public function testSubtractPoints()
     {
         $pointToSub = 5;
-        
+
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $contact = $response[$this->api->itemName()];
@@ -274,5 +274,10 @@ class ContactsTest extends MauticApiTestCase
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
     }
 }

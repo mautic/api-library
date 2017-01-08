@@ -17,7 +17,7 @@ class RolesTest extends MauticApiTestCase
             'name' => 'API test role',
             'description' => 'created via AIP',
             'rawPermissions' => array (
-                'email:emails' => 
+                'email:emails' =>
                 array (
                     'viewown',
                     'viewother',
@@ -52,5 +52,10 @@ class RolesTest extends MauticApiTestCase
     public function testEditPut()
     {
         $this->standardTestEditPut();
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
     }
 }

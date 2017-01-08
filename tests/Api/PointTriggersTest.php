@@ -18,7 +18,7 @@ class PointTriggersTest extends MauticApiTestCase
             'description' => 'created as a API test',
             'points' => 5,
             'color' => '4e5d9d',
-            'trigger_existing_leads' => false,
+            'triggerExistingLeads' => false,
             'events' => array(
                 array(
                     'name' => 'tag test event',
@@ -43,19 +43,26 @@ class PointTriggersTest extends MauticApiTestCase
         );
     }
 
-    protected function assertPayload($response, array $payload = array())
+    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
     {
-        if (empty($payload)) {
-            $payload = $this->testPayload;
-        }
-
-        $this->assertErrors($response);
-        $this->assertFalse(empty($response[$this->api->itemName()]['id']), 'The point trigger id is empty.');
-        $this->assertSame($response[$this->api->itemName()]['name'], $payload['name']);
-        $this->assertFalse(empty($response[$this->api->itemName()]['events']), 'The point trigger event array is empty.');
-        $lastEvent = array_pop($response[$this->api->itemName()]['events']);
-        $this->assertSame($lastEvent['name'], $payload['events'][1]['name']);
+        parent::assertPayload($response, $payload, $isBatch, $idColumn, array($this, 'validateComponentsPayload'));
     }
+
+    protected function validateComponentsPayload($itemProp, $itemVal, $item)
+    {
+        $this->assertFalse(empty($item['events']), 'The point trigger event array is empty: '.var_export($item, true));
+
+        switch ($itemProp) {
+            case 'events':
+                end($itemVal);
+                $key = key($itemVal);
+                $this->assertSame($itemVal[$key]['name'], $item['events'][$key]['name'], 'Event names do not match: '.var_export($item, true));
+                break;
+            default:
+                $this->assertSame($item[$itemProp], $itemVal);
+        }
+    }
+
 
     public function testGetList()
     {
@@ -133,5 +140,18 @@ class PointTriggersTest extends MauticApiTestCase
         $response   = $this->api->getEventTypes();
         $this->assertErrors($response);
         $this->assertFalse(empty($response['eventTypes']), 'The eventTypes array is empty.');
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action) {
+            switch ($action) {
+                case 'create':
+                    foreach ($batch as &$item) {
+                        unset($item['events']);
+                    }
+                    break;
+            }
+        });
     }
 }

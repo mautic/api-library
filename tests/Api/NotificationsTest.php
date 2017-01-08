@@ -47,4 +47,9 @@ class NotificationsTest extends MauticApiTestCase
     {
         $this->standardTestEditPut();
     }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
 }

@@ -11,6 +11,8 @@ namespace Mautic\Tests\Api;
 
 class CampaignsTest extends MauticApiTestCase
 {
+    protected $eventApi;
+
     protected $requiredItems = array(
         'segments' => array(
             'item' => 'list',
@@ -42,8 +44,11 @@ class CampaignsTest extends MauticApiTestCase
 
     protected $skipPayloadAssertion = array('events', 'forms', 'lists', 'canvasSettings', 'dateModified', 'dateAdded');
 
-    public function setUp() {
-        $this->api = $this->getContext('campaigns');
+    public function setUp()
+    {
+        $this->api      = $this->getContext('campaigns');
+        $this->eventApi = $this->getContext('campaignEvents');
+
         $this->testPayload = array(
             'name' => 'test',
             'description' => 'Created via API',
@@ -196,7 +201,34 @@ class CampaignsTest extends MauticApiTestCase
 
     public function testGetListOfSpecificIds()
     {
-        $this->standardTestGetListOfSpecificIds();
+        $this->setUpPayloadClass();
+        $this->standardTestGetListOfSpecificIds(array($this, 'testGetListOfSpecificEventIds'));
+        $this->clearPayloadItems();
+    }
+
+    public function testGetListOfSpecificEventIds($response = null)
+    {
+        if (null == $response) {
+            return;
+        }
+
+        // Get a list of event IDs
+        $eventIds = array();
+        foreach ($response['campaign']['events'] as $event) {
+            $eventIds[] = $event['id'];
+        }
+        $search   = 'ids:'.implode(',', $eventIds);
+        $response = $this->eventApi->getList($search);
+        $this->assertErrors($response);
+        $this->assertEquals(count($eventIds), $response['total']);
+    }
+
+    public function testEventGetList()
+    {
+        $originalApi = $this->api;
+        $this->api = $this->eventApi;
+        $this->standardTestGetList();
+        $this->api = $originalApi;
     }
 
     public function testCreateGetAndDelete()
@@ -320,5 +352,18 @@ class CampaignsTest extends MauticApiTestCase
         $response = $this->api->delete($campaign['id']);
         $this->assertErrors($response);
         $this->clearPayloadItems();
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action) {
+            switch ($action) {
+                case 'create':
+                    foreach ($batch as &$item) {
+                        unset($item['events'], $item['canvasSettings']);
+                    }
+                    break;
+            }
+        });
     }
 }
