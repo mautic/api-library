@@ -11,8 +11,22 @@ namespace Mautic\Tests\Api;
 
 class StatsTest extends MauticApiTestCase
 {
-    public function setUp() {
+    public function setUp()
+    {
         $this->api = $this->getContext('stats');
+    }
+
+    protected function getTableList($withColumns = false)
+    {
+        // Store tables and columns
+        static $tables, $tableColumns;
+        if (empty($tables)) {
+            $response     = $this->api->get();
+            $tables       = $response['availableTables'];
+            $tableColumns = $response['tableColumns'];
+        }
+
+        return ($withColumns) ? array($tables, $tableColumns) : $tables;
     }
 
     protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
@@ -64,7 +78,7 @@ class StatsTest extends MauticApiTestCase
             'lead_devices',
             'lead_donotcontact',
             'lead_frequencyrules',
-            'lead_lists',
+            'lead_lists_leads',
             'lead_points_change_log',
             'lead_stages_change_log',
             'lead_utmtags',
@@ -78,104 +92,158 @@ class StatsTest extends MauticApiTestCase
             'video_hits',
             'webhook_logs',
         );
-        $response = $this->api->get();
-        $this->assertTrue(!empty($response['availableTables']));
+        $tables         = $this->getTableList();
+        $this->assertTrue(!empty($tables));
         $this->assertSame(
-            array_diff($expectedTables, $response['availableTables']),
-            array_diff($response['availableTables'], $expectedTables)
+            array_diff($expectedTables, $tables),
+            array_diff($tables, $expectedTables)
         );
     }
 
     public function testGetSimple()
     {
-        $response = $this->api->get('asset_downloads');
-        $this->assertPayload($response);
+        foreach ($this->getTableList() as $table) {
+            $response = $this->api->get($table);
+            $this->assertPayload($response);
+        }
     }
 
     public function testGetStartLimit()
     {
-        $response = $this->api->get('asset_downloads', 1, 2);
-        $this->assertPayload($response);
-        $this->assertTrue((count($response[$this->api->listName()])) <= 2);
+        foreach ($this->getTableList() as $table) {
+            $response = $this->api->get($table, 1, 2);
+            $this->assertPayload($response);
+            $this->assertTrue((count($response[$this->api->listName()])) <= 2);
+        }
     }
 
     public function testGetOrderSimple()
     {
-        $orderWithoutDir = array(
-            array(
-                'col' => 'date_download'
-            )
-        );
+        list($tables, $columns) = $this->getTableList(true);
 
-        $response = $this->api->get('asset_downloads', 0, 10, $orderWithoutDir);
-        $this->assertPayload($response);
-        $this->assertGreaterThanIdsInArray($response);
+        foreach ($tables as $table) {
+            $hasId = (in_array('id', $columns[$table]));
+
+            $response = $this->api->get(
+                $table,
+                0,
+                10,
+                array(
+                    array(
+                        'col' => ($hasId) ? 'id' : $columns[$table][0]
+                    )
+                )
+            );
+            $this->assertPayload($response);
+
+            if ($hasId) {
+                $this->assertGreaterThanIdsInArray($response);
+            }
+        }
     }
 
     public function testGetOrderAsc()
     {
-        $orderWithDir = array(
-            array(
-                'col' => 'id',
-                'dir' => 'asc'
-            )
-        );
+        list($tables, $columns) = $this->getTableList(true);
 
-        $response = $this->api->get('asset_downloads', 0, 10, $orderWithDir);
-        $this->assertPayload($response);
-        $this->assertGreaterThanIdsInArray($response);
+        foreach ($tables as $table) {
+            $hasId    = (in_array('id', $columns[$table]));
+            $response = $this->api->get(
+                $table,
+                0,
+                10,
+                array(
+                    array(
+                        'col' => ($hasId) ? 'id' : $columns[$table][0],
+                        'dir' => 'asc'
+                    )
+                )
+            );
+            $this->assertPayload($response);
+
+            if ($hasId) {
+                $this->assertGreaterThanIdsInArray($response);
+            }
+        }
     }
 
     public function testGetOrderDesc()
     {
-        $orderWithDirDesc = array(
-            array(
-                'col' => 'id',
-                'dir' => 'DESC'
-            )
-        );
+        list($tables, $columns) = $this->getTableList(true);
 
-        $response = $this->api->get('asset_downloads', 0, 10, $orderWithDirDesc);
-        $this->assertPayload($response);
-        $this->assertLessThanIdsInArray($response);
+        foreach ($tables as $table) {
+            $hasId = (in_array('id', $columns[$table]));
+
+            $response = $this->api->get(
+                $table,
+                0,
+                10,
+                array(
+                    array(
+                        'col' => ($hasId) ? 'id' : $columns[$table][0],
+                        'dir' => 'DESC'
+                    )
+                )
+            );
+            $this->assertPayload($response);
+
+            if ($hasId) {
+                $this->assertLessThanIdsInArray($response);
+            }
+        }
     }
 
     public function testGetWhereEqual()
     {
+        list($tables, $columns) = $this->getTableList(true);
+
         $where = array(
             array(
-                'col' => 'id',
+                'col'  => 'id',
                 'expr' => 'eq',
-                'val' => 3,
+                'val'  => 3,
             )
         );
 
-        $response = $this->api->get('asset_downloads', 0, 2, array(), $where);
-        $this->assertPayload($response);
-        $this->assertTrue((count($response[$this->api->listName()])) <= 1);
+        foreach ($tables as $table) {
+            if (!in_array('id', $columns[$table])) {
+                return;
+            }
 
-        // The record might not exist in the database, but in case it does...
-        if ((count($response[$this->api->listName()])) === 1) {
-            $this->assertSame((int) $response[$this->api->listName()][0]['id'], $where[0]['val']);
+            $response = $this->api->get($table, 0, 2, array(), $where);
+            $this->assertPayload($response);
+            $this->assertTrue((count($response[$this->api->listName()])) <= 1);
+
+            // The record might not exist in the database, but in case it does...
+            if ((count($response[$this->api->listName()])) === 1) {
+                $this->assertSame((int) $response[$this->api->listName()][0]['id'], $where[0]['val']);
+            }
         }
     }
 
     public function testGetWhereGreaterThan()
     {
+        list($tables, $columns) = $this->getTableList(true);
+
         $where = array(
             array(
-                'col' => 'id',
+                'col'  => 'id',
                 'expr' => 'gt',
-                'val' => 3,
+                'val'  => 3,
             )
         );
 
-        $response = $this->api->get('asset_downloads', 0, 2, array(), $where);
-        $this->assertPayload($response);
+        foreach ($tables as $table) {
+            if (!in_array('id', $columns[$table])) {
+                return;
+            }
+            $response = $this->api->get($table, 0, 2, array(), $where);
+            $this->assertPayload($response);
 
-        // The record might not exist in the database, but in case it does...
-        if ((count($response[$this->api->listName()])) > 0) {
-            $this->assertSame((int) $response[$this->api->listName()][0]['id'], ($where[0]['val'] + 1));
+            // The record might not exist in the database, but in case it does...
+            if ((count($response[$this->api->listName()])) > 0) {
+                $this->assertSame((int) $response[$this->api->listName()][0]['id'], ($where[0]['val'] + 1));
+            }
         }
     }
 }

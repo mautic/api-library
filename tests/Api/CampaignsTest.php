@@ -9,8 +9,11 @@
 
 namespace Mautic\Tests\Api;
 
+use Mautic\Api\CampaignEvents;
+
 class CampaignsTest extends MauticApiTestCase
 {
+    /** @var  CampaignEvents */
     protected $eventApi;
 
     protected $requiredItems = array(
@@ -206,31 +209,6 @@ class CampaignsTest extends MauticApiTestCase
         $this->clearPayloadItems();
     }
 
-    public function testGetListOfSpecificEventIds($response = null)
-    {
-        if (null == $response) {
-            return;
-        }
-
-        // Get a list of event IDs
-        $eventIds = array();
-        foreach ($response['campaign']['events'] as $event) {
-            $eventIds[] = $event['id'];
-        }
-        $search   = 'ids:'.implode(',', $eventIds);
-        $response = $this->eventApi->getList($search);
-        $this->assertErrors($response);
-        $this->assertEquals(count($eventIds), $response['total']);
-    }
-
-    public function testEventGetList()
-    {
-        $originalApi = $this->api;
-        $this->api = $this->eventApi;
-        $this->standardTestGetList();
-        $this->api = $originalApi;
-    }
-
     public function testCreateGetAndDelete()
     {
         $this->setUpPayloadClass();
@@ -274,45 +252,6 @@ class CampaignsTest extends MauticApiTestCase
     {
         $this->setUpPayloadClass();
         $this->standardTestEditPut();
-        $this->clearPayloadItems();
-    }
-
-    public function testEventAndSourceDeleteViaPut()
-    {
-        $this->setUpPayloadClass();
-        $response = $this->api->create($this->testPayload);
-        $this->assertPayload($response);
-
-        // Remove the last event
-        array_pop($response[$this->api->itemName()]['events']);
-
-        // Create a new list
-        $segmentResponse = $this->getContext('segments')->create(
-            array(
-                'name' => 'second campaign test segment'
-            )
-        );
-        $this->assertErrors($segmentResponse);
-
-        // Substitude another segment
-        $newSegmentsArray = array($segmentResponse['list']);
-        $response[$this->api->itemName()]['lists'] = $newSegmentsArray;
-
-        // Edit the same entitiy without the fields and actions
-        $response = $this->api->edit(
-            $response[$this->api->itemName()]['id'],
-            $response[$this->api->itemName()],
-            true
-        );
-        $this->assertPayload($response);
-        $this->assertEquals(count($response[$this->api->itemName()]['events']), 2);
-        $this->assertEquals(count($response[$this->api->itemName()]['lists']), 1);
-        $this->assertEquals($response[$this->api->itemName()]['lists'][0]['id'], $newSegmentsArray[0]['id']);
-        $this->assertEquals($response[$this->api->itemName()]['lists'][0]['name'], $newSegmentsArray[0]['name']);
-
-        //now delete the form
-        $response = $this->api->delete($response[$this->api->itemName()]['id']);
-        $this->assertErrors($response);
         $this->clearPayloadItems();
     }
 
@@ -365,5 +304,182 @@ class CampaignsTest extends MauticApiTestCase
                     break;
             }
         });
+    }
+
+    public function testEventAndSourceDeleteViaPut()
+    {
+        $this->setUpPayloadClass();
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+
+        // Remove the last event
+        array_pop($response[$this->api->itemName()]['events']);
+
+        // Create a new list
+        $segmentResponse = $this->getContext('segments')->create(
+            array(
+                'name' => 'second campaign test segment'
+            )
+        );
+        $this->assertErrors($segmentResponse);
+
+        // Substitude another segment
+        $newSegmentsArray = array($segmentResponse['list']);
+        $response[$this->api->itemName()]['lists'] = $newSegmentsArray;
+
+        // Edit the same entitiy without the fields and actions
+        $response = $this->api->edit(
+            $response[$this->api->itemName()]['id'],
+            $response[$this->api->itemName()],
+            true
+        );
+        $this->assertPayload($response);
+        $this->assertEquals(count($response[$this->api->itemName()]['events']), 2);
+        $this->assertEquals(count($response[$this->api->itemName()]['lists']), 1);
+        $this->assertEquals($response[$this->api->itemName()]['lists'][0]['id'], $newSegmentsArray[0]['id']);
+        $this->assertEquals($response[$this->api->itemName()]['lists'][0]['name'], $newSegmentsArray[0]['name']);
+
+        //now delete the form
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
+        $this->assertErrors($response);
+        $this->clearPayloadItems();
+    }
+
+    public function testEventGetList()
+    {
+        $originalApi = $this->api;
+        $this->api = $this->eventApi;
+        $this->standardTestGetList();
+        $this->api = $originalApi;
+    }
+
+    public function testCampaignContactGetList($cleanup = true)
+    {
+        $this->setUpPayloadClass();
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+
+        // Create contact
+        $contactsContext = $this->getContext('contacts');
+        $response = $contactsContext->create(array('firstname' => 'API campagin test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create campaign
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $campaign = $response[$this->api->itemName()];
+
+        // Add the contact to the campaign
+        $response = $this->api->addContact($campaign['id'], $contact['id']);
+        $this->assertErrors($response);
+
+        $campaignEvents = $campaign['events'];
+        $eventIds = array();
+        foreach ($campaignEvents as $event) {
+            $eventIds[] = $event['id'];
+        }
+
+        $response = $this->eventApi->getContactCampaignEvents($campaign['id'], $contact['id']);
+        $campaignEvents = $response['events'];
+        $eventLogIds = array();
+        foreach ($campaignEvents as $event) {
+            $eventLogIds[] = $event['id'];
+        }
+
+        $this->assertEquals($eventIds, $eventLogIds);
+
+        if ($cleanup) {
+            // Delete the contact and the campaign
+            $response = $contactsContext->delete($contact['id']);
+            $this->assertErrors($response);
+            $response = $this->api->delete($campaign['id']);
+            $this->assertErrors($response);
+            $this->clearPayloadItems();
+        } else {
+            return array(
+                'campaign' => $campaign,
+                'events'   => $campaignEvents,
+                'contact'  => $contact
+            );
+        }
+    }
+
+    public function testCampaignContactEditEvent()
+    {
+        $contactsContext = $this->getContext('contacts');
+        $response = $this->testCampaignContactGetList(false);
+        $campaign = $response['campaign'];
+        $contact  = $response['contact'];
+        $events   = $response['events'];
+
+        $log = array(
+            'triggerDate' => '2016-01-10 00:00:00'
+        );
+
+        // Edit an event and should get a log entry returned with same triggerDate
+
+        $response = $this->eventApi->editContactEvent($contact['id'], $events[1]['id'], $log);
+        $this->assertErrors($response);
+        $this->assertNotEmpty($response[$this->eventApi->itemName()]['contactLog']);
+        $this->assertTrue(isset($response[$this->eventApi->itemName()]['contactLog'][0]['triggerDate']), var_export($response, true));
+        $date = new \DateTime($log['triggerDate'], new \DateTimeZone('UTC'));
+        $this->assertEquals($response[$this->eventApi->itemName()]['contactLog'][0]['triggerDate'], $date->format('c'));
+        $this->assertEquals($response[$this->eventApi->itemName()]['contactLog'][0]['isScheduled'], 1);
+
+        // Ensure that decisions cannot be scheduled
+        $response = $this->eventApi->editContactEvent($contact['id'], $events[0]['id'], $log);
+        $this->assertNotEmpty($response['errors']);
+
+        // Batch edit the events
+        $log = array(
+            array(
+                'contactId' => $contact['id'],
+                'eventId'   => $events[0]['id'],
+                'dateTriggered' => '2016-01-10 00:00:00'
+            ),
+            array(
+                'contactId' => $contact['id'],
+                'eventId'   => $events[1]['id'],
+                'triggerDate' => '2016-01-11 00:00:00'
+            )
+        );
+
+        $response = $this->eventApi->editEvents($log);
+        $this->assertErrors($response, var_export($events, true).var_export($response, true));
+        foreach ($response[$this->eventApi->listName()] as $event) {
+            $this->assertNotEmpty($event['contactLog']);
+            $log = $event['contactLog'][0];
+
+            if ($event['id'] === $events[0]['id']) {
+                $date = new \DateTime($log['dateTriggered'], new \DateTimeZone('UTC'));
+                $this->assertEquals($log['dateTriggered'], $date->format('c'));
+            } elseif ($event['id'] === $events[1]['id']) {
+                $date = new \DateTime($log['triggerDate'], new \DateTimeZone('UTC'));
+                $this->assertEquals($log['triggerDate'], $date->format('c'));
+            } else {
+                $this->assertFalse(false, 'Event ID not recognized in the log.', var_export($event, true));
+            }
+        }
+
+        // Delete the contact and the campaign
+        $response = $contactsContext->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $this->api->delete($campaign['id']);
+        $this->assertErrors($response);
+        $this->clearPayloadItems();
+    }
+
+    protected function getListOfSpecificEventIds($response)
+    {
+        // Get a list of event IDs
+        $eventIds = array();
+        foreach ($response['campaign']['events'] as $event) {
+            $eventIds[] = $event['id'];
+        }
+        $search   = 'ids:'.implode(',', $eventIds);
+        $response = $this->eventApi->getList($search);
+        $this->assertErrors($response);
+        $this->assertEquals(count($eventIds), $response['total']);
     }
 }

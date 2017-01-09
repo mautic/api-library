@@ -41,6 +41,13 @@ class Api implements LoggerAwareInterface
     protected $itemName;
 
     /**
+     * Array of default endpoints supported by the context; if empty, all are supported
+     *
+     * @var array
+     */
+    protected $endpointsSupported = array();
+
+    /**
      * Base URL for API endpoints
      *
      * @var string
@@ -63,7 +70,7 @@ class Api implements LoggerAwareInterface
      */
     public function __construct(AuthInterface $auth, $baseUrl = '')
     {
-        $this->auth    = $auth;
+        $this->auth = $auth;
         $this->setBaseUrl($baseUrl);
     }
 
@@ -125,34 +132,17 @@ class Api implements LoggerAwareInterface
      */
     public function setBaseUrl($url)
     {
-        if(substr($url, -1) != '/') {
+        if (substr($url, -1) != '/') {
             $url .= '/';
         }
 
-        if(substr($url,-4,4) != 'api/'){
+        if (substr($url, -4, 4) != 'api/') {
             $url .= 'api/';
         }
 
         $this->baseUrl = $url;
 
         return $this;
-    }
-
-    /**
-     * Returns a not supported error
-     *
-     * @param string $action
-     *
-     * @return array
-     */
-    protected function actionNotSupported($action)
-    {
-        return array(
-            'error' => array(
-                'code'    => 500,
-                'message' => "$action is not supported at this time."
-            )
-        );
     }
 
     /**
@@ -330,7 +320,9 @@ class Api implements LoggerAwareInterface
      */
     public function create(array $parameters)
     {
-        return $this->makeRequest($this->endpoint.'/new', $parameters, 'POST');
+        $supported = $this->isSupported('create');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/new', $parameters, 'POST') : $supported;
     }
 
     /**
@@ -342,7 +334,9 @@ class Api implements LoggerAwareInterface
      */
     public function createBatch(array $parameters)
     {
-        return $this->makeRequest($this->endpoint.'/batch/new', $parameters, 'POST');
+        $supported = $this->isSupported('createBatch');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/batch/new', $parameters, 'POST') : $supported;
     }
 
     /**
@@ -356,9 +350,10 @@ class Api implements LoggerAwareInterface
      */
     public function edit($id, array $parameters, $createIfNotExists = false)
     {
-        $method = $createIfNotExists ? 'PUT' : 'PATCH';
+        $method    = $createIfNotExists ? 'PUT' : 'PATCH';
+        $supported = $this->isSupported('edit');
 
-        return $this->makeRequest($this->endpoint.'/'.$id.'/edit', $parameters, $method);
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/'.$id.'/edit', $parameters, $method) : $supported;
     }
 
     /**
@@ -371,9 +366,10 @@ class Api implements LoggerAwareInterface
      */
     public function editBatch(array $parameters, $createIfNotExists = false)
     {
-        $method = $createIfNotExists ? 'PUT' : 'PATCH';
+        $method    = $createIfNotExists ? 'PUT' : 'PATCH';
+        $supported = $this->isSupported('editBatch');
 
-        return $this->makeRequest($this->endpoint.'/batch/edit', $parameters, $method);
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/batch/edit', $parameters, $method) : $supported;
     }
 
     /**
@@ -385,7 +381,9 @@ class Api implements LoggerAwareInterface
      */
     public function delete($id)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/delete', array(), 'DELETE');
+        $supported = $this->isSupported('delete');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/'.$id.'/delete', array(), 'DELETE') : $supported;
     }
 
     /**
@@ -397,6 +395,47 @@ class Api implements LoggerAwareInterface
      */
     public function deleteBatch(array $ids)
     {
-        return $this->makeRequest($this->endpoint.'/batch/delete', array('ids' => $ids), 'DELETE');
+        $supported = $this->isSupported('deleteBatch');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/batch/delete', array('ids' => $ids), 'DELETE') : $supported;
+    }
+
+    /**
+     * Returns a not supported error
+     *
+     * @param string $action
+     *
+     * @return array
+     */
+    protected function actionNotSupported($action)
+    {
+        $error = array(
+            'code'    => 500,
+            'message' => "$action is not supported at this time."
+        );
+
+        return array(
+            'errors' => array(
+                $error
+            ),
+            // @deprecated 2.6.0 to be removed in 3.0
+            'error'  => $error
+        );
+    }
+
+    /**
+     * Verify that a default endpoint is supported by the API
+     *
+     * @param $action
+     *
+     * @return bool
+     */
+    protected function isSupported($action)
+    {
+        if (empty($this->endpointsSupported) || in_array($action, $this->endpointsSupported)) {
+            return true;
+        }
+
+        return $this->actionNotSupported($action);
     }
 }

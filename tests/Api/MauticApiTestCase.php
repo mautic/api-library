@@ -62,7 +62,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         return MauticApi::getContext($context, $auth, $apiUrl);
     }
 
-    protected function assertErrors($response)
+    protected function assertErrors($response, $failureMessage = '')
     {
         $message = '';
         if (isset($response['errors'])) {
@@ -70,12 +70,13 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
             foreach ($response['errors'] as $error) {
                 $messages[] = "{$error['message']}";
             }
+
             $message = implode("; ", $messages);
         } elseif (isset($response['error'])) {
-            $message = is_array($response['error']) ? $response['error']['message'] : $response['error'];
+            $message = (is_array($response['error']) ? $response['error']['message'] : $response['error']);
         }
 
-        $this->assertTrue(empty($message), $message);
+        $this->assertTrue(empty($message), $message.$failureMessage);
     }
 
     protected function assertSuccess($response)

@@ -85,4 +85,5 @@ class Campaigns extends Api
     {
         return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', array(), 'POST');
     }
+
 }
