@@ -273,11 +273,9 @@ class Api implements LoggerAwareInterface
             if (isset($response['error']) && !isset($response['errors'])) {
                 if (isset($response['error_description'])) {
                     // BC Oauth2 error
-                    $info               = $this->auth->getRequestInfo();
                     $response['errors'] = array(
                         array(
                             'message' => $response['error_description'],
-                            'code'    => $info['http_code'],
                             'type'    => $response['error']
                         )
                     );
@@ -285,6 +283,16 @@ class Api implements LoggerAwareInterface
                     $response['errors'] = array(
                         $response['error']
                     );
+                }
+            }
+
+            // Ensure a code is present in the error array
+            if (!empty($response['errors'])) {
+                $info = $this->auth->getRequestInfo();
+                foreach ($response['errors'] as $key => $error) {
+                    if (!isset($response['errors'][$key]['code'])) {
+                        $response['errors'][$key]['code'] = $info['http_code'];
+                    }
                 }
             }
         }
