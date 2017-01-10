@@ -31,6 +31,14 @@ class Segments extends Api
     protected $itemName = 'list';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'segments/(.*?)/contact/(.*?)/add'    => 'segments/$1/contact/add/$2', // 2.6.0
+        'segments/(.*?)/contact/(.*?)/remove' => 'segments/$1/contact/remove/$2', // 2.6.0
+    );
+
+    /**
      * Add a contact to the segment
      *
      * @param int $segmentId Segment ID

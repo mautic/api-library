@@ -859,6 +859,14 @@ class OAuth extends ApiAuth implements AuthInterface
     }
 
     /**
+     * @return array
+     */
+    public function getRequestInfo()
+    {
+        return $this->_httpResponseInfo;
+    }
+
+    /**
      * Build the HTTP response array out of the headers string
      *
      * @param  string $headersStr

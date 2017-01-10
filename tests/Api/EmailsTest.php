@@ -274,28 +274,8 @@ class EmailsTest extends MauticApiTestCase
 
     public function testBCEndpoints()
     {
-
-        $this->setUpPayloadClass();
-
-        // Create contact
-        $contactsContext = $this->getContext('contacts');
-        $response = $contactsContext->create(array('firstname' => 'API campagin test'));
-        $this->assertErrors($response);
-        $contact = $response['contact'];
-
-        // Create email
-        $response = $this->api->create($this->testPayload);
-        $this->assertPayload($response);
-        $email = $response[$this->api->itemName()];
-
-        $response = $this->api->makeRequest('emails/'.$email['id'].'/send/contact/'.$contact['id'], array(), 'POST');
-        $this->assertErrors($response);
-
-        // Delete the contact and the campaign
-        $response = $contactsContext->delete($contact['id']);
-        $this->assertErrors($response);
-        $response = $this->api->delete($email['id']);
-        $this->assertErrors($response);
-        $this->clearPayloadItems();
+        $this->api->bcTesting = array('sendToContact');
+        $this->testSendToContact();
+        $this->api->bcTesting = false;
     }
 }

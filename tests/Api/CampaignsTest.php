@@ -473,30 +473,9 @@ class CampaignsTest extends MauticApiTestCase
 
     public function testBCEndpoints()
     {
-        $this->setUpPayloadClass();
-
-        // Create contact
-        $contactsContext = $this->getContext('contacts');
-        $response = $contactsContext->create(array('firstname' => 'API campagin test'));
-        $this->assertErrors($response);
-        $contact = $response['contact'];
-
-        // Create campaign
-        $response = $this->api->create($this->testPayload);
-        $this->assertPayload($response);
-        $campaign = $response[$this->api->itemName()];
-
-        $response = $this->api->makeRequest('campaigns/'.$campaign['id'].'/contact/add/'.$contact['id'], array(), 'POST');
-        $this->assertErrors($response);
-        $this->api->makeRequest('campaigns/'.$campaign['id'].'/contact/remove/'.$contact['id'], array(), 'POST');
-        $this->assertErrors($response);
-
-        // Delete the contact and the campaign
-        $response = $contactsContext->delete($contact['id']);
-        $this->assertErrors($response);
-        $response = $this->api->delete($campaign['id']);
-        $this->assertErrors($response);
-        $this->clearPayloadItems();
+        $this->api->bcTesting = array('addContact', 'removeContact');
+        $this->testAddAndRemove();
+        $this->api->bcTesting = false;
     }
 
     protected function getListOfSpecificEventIds($response)

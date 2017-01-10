@@ -46,6 +46,14 @@ class Contacts extends Api
     protected $itemName = 'contact';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'contacts/(.*?)/dnc/(.*?)/add'    => 'contacts/$1/dnc/add/$2', // 2.6.0
+        'contacts/(.*?)/dnc/(.*?)/remove' => 'contacts/$1/dnc/remove/$2' // 2.6.0
+    );
+
+    /**
      * Get a list of users available as contact owners
      *
      * @return array|mixed

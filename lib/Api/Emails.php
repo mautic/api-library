@@ -30,6 +30,12 @@ class Emails extends Api
      */
     protected $itemName = 'email';
 
+    /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'emails/(.*?)/contact/(.*?)/send' => 'emails/$1/send/contact/$2', // 2.6.0
+    );
 
     /**
      * Send email to the assigned lists

@@ -30,6 +30,11 @@ class Stages extends Api
      */
     protected $itemName = 'stage';
 
+    protected $bcRegexEndpoints = array(
+        'stages/(.*?)/contact/(.*?)/add' => 'stages/$1/contact/add/$2', // 2.6.0
+        'stages/(.*?)/contact/(.*?)/remove' => 'stages/$1/contact/remove/$2', // 2.6.0
+    );
+
     /**
      * Add a contact to the stage
      *

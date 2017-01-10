@@ -9,6 +9,7 @@
 
 namespace Mautic\Api;
 
+use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -19,6 +20,13 @@ use Psr\Log\NullLogger;
  */
 class Api implements LoggerAwareInterface
 {
+    /**
+     * Used by unit testing to force use of BC endpoints
+     *
+     * @var bool
+     */
+    public $bcTesting = false;
+
     /**
      * Common endpoint for this API
      *
@@ -48,6 +56,20 @@ class Api implements LoggerAwareInterface
     protected $endpointsSupported = array();
 
     /**
+     * Array of deprecated endpoints to use if a response fails as a 404 with a previous version of Mautic
+     *
+     * @var array
+     */
+    protected $bcRegexEndpoints = array();
+
+    /**
+     * Prevents from checking BC on a BC request
+     *
+     * @var bool
+     */
+    protected $bcAttempt = false;
+
+    /**
      * Base URL for API endpoints
      *
      * @var string
@@ -55,7 +77,7 @@ class Api implements LoggerAwareInterface
     protected $baseUrl;
 
     /**
-     * @var AuthInterface
+     * @var ApiAuth
      */
     private $auth;
 
@@ -148,69 +170,130 @@ class Api implements LoggerAwareInterface
     /**
      * Make the API request
      *
-     * @param string $endpoint
+     * @param        $endpoint
      * @param array  $parameters
      * @param string $method
      *
-     * @return array|mixed
+     * @return array
+     * @throws \Exception
      */
     public function makeRequest($endpoint, array $parameters = array(), $method = 'GET')
     {
-        $url = $this->baseUrl.$endpoint;
+        $response = array();
 
-        if (strpos($url, 'http') === false) {
-            $error = array(
-                'code'    => 500,
-                'message' => sprintf(
-                    'URL is incomplete.  Please use %s, set the base URL as the third argument to MauticApi::getContext(), or make $endpoint a complete URL.',
-                    __CLASS__.'setBaseUrl()'
-                )
-            );
-        } else {
-            try {
-                $response = $this->auth->makeRequest($url, $parameters, $method);
+        // Validate if this endpoint has a BC url
+        $bcEndpoint = null;
+        if (!$this->bcAttempt) {
+            if (!empty($this->bcRegexEndpoints)) {
+                foreach ($this->bcRegexEndpoints as $regex => $bc) {
+                    if (preg_match('@'.$regex.'@', $endpoint)) {
+                        $this->bcAttempt = true;
+                        $bcEndpoint = preg_replace('@'.$regex.'@', $bc, $endpoint);
 
-                $this->getLogger()->debug('API Response', array('response' => $response));
-
-                if (!is_array($response)) {
-                    $this->getLogger()->warning($response);
-
-                    //assume an error
-                    $error = array(
-                        'code'    => 500,
-                        'message' => $response
-                    );
+                        break;
+                    }
                 }
-
-                // @deprecated support for 2.6.0 to be removed in 3.0
-                if (!isset($response['errors']) && isset($response['error']) && isset($response['error_description'])) {
-                    $message = $response['error'].': '.$response['error_description'];
-
-                    $this->getLogger()->warning($message);
-
-                    $error = array(
-                        'code'    => 403,
-                        'message' => $message
-                    );
-                }
-            } catch (\Exception $e) {
-                $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
-
-                $error = array(
-                    'code'    => $e->getCode(),
-                    'message' => $e->getMessage()
-                );
             }
         }
 
-        if (!empty($error)) {
-            return array(
-                'errors' => array($error),
-                // @deprecated 2.6.0 to be removed 3.0
-                'error'  => $error
-            );
-        } elseif (!empty($response['errors'])) {
-            $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors']));
+        $url = $this->baseUrl.$endpoint;
+
+        // Don't make the call if we're unit testing a BC endpoint
+        if (!$bcEndpoint || !$this->bcTesting || ($bcEndpoint && $this->bcTesting && $this->bcAttempt)) {
+            // Hack for unit testing to ensure this isn't being called due to a bad regex
+            if ($this->bcTesting && !$this->bcAttempt) {
+                $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+                if (!is_array($this->bcTesting)) {
+                    $this->bcTesting = array($this->bcTesting);
+                }
+
+                // The method is not catching the BC endpoint so fail the test
+                if (in_array($bt[1]['function'], $this->bcTesting)) {
+                    throw new \Exception($endpoint.' not matched in '.var_export($this->bcRegexEndpoints, true));
+                }
+            }
+
+            if (strpos($url, 'http') === false) {
+                $error = array(
+                    'code'    => 500,
+                    'message' => sprintf(
+                        'URL is incomplete.  Please use %s, set the base URL as the third argument to MauticApi::getContext(), or make $endpoint a complete URL.',
+                        __CLASS__.'setBaseUrl()'
+                    )
+                );
+            } else {
+                try {
+                    $response = $this->auth->makeRequest($url, $parameters, $method);
+
+                    $this->getLogger()->debug('API Response', array('response' => $response));
+
+                    if (!is_array($response)) {
+                        $this->getLogger()->warning($response);
+
+                        //assume an error
+                        $error = array(
+                            'code'    => 500,
+                            'message' => $response
+                        );
+                    }
+
+                    // @deprecated support for 2.6.0 to be removed in 3.0
+                    if (!isset($response['errors']) && isset($response['error']) && isset($response['error_description'])) {
+                        $message = $response['error'].': '.$response['error_description'];
+
+                        $this->getLogger()->warning($message);
+
+                        $error = array(
+                            'code'    => 403,
+                            'message' => $message
+                        );
+                    }
+                } catch (\Exception $e) {
+                    $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
+
+                    $error = array(
+                        'code'    => $e->getCode(),
+                        'message' => $e->getMessage()
+                    );
+                }
+            }
+
+            if (!empty($error)) {
+                return array(
+                    'errors' => array($error),
+                    // @deprecated 2.6.0 to be removed 3.0
+                    'error'  => $error
+                );
+            } elseif (!empty($response['errors'])) {
+                $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors']));
+            }
+
+            // @deprecated 2.6.0 BC error handling
+            // @todo remove in 3.0
+            if (isset($response['error']) && !isset($response['errors'])) {
+                if (isset($response['error_description'])) {
+                    // BC Oauth2 error
+                    $info               = $this->auth->getRequestInfo();
+                    $response['errors'] = array(
+                        array(
+                            'message' => $response['error_description'],
+                            'code'    => $info['http_code'],
+                            'type'    => $response['error']
+                        )
+                    );
+                } elseif (isset($response['message'])) {
+                    $response['errors'] = array(
+                        $response['error']
+                    );
+                }
+            }
+        }
+
+        // Check for a 404 code and a BC URL then try again if applicable
+        if ($bcEndpoint && ($this->bcTesting || (!empty($response['errors'][0]['code']) && (int) $response['errors'][0]['code'] === 404))) {
+            $this->bcAttempt = true;
+
+            return $this->makeRequest($bcEndpoint, $parameters, $method);
         }
 
         return $response;

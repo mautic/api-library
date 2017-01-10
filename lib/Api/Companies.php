@@ -31,6 +31,14 @@ class Companies extends Api
     protected $itemName = 'company';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'companies/(.*?)/contact/(.*?)/add'    => 'companies/$1/contact/add/$2', // 2.6.0
+        'companies/(.*?)/contact/(.*?)/remove' => 'companies/$1/contact/remove$2' // 2.6.0
+    );
+
+    /**
      * Add a contact to the company
      *
      * @param int $id        Company ID

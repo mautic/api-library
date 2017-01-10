@@ -31,6 +31,14 @@ class Campaigns extends Api
     protected $itemName = 'campaign';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'campaigns/(.*?)/contact/(.*?)/add'    => 'campaigns/$1/contact/add/$2', // 2.6.0
+        'campaigns/(.*?)/contact/(.*?)/remove' => 'campaigns/$1/contact/remove/$2' // 2.6.0
+    );
+
+    /**
      * Add a lead to the campaign
      *
      * @deprecated 2.0.1, use addContact instead
