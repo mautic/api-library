@@ -84,4 +84,29 @@ class CompaniesTest extends AbstractCustomFieldsTest
     {
         $this->standardTestBatchEndpoints();
     }
+
+    public function testBCEndpoints()
+    {
+        // Create contact
+        $contactApi = $this->getContext('contacts');
+        $response = $contactApi->create(array('firstname' => 'API segments test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create company
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $company = $response[$this->api->itemName()];
+
+        $response = $this->api->makeRequest('companies/'.$company['id'].'/contact/add/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
+
+        $response = $this->api->makeRequest('companies/'.$company['id'].'/contact/remove/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
+
+        $response = $contactApi->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $this->api->delete($company['id']);
+        $this->assertErrors($response);
+    }
 }

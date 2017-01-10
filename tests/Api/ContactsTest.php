@@ -15,6 +15,11 @@ class ContactsTest extends AbstractCustomFieldsTest
 {
     protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags');
 
+    /**
+     * @var Contacts
+     */
+    protected $api;
+
     public function setUp()
     {
         $this->api = $this->getContext('contacts');
@@ -279,5 +284,37 @@ class ContactsTest extends AbstractCustomFieldsTest
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints();
+    }
+
+    public function testBCEndpoints()
+    {
+        // Create contact
+        $response = $this->api->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->api->itemName()];
+
+        // Test Add
+        $response = $this->api->makeRequest(
+            'contacts/'.$contact['id'].'/dnc/add/email',
+            array(
+                'reason' => Contacts::BOUNCED,
+                'channelId' => 1,
+                'comments' => 'Something',
+            ),
+            'POST'
+        );
+        $this->assertErrors($response);
+        $this->assertEquals(count($response[$this->api->itemName()]['doNotContact']), 1);
+
+        // Test Remove
+        $response = $this->api->makeRequest(
+            'contacts/'.$contact['id'].'/dnc/add/'.$response[$this->api->itemName()]['doNotContact'][0]['channel'],
+            array(),
+            'POST'
+        );
+        $this->assertErrors($response);
+
+        $response = $this->api->delete($contact['id']);
+        $this->assertErrors($response);
     }
 }

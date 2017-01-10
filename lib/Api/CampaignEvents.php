@@ -18,7 +18,7 @@ class CampaignEvents extends Api
     /**
      * {@inheritdoc}
      */
-    protected $endpoint = 'campaigns';
+    protected $endpoint = 'campaigns/events';
 
     /**
      * {@inheritdoc}
@@ -62,7 +62,7 @@ class CampaignEvents extends Api
 
         $parameters = array_filter($parameters);
 
-        return $this->makeRequest($this->endpoint.'/contact/'.$contactId.'/events', $parameters);
+        return $this->makeRequest($this->endpoint.'/contact/'.$contactId, $parameters);
     }
 
     /**
@@ -90,7 +90,7 @@ class CampaignEvents extends Api
 
         $parameters = array_filter($parameters);
 
-        return $this->makeRequest($this->endpoint.'/'.$campaignId.'/contact/'.$contactId.'/events', $parameters);
+        return $this->makeRequest('campaigns/'.$campaignId.'/events/contact/'.$contactId, $parameters);
     }
 
     /**
@@ -104,7 +104,7 @@ class CampaignEvents extends Api
      */
     public function editContactEvent($contactId, $eventId, array $parameters)
     {
-        return $this->makeRequest($this->endpoint.'/contact/'.$contactId.'/events/'.$eventId.'/edit', $parameters, 'PUT');
+        return $this->makeRequest($this->endpoint.'/'.$eventId.'/contact/'.$contactId.'/edit', $parameters, 'PUT');
     }
 
     /**
@@ -116,6 +116,6 @@ class CampaignEvents extends Api
      */
     public function editEvents(array $parameters)
     {
-        return $this->makeRequest($this->endpoint.'/events/batch/edit', $parameters, 'PUT');
+        return $this->makeRequest($this->endpoint.'/batch/edit', $parameters, 'PUT');
     }
 }

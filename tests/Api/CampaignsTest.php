@@ -381,6 +381,7 @@ class CampaignsTest extends MauticApiTestCase
         }
 
         $response = $this->eventApi->getContactCampaignEvents($campaign['id'], $contact['id']);
+        $this->assertErrors($response);
         $campaignEvents = $response['events'];
         $eventLogIds = array();
         foreach ($campaignEvents as $event) {
@@ -461,6 +462,34 @@ class CampaignsTest extends MauticApiTestCase
                 $this->assertFalse(false, 'Event ID not recognized in the log.', var_export($event, true));
             }
         }
+
+        // Delete the contact and the campaign
+        $response = $contactsContext->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $this->api->delete($campaign['id']);
+        $this->assertErrors($response);
+        $this->clearPayloadItems();
+    }
+
+    public function testBCEndpoints()
+    {
+        $this->setUpPayloadClass();
+
+        // Create contact
+        $contactsContext = $this->getContext('contacts');
+        $response = $contactsContext->create(array('firstname' => 'API campagin test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create campaign
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $campaign = $response[$this->api->itemName()];
+
+        $response = $this->api->makeRequest('campaigns/'.$campaign['id'].'/contact/add/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
+        $this->api->makeRequest('campaigns/'.$campaign['id'].'/contact/remove/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
 
         // Delete the contact and the campaign
         $response = $contactsContext->delete($contact['id']);

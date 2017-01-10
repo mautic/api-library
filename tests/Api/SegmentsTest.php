@@ -9,8 +9,15 @@
 
 namespace Mautic\Tests\Api;
 
+use Mautic\Api\Segments;
+
 class SegmentsTest extends MauticApiTestCase
 {
+    /**
+     * @var Segments
+     */
+    protected $api;
+
     public function setUp() {
         $this->api = $this->getContext('segments');
         $this->testPayload = array(
@@ -138,5 +145,30 @@ class SegmentsTest extends MauticApiTestCase
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints();
+    }
+
+    public function testBCEndpoints()
+    {
+        // Create contact
+        $contactApi = $this->getContext('contacts');
+        $response = $contactApi->create(array('firstname' => 'API segments test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create segment
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $segment = $response[$this->api->itemName()];
+
+        $response = $this->api->makeRequest('segments/'.$segment['id'].'/contact/add/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
+
+        $response = $this->api->makeRequest('segments/'.$segment['id'].'/contact/remove/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
+
+        $response = $contactApi->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $this->api->delete($segment['id']);
+        $this->assertErrors($response);
     }
 }

@@ -80,4 +80,29 @@ class StagesTest extends MauticApiTestCase
     {
         $this->standardTestBatchEndpoints();
     }
+
+    public function testBCEndpoints()
+    {
+        // Create contact
+        $contactApi = $this->getContext('contacts');
+        $response = $contactApi->create(array('firstname' => 'API segments test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create stage
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $stage = $response[$this->api->itemName()];
+
+        $response = $this->api->makeRequest('stages/'.$stage['id'].'/contact/add/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
+
+        $response = $this->api->makeRequest('stages/'.$stage['id'].'/contact/remove/'.$contact['id'], array(), 'POST');
+        $this->assertErrors($response);
+
+        $response = $contactApi->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $this->api->delete($stage['id']);
+        $this->assertErrors($response);
+    }
 }

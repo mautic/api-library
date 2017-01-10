@@ -11,6 +11,6 @@
     "campaigns/{id}/contact/{contactId}/remove",
     "campaigns/events",
     "campaigns/events/{id}",
-    "campaigns/contact/{contactId}/events/{eventId}/edit",
+    "campaigns/events/{eventId}/contact/{contactId}/edit",
     "campaigns/events/batch/edit"
 ]

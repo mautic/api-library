@@ -168,7 +168,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $response = $this->api->getList();
         $this->assertErrors($response);
         $this->assertTrue(isset($response['total']));
-        $this->assertTrue(isset($response[$this->api->listName()]));
+        $this->assertTrue(isset($response[$this->api->listName()]), var_export($response, true));
     }
 
     protected function standardTestCreateGetAndDelete(array $payload = null)
