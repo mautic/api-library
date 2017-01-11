@@ -212,6 +212,7 @@ class Api implements LoggerAwareInterface
                     throw new \Exception($endpoint.' not matched in '.var_export($this->bcRegexEndpoints, true));
                 }
             }
+            $this->bcAttempt = false;
 
             if (strpos($url, 'http') === false) {
                 $error = array(

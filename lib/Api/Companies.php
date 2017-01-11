@@ -35,7 +35,7 @@ class Companies extends Api
      */
     protected $bcRegexEndpoints = array(
         'companies/(.*?)/contact/(.*?)/add'    => 'companies/$1/contact/add/$2', // 2.6.0
-        'companies/(.*?)/contact/(.*?)/remove' => 'companies/$1/contact/remove$2' // 2.6.0
+        'companies/(.*?)/contact/(.*?)/remove' => 'companies/$1/contact/remove/$2' // 2.6.0
     );
 
     /**
