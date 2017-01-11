@@ -363,7 +363,7 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         //Check to see if token in session has expired
-        if (true || !empty($this->_expires) && $this->_expires < time()) {
+        if (!empty($this->_expires) && $this->_expires < time()) {
             return false;
         }
 
