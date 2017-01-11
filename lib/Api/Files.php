@@ -50,6 +50,20 @@ class Files extends Api
     }
 
     /**
+     * @param array $parameters
+     *
+     * @return array|mixed
+     */
+    public function create(array $parameters)
+    {
+        if (!isset($parameters['file'])) {
+            throw new \InvalidArgumentException('file must be set in parameters');
+        }
+
+        return parent::create($parameters);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function createBatch(array $parameters)

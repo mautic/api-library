@@ -771,7 +771,7 @@ class OAuth extends ApiAuth implements AuthInterface
             // the Content-Type header to multipart/form-data
             if (!empty($parameters['file']) && file_exists($parameters['file'])) {
                 $options[CURLOPT_INFILESIZE] = filesize($parameters['file']);
-                $parameters['file']          = $this->crateCurlFile($parameters['file']);
+                $parameters['file']          = $this->createCurlFile($parameters['file']);
                 $uploadHeaders               = array("Content-Type:multipart/form-data");
 
                 if ($this->isOauth1()) {
@@ -919,7 +919,7 @@ class OAuth extends ApiAuth implements AuthInterface
      *
      * @return string|\CURLFile
      */
-    protected function crateCurlFile($filename, $mimetype = '', $postname = '')
+    protected function createCurlFile($filename, $mimetype = '', $postname = '')
     {
         if (!function_exists('curl_file_create')) {
             // For PHP < 5.5
