@@ -9,6 +9,7 @@
 
 namespace Mautic\Auth;
 
+use Mautic\Exception\AuthorizationRequiredException;
 use Mautic\Exception\IncorrectParametersReturnedException;
 use Mautic\Exception\UnexpectedResponseFormatException;
 
@@ -122,6 +123,7 @@ class OAuth extends ApiAuth implements AuthInterface
      * @var bool
      */
     protected $_debug = false;
+    protected $_do_not_redirect = false;
 
     /**
      * Holds string of HTTP response headers
@@ -377,10 +379,13 @@ class OAuth extends ApiAuth implements AuthInterface
     /**
      * Validate existing access token
      *
+     * @param bool $redirect
      * @return bool
+     * @throws IncorrectParametersReturnedException
      */
-    public function validateAccessToken()
+    public function validateAccessToken($redirect = true)
     {
+        $this->_do_not_redirect = !$redirect;
         $this->log('validateAccessToken()');
 
         //Check to see if token in session has expired
@@ -670,8 +675,12 @@ class OAuth extends ApiAuth implements AuthInterface
         $this->log('redirecting to auth url '.$authUrl);
 
         //Redirect to authorization URL
-        header('Location: '.$authUrl);
-        exit;
+        if (!$this->_do_not_redirect) {
+            header('Location: '.$authUrl);
+            exit; 
+        } else { 
+            throw new AuthorizationRequiredException($authUrl); 
+        }
     }
 
     /**
