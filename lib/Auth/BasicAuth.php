@@ -23,7 +23,8 @@
 | );
 |
 | // Initiate the auth object
-| $auth = (new ApiAuth())->newAuth($settings, $settings['AuthMethod']);
+| $initAuth = new ApiAuth();
+| $auth = $initAuth->newAuth($settings, $settings['AuthMethod']);
 |
 | // None of the following is required anymore!
 | // However, class methods will respond approprietly if you use the old workflow
@@ -52,16 +53,17 @@
 | use Mautic\MauticApi;
 |
 | // Get a Contact context
-| $contactApi = (new MauticApi())->newApi('contacts', $auth, $settings['apiUrl']);
+| $api = new MauticApi();
+| $contactApi = $api->newApi('contacts', $auth, $settings['apiUrl']);
 |
 | // Get Contact list
 | $results = $contactApi->getList();
 |
 | Note: If the credentials are incorrect an error response will be returned:
-| ['error' => [
+| array('error' => array(
 |       'code'    => 403,
-|       'message' => 'access_denied: OAuth2 authentication required' ]
-| ]
+|       'message' => 'access_denied: OAuth2 authentication required' )
+| )
 |
 */
 
@@ -211,7 +213,7 @@ class BasicAuth extends ApiAuth implements AuthInterface
         }
 
         //Set post fields for POST/PUT/PATCH requests
-        $query = [];
+        $query = array();
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
             // Set file to upload
             // Sending file data requires an array to set
@@ -462,7 +464,8 @@ class BasicAuth extends ApiAuth implements AuthInterface
                 $cleanParams[$k] = $v ?: '';
             }
             $params = array_merge($params, $cleanParams);
-            $url = explode('?', $url, 2)[0];
+            $urlParts = explode('?', $url, 2);
+            $url = $urlParts[0];
         }
 
         return array($url, $params);

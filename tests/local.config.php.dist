@@ -62,6 +62,6 @@ return array(
     'clientSecret'      => '',
     'callback'          => '',
 
-    // Usefull only for OAuth 2 testing
+    // Required only for OAuth 2 testing.
     'refreshToken'      => ''
 );

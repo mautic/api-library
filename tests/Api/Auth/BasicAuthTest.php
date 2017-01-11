@@ -32,7 +32,8 @@ class BasicAuthTest extends MauticApiTestCase
     public function testParameterExceptionErrorNoUserName()
     {
         // This should throw an error becuse the userName is missing
-        $auth = (new ApiAuth())->newAuth(['password'=>'********'], 'BasicAuth' );
+        $apiAuth = new ApiAuth();
+        $auth = $apiAuth->newAuth(array('password'=>'********'), 'BasicAuth');
     }
 
     /**
@@ -45,7 +46,8 @@ class BasicAuthTest extends MauticApiTestCase
     public function testParameterExceptionErrorNoPassword()
     {
         // This should throw an error becuse the password is missing
-        $auth = (new ApiAuth())->newAuth(['userName'=>'anyolduser'], 'BasicAuth' );
+        $api = new ApiAuth();
+        $auth = $api->newAuth(array('userName'=>'anyolduser'), 'BasicAuth');
     }
 
     /**
@@ -58,7 +60,8 @@ class BasicAuthTest extends MauticApiTestCase
     public function testParameterExceptionErrorEmptyUserName()
     {
         // This should throw an error becuse the userName is empty - test blanks
-        $auth = (new ApiAuth())->newAuth(['userName'=>' ','password'=>'********'], 'BasicAuth' );
+        $apiAuth = new ApiAuth();
+        $auth = $apiAuth->newAuth(array('userName'=>' ','password'=>'********'), 'BasicAuth' );
     }
 
     /**
@@ -71,7 +74,8 @@ class BasicAuthTest extends MauticApiTestCase
     public function testParameterExceptionErrorEmptyPassword()
     {
         // This should throw an error because the password is empty - test blanks
-        $auth = (new ApiAuth())->newAuth(['userName'=>'admin','password'=>' '], 'BasicAuth' );
+        $apiAuth = new ApiAuth();
+        $auth = $apiAuth->newAuth(array('userName'=>'admin','password'=>' '), 'BasicAuth' );
     }
 
     /**
@@ -105,7 +109,8 @@ class BasicAuthTest extends MauticApiTestCase
     public function testPublicInterface()
     {
         $config = include $this->configFile;
-        $auth   = (new ApiAuth())->newAuth($config, 'BasicAuth' );
+        $apiAuth = new ApiAuth();
+        $auth   = $apiAuth->newAuth($config, 'BasicAuth' );
 
         $this->assertTrue($auth->isAuthorized(), 'Authorization failed. Check credentials in local.config.php.');
         $this->assertTrue($auth->validateAccessToken(), 'validateAccessToken test failed. Check credentials in local.config.php.');

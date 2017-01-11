@@ -117,8 +117,8 @@ class DataTest extends MauticApiTestCase
     {
         $notSupported = array(
             'getPublishedList'  => function() { return $this->api->getPublishedList();},
-            'create'            => function() { return $this->api->create([]);        },
-            'edit'              => function() { return $this->api->edit('x',[]);      },
+            'create'            => function() { return $this->api->create(array());   },
+            'edit'              => function() { return $this->api->edit('x',array()); },
             'delete'            => function() { return $this->api->delete('x');       },
             );
         foreach($notSupported as $key => $closure) {
@@ -139,7 +139,6 @@ class DataTest extends MauticApiTestCase
 
         // test all currently known types exist
         foreach( $this->dataToTest as $key => $data) {
-            // echo 'Test if '.$key .' exists' . PHP_EOL;
             $this->assertTrue(isset($response['types'][$key]), 'Should contain key of '. $key);
         }
     }

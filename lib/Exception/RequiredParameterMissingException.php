@@ -12,13 +12,10 @@ namespace Mautic\Exception;
 /**
  * Exception representing a required parameter is missing for Basic Authentication
  */
-class RequiredParameterMissingException extends \Exception
+class RequiredParameterMissingException extends AbstractApiException
 {
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = 'Required Parameter is missing.', $code = 500, \Exception $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
+    const DEFAULT_MESSAGE = 'Required Parameter is missing.';
 }

@@ -100,7 +100,8 @@ $settings = array(
 );
 
 // Initiate the auth object specifying to use BasicAuth
-$auth = (new ApiAuth())->newAuth($settings, 'BasicAuth');
+$initAuth = new ApiAuth();
+$auth = $initAuth->newAuth($settings, 'BasicAuth');
 
 // Nothing else to do ... It's ready to use.
 // Just pass the auth object to the API context you are creating.
@@ -109,10 +110,11 @@ $auth = (new ApiAuth())->newAuth($settings, 'BasicAuth');
 **Note:** If the credentials are incorrect an error response will be returned.
 
 ```php
- ['error' => [
+ array('error' => array(
        'code'    => 403,
-       'message' => 'access_denied: OAuth2 authentication required' ]
- ]
+       'message' => 'access_denied: OAuth2 authentication required' )
+ )
+ 
 ```
 
 ## API Requests
