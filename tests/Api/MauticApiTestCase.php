@@ -206,7 +206,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
         // Create batch
         $createResponse = $this->api->createBatch($batch);
-        //$this->assertPayload($createResponse, $batch, 3);
+        $this->assertPayload($createResponse, $batch, 3);
 
         // Add new IDs
         $ids = array();
