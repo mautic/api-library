@@ -45,8 +45,45 @@ class StatsTest extends MauticApiTestCase
 
     public function testGetTables()
     {
+        $expectedTables = array(
+            'asset_downloads',
+            'audit_log',
+            'campaign_lead_event_log',
+            'campaign_leads',
+            'channel_url_trackables',
+            'companies_leads',
+            'dynamic_content_lead_data',
+            'dynamic_content_stats',
+            'email_stats',
+            'email_stats_devices',
+            'focus_stats',
+            'form_submissions',
+            'ip_addresses',
+            'lead_categories',
+            'lead_companies_change_log',
+            'lead_devices',
+            'lead_donotcontact',
+            'lead_frequencyrules',
+            'lead_lists',
+            'lead_points_change_log',
+            'lead_stages_change_log',
+            'lead_utmtags',
+            'page_hits',
+            'page_redirects',
+            'point_lead_action_log',
+            'point_lead_event_log',
+            'push_notification_stats',
+            'sms_message_stats',
+            'stage_lead_action_log',
+            'video_hits',
+            'webhook_logs',
+        );
         $response = $this->api->get();
         $this->assertTrue(!empty($response['availableTables']));
+        $this->assertSame(
+            array_diff($expectedTables, $response['availableTables']),
+            array_diff($response['availableTables'], $expectedTables)
+        );
     }
 
     public function testGetSimple()

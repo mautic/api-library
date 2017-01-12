@@ -12,13 +12,10 @@ namespace Mautic\Exception;
 /**
  * Exception representing a requested API context which was not found
  */
-class ContextNotFoundException extends \Exception
+class ContextNotFoundException extends AbstractApiException
 {
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = 'Context not found.', $code = 500, \Exception $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
+    const DEFAULT_MESSAGE = 'Context not found.';
 }

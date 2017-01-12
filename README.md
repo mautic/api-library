@@ -137,16 +137,7 @@ $contactApi = $api->newApi('contacts', $auth, $apiUrl);
 
 Supported contexts are currently:
 
-* Assets - read only
-* Campaigns - read only
-* Emails - read only
-* Forms - read only
-* Contacts - read and write
-* Segments - read and write
-* Pages - read only
-* Points - read only
-* PointTriggers - read only
-* Reports - read only
+See the [developer documentation](https://developer.mautic.org).
 
 ### Retrieving items
 All of the above contexts support the following functions for retrieving items:
@@ -154,14 +145,16 @@ All of the above contexts support the following functions for retrieving items:
 ```php
 <?php
 
-$contact = $contactApi->get($id);
+$response = $contactApi->get($id);
+$contact = $response[$contactApi->itemName()];
 
 // getList accepts optional parameters for filtering, limiting, and ordering
-$contacts = $contactApi->getList($filter, $start, $limit, $orderBy, $orderByDir);
+$response = $contactApi->getList($filter, $start, $limit, $orderBy, $orderByDir);
+$totalContacts = $response['total'];
+$contact = $response[$contactApi->listName()];
 ```
 
 ### Creating an item
-Currently, only Contacts support this
 
 ```php
 <?php
@@ -170,15 +163,16 @@ $fields = $contactApi->getFieldList();
 
 $data = array();
 
-foreach ($fields as $f) {
-    $data[$f['alias']] = $_POST[$f['alias']];
+foreach ($fields as $field) {
+    $data[$field['alias']] = $_POST[$field['alias']];
 }
 
 // Set the IP address the contact originated from if it is different than that of the server making the request
 $data['ipAddress'] = $ipAddress;
  
 // Create the contact 
-$contact = $contactApi->create($data);
+$response = $contactApi->create($data);
+$contact = $response[$contactApi->itemName()];
 ```
     
 ### Editing an item
@@ -191,20 +185,22 @@ $updatedData = array(
     'firstname' => 'Updated Name'
 );
 
-$result = $contactApi->edit($contactId, $updatedData);
+$response = $contactApi->edit($contactId, $updatedData);
+$contact = $response[$contactApi->itemName()];
 
 // If you want to create a new contact in the case that $contactId no longer exists
-// $result will be populated with the new contact item
-$result = $contactApi->edit($contactId, $updatedData, true);
+// $response will be populated with the new contact item
+$response = $contactApi->edit($contactId, $updatedData, true);
+$contact = $response[$contactApi->itemName()];
 ```
     
 ### Deleting an item
-Currently, only Contacts support this
 
 ```php
 <?php
 
-$result = $contactApi->delete($contactId);
+$response = $contactApi->delete($contactId);
+$contact = $response[$contactApi->itemName()];
 ```
 
 ### Error handling
@@ -212,11 +208,11 @@ $result = $contactApi->delete($contactId);
 ```php
 <?php
 
-// $result returned by an API call should be checked for errors
-$result = $contactApi->delete($contactId);
+// $response returned by an API call should be checked for errors
+$response = $contactApi->delete($contactId);
 
-if (isset($result['error'])) {
-    echo $result['error']['code'] . ": " . $result['error']['message'];
+if (isset($response['error'])) {
+    echo $response['error']['code'] . ": " . $response['error']['message'];
 } else {
     // do whatever with the info
 }
