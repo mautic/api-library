@@ -39,8 +39,15 @@ class ContactsTest extends MauticApiTestCase
         $this->assertTrue(isset($response['filters']));
         $this->assertEquals(count($response['events']), count($expectedEvents));
 
-        foreach ($expectedEvents as $key => $event) {
-            $this->assertEquals($response['events'][$key]['event'], $event);
+        foreach ($expectedEvents as $key => $eventName) {
+            $actual = 'oops Missing';
+            foreach ($response['events'] as $event) {
+                if ($eventName == $event['event']) {
+                    $actual = $event['event'];
+                    break;
+                }
+            }
+            $this->assertEquals($eventName, $actual);
         }
     }
 
