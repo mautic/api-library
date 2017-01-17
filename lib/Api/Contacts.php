@@ -261,4 +261,36 @@ class Contacts extends Api
             'POST'
         );
     }
+
+    /**
+     * Add UTM Tags to Contact
+     *
+     * @param int    $id
+     * @param array  $utmTags
+     *
+     * @return mixed
+     */
+    public function addUtm($id, $utmTags) {
+        return $this->makeRequest(
+            'contacts/'.$id.'/utm/add',
+            $utmTags,
+            'POST'
+        );
+    }
+
+    /**
+     * Remove UTM Tags from a Contact
+     *
+     * @param int    $id
+     * @param int    $utmId
+     *
+     * @return mixed
+     */
+    public function removeUtm($id, $utmId) {
+        return $this->makeRequest(
+            'contacts/'.$id.'/utm/'.$utmId.'/remove',
+            array(),
+            'POST'
+        );
+    }
 }
