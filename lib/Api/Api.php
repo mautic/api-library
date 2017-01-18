@@ -9,6 +9,7 @@
 
 namespace Mautic\Api;
 
+use Mautic\QueryBuilder\QueryBuilder;
 use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -358,6 +359,19 @@ class Api implements LoggerAwareInterface
     }
 
     /**
+     * @param       $id
+     * @param array $select
+     *
+     * @return array|bool
+     */
+    public function getCustom($id, array $select = array())
+    {
+        $supported = $this->isSupported('get');
+
+        return (true === $supported) ? $this->makeRequest("{$this->endpoint}/$id", array('select' => $select)) : $supported;
+    }
+
+    /**
      * Get a list of items
      *
      * @param string $search
@@ -385,6 +399,30 @@ class Api implements LoggerAwareInterface
         $parameters = array_filter($parameters);
 
         return $this->makeRequest($this->endpoint, $parameters);
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param int          $start
+     * @param int          $limit
+     *
+     * @return array|bool
+     */
+    public function getCustomList(QueryBuilder $queryBuilder, $start = 0, $limit = 0)
+    {
+        $parameters = array(
+            'select' => $queryBuilder->getSelect(),
+            'where'  => $queryBuilder->getWhere(),
+            'order'  => $queryBuilder->getOrder(),
+            'start'  => $start,
+            'limit'  => $limit,
+        );
+
+        $parameters = array_filter($parameters);
+
+        $supported = $this->isSupported('getList');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint, $parameters) : $supported;
     }
 
     /**

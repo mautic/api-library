@@ -13,6 +13,8 @@ use Mautic\Api\Api;
 use Mautic\Auth\ApiAuth;
 use Mautic\Auth\OAuth;
 use Mautic\MauticApi;
+use Mautic\QueryBuilder\QueryBuilder;
+use Mautic\QueryBuilder\WhereBuilder;
 
 abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -22,6 +24,11 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
     /** @var  Api */
     protected $api;
+
+    public function setUp()
+    {
+        $this->testPayload = array();
+    }
 
     protected function getAuth()
     {
@@ -169,6 +176,25 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $this->assertErrors($response);
         $this->assertTrue(isset($response['total']));
         $this->assertTrue(isset($response[$this->api->listName()]), var_export($response, true));
+
+        if (!empty($this->testPayload)) {
+            reset($this->testPayload);
+            $fieldKey = key($this->testPayload);
+            $qb = new QueryBuilder();
+            $qb->getWhereBuilder()->isNotEmpty($fieldKey);
+
+            $response = $this->api->getCustomList($qb);
+            $this->assertErrors($response);
+            $this->assertTrue(isset($response['total']));
+            $this->assertTrue(isset($response[$this->api->listName()]), var_export($response, true));
+            $first = reset($response[$this->api->listName()]);
+
+            if (isset($first['fields']) && isset($first['fields']['all'])) {
+                $this->assertTrue(!$response['total'] || !empty($first['fields']['all'][$fieldKey]), $fieldKey.'; ' .var_export($response, true));
+            } else {
+                $this->assertTrue(!$response['total'] || !empty($first[$fieldKey]), $fieldKey.'; '.var_export($response, true));
+            }
+        }
     }
 
     protected function standardTestCreateGetAndDelete(array $payload = null)
@@ -179,10 +205,12 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 
         // Create item
         $response = $this->api->create($payload);
+        $this->assertErrors($response);
         $this->assertPayload($response, $payload);
 
         // GET item
         $response = $this->api->get($response[$this->api->itemName()]['id']);
+        $this->assertErrors($response);
         $this->assertPayload($response, $payload);
 
         // Delete item

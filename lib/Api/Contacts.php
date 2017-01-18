@@ -54,6 +54,24 @@ class Contacts extends Api
     );
 
     /**
+     * @param string $search
+     * @param int    $start
+     * @param int    $limit
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param bool   $publishedOnly
+     * @param bool   $minimal
+     *
+     * @return array|mixed
+     */
+    public function getIdentified($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
+    {
+        $search .= ($search) ? "$search !is:anonymous" : '!is:anonymous';
+
+        return $this->getList($search, $start, $limit, $orderBy, $orderByDir, $publishedOnly, $minimal);
+    }
+
+    /**
      * Get a list of users available as contact owners
      *
      * @return array|mixed
@@ -96,19 +114,26 @@ class Contacts extends Api
      *
      * @return array|mixed
      */
-    public function getEvents($id, $search = '', array $includeEvents = array(), array $excludeEvents = array(), $orderBy = '', $orderByDir = 'ASC', $page = 1)
-    {
+    public function getEvents(
+        $id,
+        $search = '',
+        array $includeEvents = array(),
+        array $excludeEvents = array(),
+        $orderBy = '',
+        $orderByDir = 'ASC',
+        $page = 1
+    ) {
         $parameters = array(
             'filters' => array(
-                'search' => $search,
+                'search'        => $search,
                 'includeEvents' => $includeEvents,
                 'excludeEvents' => $excludeEvents,
             ),
-            'order' => array(
+            'order'   => array(
                 $orderBy,
                 $orderByDir,
             ),
-            'page' => $page
+            'page'    => $page
         );
 
         return $this->makeRequest(
@@ -132,11 +157,11 @@ class Contacts extends Api
     public function getContactNotes($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
         $parameters = array(
-            'search'        => $search,
-            'start'         => $start,
-            'limit'         => $limit,
-            'orderBy'       => $orderBy,
-            'orderByDir'    => $orderByDir,
+            'search'     => $search,
+            'start'      => $start,
+            'limit'      => $limit,
+            'orderBy'    => $orderBy,
+            'orderByDir' => $orderByDir,
         );
 
         $parameters = array_filter($parameters);
@@ -159,11 +184,11 @@ class Contacts extends Api
     public function getContactDevices($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
         $parameters = array(
-            'search'        => $search,
-            'start'         => $start,
-            'limit'         => $limit,
-            'orderBy'       => $orderBy,
-            'orderByDir'    => $orderByDir,
+            'search'     => $search,
+            'start'      => $start,
+            'limit'      => $limit,
+            'orderBy'    => $orderBy,
+            'orderByDir' => $orderByDir,
         );
 
         $parameters = array_filter($parameters);
@@ -210,26 +235,28 @@ class Contacts extends Api
     /**
      * Add the points to a contact
      *
-     * @param int $id
-     * @param int $points
+     * @param int   $id
+     * @param int   $points
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
      */
-    public function addPoints($id, $points, array $parameters = array()) {
+    public function addPoints($id, $points, array $parameters = array())
+    {
         return $this->makeRequest('contacts/'.$id.'/points/plus/'.$points, $parameters, 'POST');
     }
 
     /**
      * Subtract points from a contact
      *
-     * @param int $id
-     * @param int $points
+     * @param int   $id
+     * @param int   $points
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
      */
-    public function subtractPoints($id, $points, array $parameters = array()) {
+    public function subtractPoints($id, $points, array $parameters = array())
+    {
         return $this->makeRequest('contacts/'.$id.'/points/minus/'.$points, $parameters, 'POST');
     }
 
@@ -244,14 +271,15 @@ class Contacts extends Api
      *
      * @return array|mixed
      */
-    public function addDnc($id, $channel = 'email', $reason = Contact::MANUAL, $channelId = null, $comments = 'via API') {
+    public function addDnc($id, $channel = 'email', $reason = Contact::MANUAL, $channelId = null, $comments = 'via API')
+    {
 
         return $this->makeRequest(
             'contacts/'.$id.'/dnc/'.$channel.'/add',
             array(
-                'reason' => $reason,
+                'reason'    => $reason,
                 'channelId' => $channelId,
-                'comments' => $comments,
+                'comments'  => $comments,
             ),
             'POST'
         );
@@ -265,7 +293,8 @@ class Contacts extends Api
      *
      * @return mixed
      */
-    public function removeDnc($id, $channel) {
+    public function removeDnc($id, $channel)
+    {
         return $this->makeRequest(
             'contacts/'.$id.'/dnc/'.$channel.'/remove',
             array(),
