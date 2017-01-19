@@ -10,12 +10,12 @@
 namespace Mautic\Exception;
 
 /**
- * Exception representing a requested API context which was not found
+ * Exception representing a required parameter is missing for Basic Authentication
  */
-class ContextNotFoundException extends AbstractApiException
+class RequiredParameterMissingException extends AbstractApiException
 {
     /**
      * {@inheritdoc}
      */
-    const DEFAULT_MESSAGE = 'Context not found.';
+    const DEFAULT_MESSAGE = 'Required Parameter is missing.';
 }
