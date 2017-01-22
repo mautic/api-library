@@ -75,4 +75,40 @@ class Leads extends Contacts
     {
         return $this->makeRequest('contacts/'.$id.'/campaigns');
     }
+    
+    /**
+     * Change the number of points a lead
+     * 
+     * @param int $leadId
+     * @param int $points
+     * @param array $parameters 'eventname' and 'actionname'
+     * @return mixed
+     */
+    public function setPoints($id, $points, array $parameters = array()) {
+        return $this->makeRequest('leads/'.$id.'/setpoints/'.$points, $parameters, 'PATCH');
+    }
+    
+    /**
+     * Add points a lead
+     *
+     * @param int $leadId
+     * @param int $points
+     * @param array $parameters 'eventname' and 'actionname'
+     * @return mixed
+     */
+    public function addPoints($id, $points, array $parameters = array()) {     
+        return $this->makeRequest('leads/'.$id.'/addpoints/'.$points, $parameters, 'PATCH');
+    }
+    
+    /**
+     * Remove points a lead
+     *
+     * @param int $leadId
+     * @param int $points
+     * @param array $parameters 'eventname' and 'actionname'
+     * @return mixed
+     */
+    public function subtractPoints($id, $points, array $parameters = array()) {
+        return $this->makeRequest('leads/'.$id.'/subtractpoints/'.$points, $parameters, 'PATCH');
+    }
 }
