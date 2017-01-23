@@ -92,7 +92,7 @@ class OAuth extends ApiAuth implements AuthInterface
     /**
      * OAuth2 scope
      *
-     * @var string
+     * @var array
      */
     protected $_scope = array();
 
@@ -901,7 +901,7 @@ class OAuth extends ApiAuth implements AuthInterface
      * @param  string $mimetype
      * @param  string $postname
      *
-     * @return string|CURLFile
+     * @return string|\CURLFile
      */
     protected function crateCurlFile($filename, $mimetype = '', $postname = '')
     {
