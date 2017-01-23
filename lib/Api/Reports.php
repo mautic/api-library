@@ -33,6 +33,16 @@ class Reports extends Api
     /**
      * {@inheritdoc}
      */
+    protected $searchCommands = [
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
     public function create(array $parameters)
     {
         return $this->actionNotSupported('create');

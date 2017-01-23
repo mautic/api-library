@@ -28,4 +28,17 @@ class DynamicContents extends Api
      * {@inheritdoc}
      */
     protected $itemName = 'dynamicContent';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+        'lang',
+    ];
 }

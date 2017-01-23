@@ -29,4 +29,17 @@ class Pages extends Api
      * {@inheritdoc}
      */
     protected $itemName = 'page';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+        'lang',
+    ];
 }

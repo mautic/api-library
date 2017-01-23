@@ -31,6 +31,13 @@ class Stages extends Api
     protected $itemName = 'stage';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+    ];
+
+    /**
      * Add a contact to the stage
      *
      * @param int $id        Stage ID

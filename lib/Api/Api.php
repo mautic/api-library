@@ -48,6 +48,13 @@ class Api implements LoggerAwareInterface
     protected $baseUrl;
 
     /**
+     * Array of available search commands
+     *
+     * @var array
+     */
+    protected $searchCommands = [];
+
+    /**
      * @var AuthInterface
      */
     private $auth;
@@ -94,6 +101,28 @@ class Api implements LoggerAwareInterface
         $this->logger = $logger;
 
         return $this;
+    }
+
+    /**
+     * Get the array of available search commands
+     *
+     * @return array
+     */
+    public function getSearchCommands()
+    {
+        return $this->searchCommands;
+    }
+
+    /**
+     * Check if the search command is available
+     *
+     * @param string $command
+     *
+     * @return boolean
+     */
+    public function hasCommand($command)
+    {
+        return in_array($command, $this->searchCommands);
     }
 
     /**

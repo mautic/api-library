@@ -31,6 +31,20 @@ class Forms extends Api
     protected $itemName = 'form';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+        'name',
+        'has:results',
+    ];
+
+    /**
      * Remove fields from a form
      *
      * @param integer $formId
