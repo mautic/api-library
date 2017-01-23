@@ -98,4 +98,9 @@ class ExceptionsTest extends MauticApiTestCase
         $this->assertEquals(self::CUSTOM_ERROR_MESSAGE, $exception->getMessage(), 'This should return "'.self::CUSTOM_ERROR_MESSAGE.'"' );
         $this->assertEquals(500, $exception->getCode());
     }
+
+    public function testSearchCommands() {
+        // overwrite this inheritted method with no content
+    }
+
 }

@@ -120,7 +120,7 @@ class Api implements LoggerAwareInterface
      *
      * @return boolean
      */
-    public function hasCommand($command)
+    public function hasSearchCommand($command)
     {
         return in_array($command, $this->searchCommands);
     }
