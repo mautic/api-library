@@ -13,7 +13,7 @@ return array(
     |
     | Pass this as the second parameter to specify which to use.
     |
-    | If commented out, will default OAuth.
+    | If commented out, will default OAuth. see MauticApiTestCase::getAuth()
     |
     */
     // 'AuthMethod'       => 'BasicAuth',
@@ -50,9 +50,15 @@ return array(
     */
     'version'           => 'OAuth1a',
 
-    // Required for both OAuth 1a and 2 testing
+    // Required for OAuth1a and OAuth2
+    'baseUrl'           => 'http://example.com/index_dev.php',
+
+    // Required for All tests
     'apiUrl'            => 'http://example.com/index_dev.php/api/',
+    // Required for EmailsTest
     'testEmail'         => 'notexisting@email.com',
+
+    // Required for both OAuth 1a and 2 testing
     'accessToken'       => '',
 
     // Required only for OAuth 1a testing
@@ -64,4 +70,5 @@ return array(
 
     // Required only for OAuth 2 testing.
     'refreshToken'      => ''
+
 );
