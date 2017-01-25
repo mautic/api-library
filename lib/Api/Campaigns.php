@@ -85,4 +85,29 @@ class Campaigns extends Api
     {
         return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
     }
+
+    /**
+     * Get a list of stat items
+     *
+     * @param int    $id Campaign ID
+     * @param int    $start
+     * @param int    $limit
+     * @param array  $order
+     * @param array  $where
+     *
+     * @return array|mixed
+     */
+    public function getContacts($id, $start = 0, $limit = 0, array $order = array(), array $where = array())
+    {
+        $parameters = array();
+        $args = array('start', 'limit', 'order', 'where');
+
+        foreach ($args as $arg) {
+            if (!empty($$arg)) {
+                $parameters[$arg] = $$arg;
+            }
+        }
+
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contacts', $parameters);
+    }
 }
