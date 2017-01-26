@@ -255,13 +255,7 @@ class WhereBuilder
      */
     public function andX()
     {
-        $clause  = func_get_args();
-        $builder = new self('andX');
-        foreach ($clause as $x) {
-            $builder->add($x);
-        }
-
-        return $builder;
+        return $this->x('andX', func_get_args());
     }
 
     /**
@@ -269,13 +263,7 @@ class WhereBuilder
      */
     public function orX()
     {
-        $clause  = func_get_args();
-        $builder = new self('orX');
-        foreach ($clause as $x) {
-            $builder->add($x);
-        }
-
-        return $builder;
+        return $this->x('orX', func_get_args());
     }
 
     /**
@@ -323,5 +311,28 @@ class WhereBuilder
             'expr' => $expr,
             'val'  => $val,
         );
+    }
+
+    /**
+     * @param $composite
+     * @param $clauses
+     *
+     * @return $this|WhereBuilder
+     */
+    private function x($composite, $clauses)
+    {
+        $builder = new self($composite);
+
+        if ($clauses) {
+            foreach ($clauses as $x) {
+                $builder->add($x);
+            }
+
+            $this->add($builder);
+
+            return $this;
+        }
+
+        return $builder;
     }
 }
