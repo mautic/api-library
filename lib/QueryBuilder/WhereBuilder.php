@@ -265,11 +265,9 @@ class WhereBuilder
     }
 
     /**
-     * @param self $builder
-     *
-     * @return self
+     * @return WhereBuilder
      */
-    public function orX(self $builder)
+    public function orX()
     {
         $clause  = func_get_args();
         $builder = new self('orX');

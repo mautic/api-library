@@ -72,15 +72,29 @@ class QueryBuilder
     }
 
     /**
+     * @param bool $new
+     *
      * @return WhereBuilder
      */
-    public function getWhereBuilder()
+    public function getWhereBuilder($new = false)
     {
+        if ($new) {
+            return new WhereBuilder();
+        }
+
         if (null == self::$whereBuilder) {
             $this->resetWhereBuilder();
         }
 
         return self::$whereBuilder;
+    }
+
+    /**
+     * @return WhereBuilder
+     */
+    public function expr()
+    {
+        return $this->getWhereBuilder(true);
     }
 
     /**
