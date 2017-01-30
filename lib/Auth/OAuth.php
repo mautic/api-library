@@ -695,9 +695,9 @@ class OAuth extends ApiAuth implements AuthInterface
         //Redirect to authorization URL
         if (!$this->_do_not_redirect) {
             header('Location: '.$authUrl);
-            exit; 
-        } else { 
-            throw new AuthorizationRequiredException($authUrl); 
+            exit;
+        } else {
+            throw new AuthorizationRequiredException($authUrl);
         }
     }
 
@@ -717,17 +717,18 @@ class OAuth extends ApiAuth implements AuthInterface
 
         //make sure $method is capitalized for congruency
         $method = strtoupper($method);
-        $header = array();
+        $headers = (isset($settings['headers']) && is_array($settings['headers'])) ? $settings['headers'] : array();
+
         //Set OAuth parameters/headers
         if ($this->isOauth1()) {
             //OAuth 1.0
             $this->log('making request using OAuth1.0a spec');
 
             //Get standard OAuth headers
-            $headers = $this->getOauthHeaders($includeCallback);
+            $oAuthHeaders = $this->getOauthHeaders($includeCallback);
 
             if ($includeVerifier && isset($_GET['oauth_verifier'])) {
-                $headers['oauth_verifier'] = $_GET['oauth_verifier'];
+                $oAuthHeaders['oauth_verifier'] = $_GET['oauth_verifier'];
 
                 if ($this->_debug) {
                     $_SESSION['oauth']['debug']['oauth_verifier'] = $_GET['oauth_verifier'];
@@ -735,11 +736,12 @@ class OAuth extends ApiAuth implements AuthInterface
             }
 
             //Add the parameters
-            $headers                    = array_merge($headers, $parameters);
-            $base_info                  = $this->buildBaseString($url, $method, $headers);
+            $oAuthHeaders                    = array_merge($oAuthHeaders, $parameters);
+            $base_info                  = $this->buildBaseString($url, $method, $oAuthHeaders);
             $composite_key              = $this->getCompositeKey();
-            $headers['oauth_signature'] = base64_encode(hash_hmac('sha1', $base_info, $composite_key, true));
-            $header                     = array($this->buildAuthorizationHeader($headers), 'Expect:');
+            $oAuthHeaders['oauth_signature'] = base64_encode(hash_hmac('sha1', $base_info, $composite_key, true));
+            $headers[]                   = $this->buildAuthorizationHeader($oAuthHeaders);
+            $headers[]                     = 'Expect:';
 
             if ($this->_debug) {
                 $_SESSION['oauth']['debug']['basestring'] = $base_info;
@@ -784,9 +786,9 @@ class OAuth extends ApiAuth implements AuthInterface
                 $uploadHeaders               = array("Content-Type:multipart/form-data");
 
                 if ($this->isOauth1()) {
-                    array_merge($header, $uploadHeaders);
+                    array_merge($headers, $uploadHeaders);
                 } else {
-                    $header = $uploadHeaders;
+                    $headers = $uploadHeaders;
 
                     // Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
                     $query['access_token'] = $parameters['access_token'];
@@ -817,10 +819,8 @@ class OAuth extends ApiAuth implements AuthInterface
         // Set the URL
         $options[CURLOPT_URL] = $url;
 
-        //Set CURL headers for oauth 1.0 requests
-        if (!empty($header)) {
-            $options[CURLOPT_HTTPHEADER] = $header;
-        }
+        $headers[] = 'Accept: application/json';
+        $options[CURLOPT_HTTPHEADER] = $headers;
 
         //Make CURL request
         $curl = curl_init();
