@@ -242,7 +242,7 @@ class StatsTest extends MauticApiTestCase
 
             // The record might not exist in the database, but in case it does...
             if ((count($response[$this->api->listName()])) > 0) {
-                $this->assertSame((int) $response[$this->api->listName()][0]['id'], ($where[0]['val'] + 1));
+                $this->assertGreaterThan($where[0]['val'], (int) $response[$this->api->listName()][0]['id']);
             }
         }
     }
