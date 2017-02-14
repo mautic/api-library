@@ -9,8 +9,8 @@
 
 namespace Mautic\Tests\Api;
 
-use Mautic\Auth\ApiAuth;
 use Mautic\MauticApi;
+use Mautic\Auth\ApiAuth;
 
 abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -20,8 +20,10 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
     protected function getAuth()
     {
         $this->config = include __DIR__.'/../local.config.php';
+        $authMethod   = isset($this->config['AuthMethod']) ? $this->config['AuthMethod'] : 'OAuth';
 
-        $auth = ApiAuth::initiate($this->config);
+        $apiAuth = new ApiAuth();
+        $auth = $apiAuth->newAuth($this->config, $authMethod );
 
         $this->assertTrue($auth->isAuthorized(), 'Authorization failed. Check credentials in local.config.php.');
 
@@ -32,7 +34,8 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
     {
         list($auth, $apiUrl) = $this->getAuth();
 
-        return MauticApi::getContext($context, $auth, $apiUrl);
+        $api = new MauticApi();
+        return $api->newApi($context, $auth, $apiUrl);
     }
 
     protected function assertErrors($response)
