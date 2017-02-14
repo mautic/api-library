@@ -33,7 +33,7 @@ class Forms extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:published',
         'is:unpublished',
@@ -42,7 +42,7 @@ class Forms extends Api
         'category',
         'name',
         'has:results',
-    ];
+    );
 
     /**
      * Remove fields from a form

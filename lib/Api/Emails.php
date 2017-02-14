@@ -31,9 +31,16 @@ class Emails extends Api
     protected $itemName = 'email';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'emails/(.*?)/contact/(.*?)/send' => 'emails/$1/send/contact/$2', // 2.6.0
+    );
+
+    /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:published',
         'is:unpublished',
@@ -41,7 +48,7 @@ class Emails extends Api
         'is:uncategorized',
         'category',
         'lang',
-    ];
+    );
 
 
     /**
@@ -66,7 +73,7 @@ class Emails extends Api
      */
     public function sendToContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/send/contact/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', array(), 'POST');
     }
 
     /**

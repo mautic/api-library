@@ -30,12 +30,17 @@ class Stages extends Api
      */
     protected $itemName = 'stage';
 
+    protected $bcRegexEndpoints = array(
+        'stages/(.*?)/contact/(.*?)/add' => 'stages/$1/contact/add/$2', // 2.6.0
+        'stages/(.*?)/contact/(.*?)/remove' => 'stages/$1/contact/remove/$2', // 2.6.0
+    );
+
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
-    ];
+    );
 
     /**
      * Add a contact to the stage
@@ -47,7 +52,7 @@ class Stages extends Api
      */
     public function addContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', array(), 'POST');
     }
 
     /**
@@ -60,6 +65,6 @@ class Stages extends Api
      */
     public function removeContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', array(), 'POST');
     }
 }

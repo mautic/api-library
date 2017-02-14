@@ -33,9 +33,9 @@ class PointTriggers extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
-    ];
+    );
 
     /**
      * Remove events from a point trigger

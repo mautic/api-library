@@ -28,24 +28,24 @@ class Stats extends Api
     /**
      * Get a list of stat items
      *
-     * @param string $table database table name
+     * @param string $table
      * @param int    $start
      * @param int    $limit
      * @param array  $order
      * @param array  $where
      *
-     * @return array|mixed
+     * @return array
      */
     public function get($table = '', $start = 0, $limit = 0, array $order = array(), array $where = array())
     {
-        $parameters = array();
-        $args = array('start', 'limit', 'order', 'where');
+        $parameters = array(
+            'start' => $start,
+            'limit' => $limit,
+            'order' => $order,
+            'where' => $where,
+        );
 
-        foreach ($args as $arg) {
-            if (!empty($$arg)) {
-                $parameters[$arg] = $$arg;
-            }
-        }
+        $parameters = array_filter($parameters);
 
         return $this->makeRequest($this->endpoint.'/'.$table, $parameters);
     }

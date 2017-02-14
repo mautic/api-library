@@ -31,12 +31,20 @@ class Companies extends Api
     protected $itemName = 'company';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'companies/(.*?)/contact/(.*?)/add'    => 'companies/$1/contact/add/$2', // 2.6.0
+        'companies/(.*?)/contact/(.*?)/remove' => 'companies/$1/contact/remove/$2' // 2.6.0
+    );
+
+    /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:mine',
-    ];
+    );
 
     /**
      * Add a contact to the company
@@ -48,7 +56,7 @@ class Companies extends Api
      */
     public function addContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', array(), 'POST');
     }
 
     /**
@@ -61,6 +69,6 @@ class Companies extends Api
      */
     public function removeContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', array(), 'POST');
     }
 }

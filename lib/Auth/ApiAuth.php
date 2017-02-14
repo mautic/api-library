@@ -20,7 +20,7 @@ class ApiAuth
      * @param array  $parameters
      * @param string $authMethod
      *
-     * @return $this
+     * @return AuthInterface
      *
      * @deprecated
      */
@@ -58,5 +58,15 @@ class ApiAuth
         $reflection->invokeArgs($authObject, $pass);
 
         return $authObject;
+    }
+
+    /**
+     * Can be used to retrieve code, etc from requests
+     *
+     * @return array
+     */
+    public function getRequestInfo()
+    {
+        return array();
     }
 }

@@ -33,7 +33,7 @@ class Pages extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:published',
         'is:unpublished',
@@ -41,5 +41,5 @@ class Pages extends Api
         'is:uncategorized',
         'category',
         'lang',
-    ];
+    );
 }

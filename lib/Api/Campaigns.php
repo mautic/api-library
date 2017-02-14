@@ -31,16 +31,24 @@ class Campaigns extends Api
     protected $itemName = 'campaign';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'campaigns/(.*?)/contact/(.*?)/add'    => 'campaigns/$1/contact/add/$2', // 2.6.0
+        'campaigns/(.*?)/contact/(.*?)/remove' => 'campaigns/$1/contact/remove/$2' // 2.6.0
+    );
+
+    /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:published',
         'is:unpublished',
         'is:mine',
         'is:uncategorized',
         'category',
-    ];
+    );
 
     /**
      * Add a lead to the campaign
@@ -67,7 +75,7 @@ class Campaigns extends Api
      */
     public function addContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/add/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', array(), 'POST');
     }
 
     /**
@@ -95,7 +103,7 @@ class Campaigns extends Api
      */
     public function removeContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', array(), 'POST');
     }
 
     /**

@@ -33,12 +33,12 @@ class Assets extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:published',
         'is:unpublished',
         'is:mine',
         'is:uncategorized',
         'category',
-    ];
+    );
 }

@@ -18,7 +18,7 @@ class FilesTest extends MauticApiTestCase
         $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
     }
 
-    protected function assertPayload($response, array $payload = array())
+    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
     {
         $this->assertErrors($response);
         $this->assertFalse(empty($response[$this->api->itemName()]['name']), 'The '.$this->api->itemName().' file name is empty.');

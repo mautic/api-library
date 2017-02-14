@@ -33,9 +33,9 @@ class Points extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
-    ];
+    );
 
     /**
      * Get list of available action types

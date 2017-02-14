@@ -140,8 +140,8 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_httpResponseInfo;
 
     /**
-     * @param string $baseUrl               URL of the Mautic instance
-     * @param string $version               ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
+     * @param string $baseUrl URL of the Mautic instance
+     * @param string $version ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
      * @param string $clientKey
      * @param string $clientSecret
      * @param string $accessToken
@@ -172,20 +172,20 @@ class OAuth extends ApiAuth implements AuthInterface
         if ($baseUrl) {
             if ($version == 'OAuth1a') {
                 if (!$this->_access_token_url) {
-                    $this->_access_token_url = $baseUrl . '/oauth/v1/access_token';
+                    $this->_access_token_url = $baseUrl.'/oauth/v1/access_token';
                 }
                 if (!$this->_request_token_url) {
-                    $this->_request_token_url = $baseUrl . '/oauth/v1/request_token';
+                    $this->_request_token_url = $baseUrl.'/oauth/v1/request_token';
                 }
                 if (!$this->_authorize_url) {
-                    $this->_authorize_url = $baseUrl . '/oauth/v1/authorize';
+                    $this->_authorize_url = $baseUrl.'/oauth/v1/authorize';
                 }
             } else {
                 if (!$this->_access_token_url) {
-                    $this->_access_token_url = $baseUrl . '/oauth/v2/token';
+                    $this->_access_token_url = $baseUrl.'/oauth/v2/token';
                 }
                 if (!$this->_authorize_url) {
-                    $this->_authorize_url = $baseUrl . '/oauth/v2/authorize';
+                    $this->_authorize_url = $baseUrl.'/oauth/v2/authorize';
                 }
             }
         }
@@ -470,13 +470,14 @@ class OAuth extends ApiAuth implements AuthInterface
 
             return true;
         }
+
+        return false;
     }
 
     /**
      * Request token for OAuth1
      *
      * @param string $responseType
-     * @param array  $values
      *
      * @throws IncorrectParametersReturnedException
      */
@@ -627,10 +628,27 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         if (is_array($params)) {
-            if (isset($params['error'])) {
-                $response = $params['error'];
+            if (isset($params['errors'])) {
+                $errors = array();
+                foreach ($params['errors'] as $error) {
+                    $errors[] = $error['message'];
+                }
+                $response = implode("; ", $errors);
+            } elseif (isset($params['error'])) {
+                // @deprecated support for pre Mautic 2.6.0
+                if (is_array($params['error'])) {
+                    if (isset($params['error']['message'])) {
+                        $response = $params['error']['message'];
+                    } else {
+                        $response = print_r($params['error'], true);
+                    }
+                } elseif (isset($params['error_description'])) {
+                    $response = $params['error_description'];
+                } else {
+                    $response = $params['error'];
+                }
             } else {
-                $response = '???';
+                $response = print_r($params, true);
             }
         } else {
             $response = $params;
@@ -656,7 +674,7 @@ class OAuth extends ApiAuth implements AuthInterface
             $authUrl .= '?oauth_token='.$_SESSION['oauth']['token'];
 
             if (!empty($this->_callback)) {
-                $authUrl .= '&oauth_callback=' . urlencode($this->_callback);
+                $authUrl .= '&oauth_callback='.urlencode($this->_callback);
             }
 
         } else {
@@ -699,6 +717,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         //make sure $method is capitalized for congruency
         $method = strtoupper($method);
+        $headers = (isset($settings['headers']) && is_array($settings['headers'])) ? $settings['headers'] : array();
 
         //Set OAuth parameters/headers
         if ($this->isOauth1()) {
@@ -706,10 +725,10 @@ class OAuth extends ApiAuth implements AuthInterface
             $this->log('making request using OAuth1.0a spec');
 
             //Get standard OAuth headers
-            $headers = $this->getOauthHeaders($includeCallback);
+            $oAuthHeaders = $this->getOauthHeaders($includeCallback);
 
             if ($includeVerifier && isset($_GET['oauth_verifier'])) {
-                $headers['oauth_verifier'] = $_GET['oauth_verifier'];
+                $oAuthHeaders['oauth_verifier'] = $_GET['oauth_verifier'];
 
                 if ($this->_debug) {
                     $_SESSION['oauth']['debug']['oauth_verifier'] = $_GET['oauth_verifier'];
@@ -717,11 +736,12 @@ class OAuth extends ApiAuth implements AuthInterface
             }
 
             //Add the parameters
-            $headers                    = array_merge($headers, $parameters);
-            $base_info                  = $this->buildBaseString($url, $method, $headers);
+            $oAuthHeaders                    = array_merge($oAuthHeaders, $parameters);
+            $base_info                  = $this->buildBaseString($url, $method, $oAuthHeaders);
             $composite_key              = $this->getCompositeKey();
-            $headers['oauth_signature'] = base64_encode(hash_hmac('sha1', $base_info, $composite_key, true));
-            $header                     = array($this->buildAuthorizationHeader($headers), 'Expect:');
+            $oAuthHeaders['oauth_signature'] = base64_encode(hash_hmac('sha1', $base_info, $composite_key, true));
+            $headers[]                   = $this->buildAuthorizationHeader($oAuthHeaders);
+            $headers[]                     = 'Expect:';
 
             if ($this->_debug) {
                 $_SESSION['oauth']['debug']['basestring'] = $base_info;
@@ -753,7 +773,7 @@ class OAuth extends ApiAuth implements AuthInterface
             $options[CURLOPT_CUSTOMREQUEST] = $method;
         }
 
-        //Set post fields for POST/PUT/PATCH requests
+        //Set post fields for POST/PUT/PATCH/DELETE requests
         $query = array();
         $header = array();
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
@@ -763,13 +783,13 @@ class OAuth extends ApiAuth implements AuthInterface
             // the Content-Type header to multipart/form-data
             if (!empty($parameters['file']) && file_exists($parameters['file'])) {
                 $options[CURLOPT_INFILESIZE] = filesize($parameters['file']);
-                $parameters['file'] = $this->crateCurlFile($parameters['file']);
-                $uploadHeaders = array("Content-Type:multipart/form-data");
+                $parameters['file']          = $this->createCurlFile($parameters['file']);
+                $uploadHeaders               = array("Content-Type:multipart/form-data");
 
                 if ($this->isOauth1()) {
-                    array_merge($header, $uploadHeaders);
+                    array_merge($headers, $uploadHeaders);
                 } else {
-                    $header = $uploadHeaders;
+                    $headers = $uploadHeaders;
 
                     // Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
                     $query['access_token'] = $parameters['access_token'];
@@ -800,10 +820,8 @@ class OAuth extends ApiAuth implements AuthInterface
         // Set the URL
         $options[CURLOPT_URL] = $url;
 
-        //Set CURL headers for oauth 1.0 requests
-        if (!empty($header)) {
-            $options[CURLOPT_HTTPHEADER] = $header;
-        }
+        $headers[] = 'Accept: application/json';
+        $options[CURLOPT_HTTPHEADER] = $headers;
 
         //Make CURL request
         $curl = curl_init();
@@ -851,6 +869,14 @@ class OAuth extends ApiAuth implements AuthInterface
     }
 
     /**
+     * @return array
+     */
+    public function getRequestInfo()
+    {
+        return $this->_httpResponseInfo;
+    }
+
+    /**
      * Build the HTTP response array out of the headers string
      *
      * @param  string $headersStr
@@ -859,7 +885,7 @@ class OAuth extends ApiAuth implements AuthInterface
      */
     protected function parseHeaders($headersStr)
     {
-        $headersArr = array();
+        $headersArr  = array();
         $headersHlpr = explode("\r\n", $headersStr);
 
         foreach ($headersHlpr as $header) {
@@ -903,13 +929,13 @@ class OAuth extends ApiAuth implements AuthInterface
      *
      * @return string|\CURLFile
      */
-    protected function crateCurlFile($filename, $mimetype = '', $postname = '')
+    protected function createCurlFile($filename, $mimetype = '', $postname = '')
     {
         if (!function_exists('curl_file_create')) {
             // For PHP < 5.5
             return "@$filename;filename="
-                . ($postname ?: basename($filename))
-                . ($mimetype ? ";type=$mimetype" : '');
+                .($postname ?: basename($filename))
+                .($mimetype ? ";type=$mimetype" : '');
         }
 
         // For PHP >= 5.5
@@ -1005,7 +1031,7 @@ class OAuth extends ApiAuth implements AuthInterface
      * @param array  $normalized
      * @param string $key
      *
-     * @return string
+     * @return array|string
      */
     private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
     {
@@ -1113,6 +1139,9 @@ class OAuth extends ApiAuth implements AuthInterface
     /**
      * Separates parameters from base URL
      *
+     * @param $url
+     * @param $params
+     *
      * @return array
      */
     protected function separateUrlParams($url, $params)
@@ -1125,9 +1154,9 @@ class OAuth extends ApiAuth implements AuthInterface
             foreach ($qparts as $k => $v) {
                 $cleanParams[$k] = $v ? $v : '';
             }
-            $params = array_merge($params, $cleanParams);
+            $params   = array_merge($params, $cleanParams);
             $urlParts = explode('?', $url, 2);
-            $url = $urlParts[0];
+            $url      = $urlParts[0];
         }
 
         return array($url, $params);

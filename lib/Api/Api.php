@@ -9,6 +9,8 @@
 
 namespace Mautic\Api;
 
+use Mautic\QueryBuilder\QueryBuilder;
+use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -19,6 +21,13 @@ use Psr\Log\NullLogger;
  */
 class Api implements LoggerAwareInterface
 {
+    /**
+     * Used by unit testing to force use of BC endpoints
+     *
+     * @var bool
+     */
+    public $bcTesting = false;
+
     /**
      * Common endpoint for this API
      *
@@ -41,6 +50,27 @@ class Api implements LoggerAwareInterface
     protected $itemName;
 
     /**
+     * Array of default endpoints supported by the context; if empty, all are supported
+     *
+     * @var array
+     */
+    protected $endpointsSupported = array();
+
+    /**
+     * Array of deprecated endpoints to use if a response fails as a 404 with a previous version of Mautic
+     *
+     * @var array
+     */
+    protected $bcRegexEndpoints = array();
+
+    /**
+     * Prevents from checking BC on a BC request
+     *
+     * @var bool
+     */
+    protected $bcAttempt = false;
+
+    /**
      * Base URL for API endpoints
      *
      * @var string
@@ -52,10 +82,10 @@ class Api implements LoggerAwareInterface
      *
      * @var array
      */
-    protected $searchCommands = [];
+    protected $searchCommands = array();
 
     /**
-     * @var AuthInterface
+     * @var ApiAuth
      */
     private $auth;
 
@@ -70,7 +100,7 @@ class Api implements LoggerAwareInterface
      */
     public function __construct(AuthInterface $auth, $baseUrl = '')
     {
-        $this->auth    = $auth;
+        $this->auth = $auth;
         $this->setBaseUrl($baseUrl);
     }
 
@@ -168,88 +198,143 @@ class Api implements LoggerAwareInterface
     }
 
     /**
-     * Returns a not supported error
-     *
-     * @param string $action
-     *
-     * @return array
-     */
-    protected function actionNotSupported($action)
-    {
-        return array(
-            'error' => array(
-                'code'    => 500,
-                'message' => "$action is not supported at this time."
-            )
-        );
-    }
-
-    /**
      * Make the API request
      *
-     * @param string $endpoint
+     * @param        $endpoint
      * @param array  $parameters
      * @param string $method
      *
-     * @return array|mixed
+     * @return array
+     * @throws \Exception
      */
     public function makeRequest($endpoint, array $parameters = array(), $method = 'GET')
     {
+        $response = array();
+
+        // Validate if this endpoint has a BC url
+        $bcEndpoint = null;
+        if (!$this->bcAttempt) {
+            if (!empty($this->bcRegexEndpoints)) {
+                foreach ($this->bcRegexEndpoints as $regex => $bc) {
+                    if (preg_match('@'.$regex.'@', $endpoint)) {
+                        $this->bcAttempt = true;
+                        $bcEndpoint = preg_replace('@'.$regex.'@', $bc, $endpoint);
+
+                        break;
+                    }
+                }
+            }
+        }
+
         $url = $this->baseUrl.$endpoint;
 
-        if (strpos($url, 'http') === false) {
-            return array(
-                'error' => array(
+        // Don't make the call if we're unit testing a BC endpoint
+        if (!$bcEndpoint || !$this->bcTesting || ($bcEndpoint && $this->bcTesting && $this->bcAttempt)) {
+            // Hack for unit testing to ensure this isn't being called due to a bad regex
+            if ($this->bcTesting && !$this->bcAttempt) {
+                $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+                if (!is_array($this->bcTesting)) {
+                    $this->bcTesting = array($this->bcTesting);
+                }
+
+                // The method is not catching the BC endpoint so fail the test
+                if (in_array($bt[1]['function'], $this->bcTesting)) {
+                    throw new \Exception($endpoint.' not matched in '.var_export($this->bcRegexEndpoints, true));
+                }
+            }
+            $this->bcAttempt = false;
+
+            if (strpos($url, 'http') === false) {
+                $error = array(
                     'code'    => 500,
                     'message' => sprintf(
                         'URL is incomplete.  Please use %s, set the base URL as the third argument to $MauticApi->newApi(), or make $endpoint a complete URL.',
                         __CLASS__.'setBaseUrl()'
                     )
-                )
-            );
-        }
-
-        try {
-            $response = $this->auth->makeRequest($url, $parameters, $method);
-
-            $this->getLogger()->debug('API Response', array('response' => $response));
-
-            if (!is_array($response)) {
-                $this->getLogger()->warning($response);
-
-                //assume an error
-                return array(
-                    'error' => array(
-                        'code'    => 500,
-                        'message' => $response
-                    )
                 );
+            } else {
+                try {
+                    $response = $this->auth->makeRequest($url, $parameters, $method);
+
+                    $this->getLogger()->debug('API Response', array('response' => $response));
+
+                    if (!is_array($response)) {
+                        $this->getLogger()->warning($response);
+
+                        //assume an error
+                        $error = array(
+                            'code'    => 500,
+                            'message' => $response
+                        );
+                    }
+
+                    // @deprecated support for 2.6.0 to be removed in 3.0
+                    if (!isset($response['errors']) && isset($response['error']) && isset($response['error_description'])) {
+                        $message = $response['error'].': '.$response['error_description'];
+
+                        $this->getLogger()->warning($message);
+
+                        $error = array(
+                            'code'    => 403,
+                            'message' => $message
+                        );
+                    }
+                } catch (\Exception $e) {
+                    $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
+
+                    $error = array(
+                        'code'    => $e->getCode(),
+                        'message' => $e->getMessage()
+                    );
+                }
             }
 
-            if (isset($response['error']) && isset($response['error_description'])) {
-                $message = $response['error'].': '.$response['error_description'];
-
-                $this->getLogger()->warning($message);
-
+            if (!empty($error)) {
                 return array(
-                    'error' => array(
-                        'code'    => 403,
-                        'message' => $message
-                    )
+                    'errors' => array($error),
+                    // @deprecated 2.6.0 to be removed 3.0
+                    'error'  => $error
                 );
+            } elseif (!empty($response['errors'])) {
+                $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors']));
             }
-        } catch (\Exception $e) {
-            $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
 
-            return array(
-                'error' => array(
-                    'code'    => $e->getCode(),
-                    'message' => $e->getMessage()
-                )
-            );
+            // @deprecated 2.6.0 BC error handling
+            // @todo remove in 3.0
+            if (isset($response['error']) && !isset($response['errors'])) {
+                if (isset($response['error_description'])) {
+                    // BC Oauth2 error
+                    $response['errors'] = array(
+                        array(
+                            'message' => $response['error_description'],
+                            'type'    => $response['error']
+                        )
+                    );
+                } elseif (isset($response['message'])) {
+                    $response['errors'] = array(
+                        $response['error']
+                    );
+                }
+            }
+
+            // Ensure a code is present in the error array
+            if (!empty($response['errors'])) {
+                $info = $this->auth->getRequestInfo();
+                foreach ($response['errors'] as $key => $error) {
+                    if (!isset($response['errors'][$key]['code'])) {
+                        $response['errors'][$key]['code'] = $info['http_code'];
+                    }
+                }
+            }
         }
 
-        //return the response if no error condition is met
+        // Check for a 404 code and a BC URL then try again if applicable
+        if ($bcEndpoint && ($this->bcTesting || (!empty($response['errors'][0]['code']) && (int) $response['errors'][0]['code'] === 404))) {
+            $this->bcAttempt = true;
+
+            return $this->makeRequest($bcEndpoint, $parameters, $method);
+        }
+
         return $response;
     }
 
@@ -303,6 +388,19 @@ class Api implements LoggerAwareInterface
     }
 
     /**
+     * @param       $id
+     * @param array $select
+     *
+     * @return array|bool
+     */
+    public function getCustom($id, array $select = array())
+    {
+        $supported = $this->isSupported('get');
+
+        return (true === $supported) ? $this->makeRequest("{$this->endpoint}/$id", array('select' => $select)) : $supported;
+    }
+
+    /**
      * Get a list of items
      *
      * @param string $search
@@ -317,17 +415,43 @@ class Api implements LoggerAwareInterface
      */
     public function getList($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
     {
-        $parameters = array();
+        $parameters = array(
+            'search'        => $search,
+            'start'         => $start,
+            'limit'         => $limit,
+            'orderBy'       => $orderBy,
+            'orderByDir'    => $orderByDir,
+            'publishedOnly' => $publishedOnly,
+            'minimal'       => $minimal
+        );
 
-        $args = array('search', 'start', 'limit', 'orderBy', 'orderByDir', 'publishedOnly', 'minimal');
-
-        foreach ($args as $arg) {
-            if (!empty($$arg)) {
-                $parameters[$arg] = $$arg;
-            }
-        }
+        $parameters = array_filter($parameters);
 
         return $this->makeRequest($this->endpoint, $parameters);
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param int          $start
+     * @param int          $limit
+     *
+     * @return array|bool
+     */
+    public function getCustomList(QueryBuilder $queryBuilder, $start = 0, $limit = 0)
+    {
+        $parameters = array(
+            'select' => $queryBuilder->getSelect(),
+            'where'  => $queryBuilder->getWhere(),
+            'order'  => $queryBuilder->getOrder(),
+            'start'  => $start,
+            'limit'  => $limit,
+        );
+
+        $parameters = array_filter($parameters);
+
+        $supported = $this->isSupported('getList');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint, $parameters) : $supported;
     }
 
     /**
@@ -355,7 +479,23 @@ class Api implements LoggerAwareInterface
      */
     public function create(array $parameters)
     {
-        return $this->makeRequest($this->endpoint.'/new', $parameters, 'POST');
+        $supported = $this->isSupported('create');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/new', $parameters, 'POST') : $supported;
+    }
+
+    /**
+     * Create a batch of new items
+     *
+     * @param array $parameters
+     *
+     * @return array|mixed
+     */
+    public function createBatch(array $parameters)
+    {
+        $supported = $this->isSupported('createBatch');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/batch/new', $parameters, 'POST') : $supported;
     }
 
     /**
@@ -369,9 +509,26 @@ class Api implements LoggerAwareInterface
      */
     public function edit($id, array $parameters, $createIfNotExists = false)
     {
-        $method = $createIfNotExists ? 'PUT' : 'PATCH';
+        $method    = $createIfNotExists ? 'PUT' : 'PATCH';
+        $supported = $this->isSupported('edit');
 
-        return $this->makeRequest($this->endpoint.'/'.$id.'/edit', $parameters, $method);
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/'.$id.'/edit', $parameters, $method) : $supported;
+    }
+
+    /**
+     * Edit a batch of items
+     *
+     * @param array $parameters
+     * @param bool  $createIfNotExists
+     *
+     * @return array|mixed
+     */
+    public function editBatch(array $parameters, $createIfNotExists = false)
+    {
+        $method    = $createIfNotExists ? 'PUT' : 'PATCH';
+        $supported = $this->isSupported('editBatch');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/batch/edit', $parameters, $method) : $supported;
     }
 
     /**
@@ -383,6 +540,61 @@ class Api implements LoggerAwareInterface
      */
     public function delete($id)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/delete', array(), 'DELETE');
+        $supported = $this->isSupported('delete');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/'.$id.'/delete', array(), 'DELETE') : $supported;
+    }
+
+    /**
+     * Delete a batch of items
+     *
+     * @param $ids
+     *
+     * @return array|mixed
+     */
+    public function deleteBatch(array $ids)
+    {
+        $supported = $this->isSupported('deleteBatch');
+
+        return (true === $supported) ? $this->makeRequest($this->endpoint.'/batch/delete', array('ids' => $ids), 'DELETE') : $supported;
+    }
+
+    /**
+     * Returns a not supported error
+     *
+     * @param string $action
+     *
+     * @return array
+     */
+    protected function actionNotSupported($action)
+    {
+        $error = array(
+            'code'    => 500,
+            'message' => "$action is not supported at this time."
+        );
+
+        return array(
+            'errors' => array(
+                $error
+            ),
+            // @deprecated 2.6.0 to be removed in 3.0
+            'error'  => $error
+        );
+    }
+
+    /**
+     * Verify that a default endpoint is supported by the API
+     *
+     * @param $action
+     *
+     * @return bool
+     */
+    protected function isSupported($action)
+    {
+        if (empty($this->endpointsSupported) || in_array($action, $this->endpointsSupported)) {
+            return true;
+        }
+
+        return $this->actionNotSupported($action);
     }
 }

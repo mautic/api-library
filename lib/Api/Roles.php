@@ -33,9 +33,9 @@ class Roles extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:admin',
         'name',
-    ];
+    );
 }

@@ -32,7 +32,7 @@ class Notes extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
-    ];
+    );
 }

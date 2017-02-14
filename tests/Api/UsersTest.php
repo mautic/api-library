@@ -114,4 +114,15 @@ class UsersTest extends MauticApiTestCase
             $this->assertTrue(isset($response[$p]));
         }
     }
+
+    public function testBatchEndpoints()
+    {
+        $batch = array(
+            $this->getUniqueUser(),
+            $this->getUniqueUser(),
+            $this->getUniqueUser(),
+        );
+
+        $this->standardTestBatchEndpoints($batch);
+    }
 }

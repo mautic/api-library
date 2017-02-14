@@ -55,4 +55,9 @@ class PointsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertFalse(empty($response['pointActionTypes']), 'The pointActionTypes array is empty.');
     }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
 }
