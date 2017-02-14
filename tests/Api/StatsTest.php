@@ -64,7 +64,7 @@ class StatsTest extends MauticApiTestCase
             'lead_devices',
             'lead_donotcontact',
             'lead_frequencyrules',
-            'lead_lists',
+            'lead_lists_leads',
             'lead_points_change_log',
             'lead_stages_change_log',
             'lead_utmtags',

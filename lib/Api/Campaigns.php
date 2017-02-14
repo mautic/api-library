@@ -31,6 +31,18 @@ class Campaigns extends Api
     protected $itemName = 'campaign';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+    ];
+
+    /**
      * Add a lead to the campaign
      *
      * @deprecated 2.0.1, use addContact instead
@@ -84,5 +96,30 @@ class Campaigns extends Api
     public function removeContact($id, $contactId)
     {
         return $this->makeRequest($this->endpoint.'/'.$id.'/contact/remove/'.$contactId, array(), 'POST');
+    }
+
+    /**
+     * Get a list of stat items
+     *
+     * @param int    $id Campaign ID
+     * @param int    $start
+     * @param int    $limit
+     * @param array  $order
+     * @param array  $where
+     *
+     * @return array|mixed
+     */
+    public function getContacts($id, $start = 0, $limit = 0, array $order = array(), array $where = array())
+    {
+        $parameters = array();
+        $args = array('start', 'limit', 'order', 'where');
+
+        foreach ($args as $arg) {
+            if (!empty($$arg)) {
+                $parameters[$arg] = $$arg;
+            }
+        }
+
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contacts', $parameters);
     }
 }

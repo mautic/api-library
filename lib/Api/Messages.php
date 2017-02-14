@@ -10,32 +10,22 @@
 namespace Mautic\Api;
 
 /**
- * Roles Context
+ * Marketing Messages Context
  */
-class Roles extends Api
+class Messages extends Api
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $endpoint = 'messages';
 
     /**
      * {@inheritdoc}
      */
-    protected $endpoint = 'roles';
+    protected $listName = 'messages';
 
     /**
      * {@inheritdoc}
      */
-    protected $listName = 'roles';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $itemName = 'role';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $searchCommands = [
-        'ids',
-        'is:admin',
-        'name',
-    ];
+    protected $itemName = 'message';
 }

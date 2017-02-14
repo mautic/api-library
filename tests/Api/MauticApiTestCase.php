@@ -141,4 +141,14 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
+
+    public function testSearchCommands() {
+        $commands = $this->api->getSearchCommands();
+
+        foreach ($commands as $command) {
+            $this->assertTrue($this->api->hasSearchCommand($command));
+        }
+
+        $this->assertFalse($this->api->hasSearchCommand('this:command:should:not:exist'));
+    }
 }

@@ -92,7 +92,7 @@ class OAuth extends ApiAuth implements AuthInterface
     /**
      * OAuth2 scope
      *
-     * @var string
+     * @var array
      */
     protected $_scope = array();
 
@@ -677,9 +677,9 @@ class OAuth extends ApiAuth implements AuthInterface
         //Redirect to authorization URL
         if (!$this->_do_not_redirect) {
             header('Location: '.$authUrl);
-            exit; 
-        } else { 
-            throw new AuthorizationRequiredException($authUrl); 
+            exit;
+        } else {
+            throw new AuthorizationRequiredException($authUrl);
         }
     }
 
@@ -755,6 +755,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         //Set post fields for POST/PUT/PATCH requests
         $query = array();
+        $header = array();
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
 
             //Set file to upload
@@ -900,7 +901,7 @@ class OAuth extends ApiAuth implements AuthInterface
      * @param  string $mimetype
      * @param  string $postname
      *
-     * @return string|CURLFile
+     * @return string|\CURLFile
      */
     protected function crateCurlFile($filename, $mimetype = '', $postname = '')
     {
@@ -1008,8 +1009,17 @@ class OAuth extends ApiAuth implements AuthInterface
      */
     private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
     {
-        //Sort by key
-        ksort($parameters);
+        // December 2016 - Fix for issue #75
+        //
+        // recursive call identified by these 2 conditions.
+        if ($returnarray && ('' != $key)) {
+            // Ref: Spec: 9.1.1 (1)
+            // If two or more parameters share the same name, they are sorted by their value
+            sort($parameters, SORT_STRING);
+        } else {
+            // Sort by key
+            ksort($parameters);
+        }
 
         foreach ($parameters as $k => $v) {
             if (is_array($v)) {
@@ -1111,6 +1121,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         if (!empty($a['query'])) {
             parse_str($a['query'], $qparts);
+            $cleanParams = array();
             foreach ($qparts as $k => $v) {
                 $cleanParams[$k] = $v ? $v : '';
             }

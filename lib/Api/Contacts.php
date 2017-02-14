@@ -46,6 +46,23 @@ class Contacts extends Api
     protected $itemName = 'contact';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:anonymous',
+        'is:unowned',
+        'is:mine',
+        'name',
+        'email',
+        'segment',
+        'company',
+        'onwer',
+        'ip',
+        'common',
+    ];
+
+    /**
      * Get a list of users available as contact owners
      *
      * @return array|mixed
@@ -228,12 +245,15 @@ class Contacts extends Api
     /**
      * Adds Do Not Contact
      *
-     * @param int    $id
+     * @param int $id
      * @param string $channel
+     * @param int $reason
+     * @param null $channelId
+     * @param string $comments
      *
      * @return mixed
      */
-    public function addDnc($id, $channel = 'email', $reason = Contact::MANUAL, $channelId = null, $comments = 'via API') {
+    public function addDnc($id, $channel = 'email', $reason = Contacts::MANUAL, $channelId = null, $comments = 'via API') {
 
         return $this->makeRequest(
             'contacts/'.$id.'/dnc/add/'.$channel,
