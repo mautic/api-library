@@ -33,9 +33,9 @@ class Stages extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
-    ];
+    );
 
     /**
      * Add a contact to the stage

@@ -33,10 +33,10 @@ class Companies extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:mine',
-    ];
+    );
 
     /**
      * Add a contact to the company

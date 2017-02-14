@@ -33,9 +33,9 @@ class Categories extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:published',
         'is:unpublished',
-    ];
+    );
 }

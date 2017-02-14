@@ -33,7 +33,7 @@ class Emails extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:published',
         'is:unpublished',
@@ -41,7 +41,7 @@ class Emails extends Api
         'is:uncategorized',
         'category',
         'lang',
-    ];
+    );
 
 
     /**

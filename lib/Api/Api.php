@@ -52,7 +52,7 @@ class Api implements LoggerAwareInterface
      *
      * @var array
      */
-    protected $searchCommands = [];
+    protected $searchCommands = array();
 
     /**
      * @var AuthInterface

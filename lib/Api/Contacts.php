@@ -48,7 +48,7 @@ class Contacts extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:anonymous',
         'is:unowned',
@@ -60,7 +60,7 @@ class Contacts extends Api
         'onwer',
         'ip',
         'common',
-    ];
+    );
 
     /**
      * Get a list of users available as contact owners

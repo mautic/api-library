@@ -33,7 +33,7 @@ class Users extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = [
+    protected $searchCommands = array(
         'ids',
         'is:admin',
         'is:active',
@@ -43,7 +43,7 @@ class Users extends Api
         'username',
         'name',
         'position',
-    ];
+    );
 
     /**
      * Get your (API) user
