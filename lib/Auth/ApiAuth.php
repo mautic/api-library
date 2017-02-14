@@ -37,7 +37,7 @@ class ApiAuth
      * @param array  $parameters
      * @param string $authMethod
      *
-     * @return $this
+     * @return AuthInterface
      */
     public function newAuth($parameters = array(), $authMethod = 'OAuth')
     {
