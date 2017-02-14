@@ -31,6 +31,18 @@ class Campaigns extends Api
     protected $itemName = 'campaign';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+    ];
+
+    /**
      * Add a lead to the campaign
      *
      * @deprecated 2.0.1, use addContact instead

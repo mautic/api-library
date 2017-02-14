@@ -29,4 +29,13 @@ class Roles extends Api
      * {@inheritdoc}
      */
     protected $itemName = 'role';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:admin',
+        'name',
+    ];
 }

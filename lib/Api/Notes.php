@@ -14,7 +14,6 @@ namespace Mautic\Api;
  */
 class Notes extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -29,4 +28,11 @@ class Notes extends Api
      * {@inheritdoc}
      */
     protected $itemName = 'note';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+    ];
 }

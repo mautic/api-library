@@ -46,6 +46,23 @@ class Contacts extends Api
     protected $itemName = 'contact';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:anonymous',
+        'is:unowned',
+        'is:mine',
+        'name',
+        'email',
+        'segment',
+        'company',
+        'onwer',
+        'ip',
+        'common',
+    ];
+
+    /**
      * Get a list of users available as contact owners
      *
      * @return array|mixed

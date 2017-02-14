@@ -31,6 +31,13 @@ class Points extends Api
     protected $itemName = 'point';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+    ];
+
+    /**
      * Get list of available action types
      *
      * @return array|mixed

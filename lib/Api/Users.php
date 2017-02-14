@@ -31,6 +31,21 @@ class Users extends Api
     protected $itemName = 'user';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = [
+        'ids',
+        'is:admin',
+        'is:active',
+        'is:inactive',
+        'email',
+        'role',
+        'username',
+        'name',
+        'position',
+    ];
+
+    /**
      * Get your (API) user
      *
      * @return array|mixed
