@@ -29,4 +29,9 @@ interface AuthInterface
      * @return bool
      */
     public function isAuthorized();
+
+    public function getResponseInfo();
+
+    public function getResponseHeaders();
+
 }

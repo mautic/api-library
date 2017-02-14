@@ -92,7 +92,7 @@ class OAuth extends ApiAuth implements AuthInterface
     /**
      * OAuth2 scope
      *
-     * @var string
+     * @var array
      */
     protected $_scope = array();
 
@@ -754,7 +754,8 @@ class OAuth extends ApiAuth implements AuthInterface
         }
 
         //Set post fields for POST/PUT/PATCH requests
-        $query = [];
+        $query = array();
+        $header = array();
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
 
             //Set file to upload
@@ -900,7 +901,7 @@ class OAuth extends ApiAuth implements AuthInterface
      * @param  string $mimetype
      * @param  string $postname
      *
-     * @return string|CURLFile
+     * @return string|\CURLFile
      */
     protected function crateCurlFile($filename, $mimetype = '', $postname = '')
     {
@@ -1111,6 +1112,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         if (!empty($a['query'])) {
             parse_str($a['query'], $qparts);
+            $cleanParams = array();
             foreach ($qparts as $k => $v) {
                 $cleanParams[$k] = $v ? $v : '';
             }
