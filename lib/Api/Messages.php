@@ -10,29 +10,22 @@
 namespace Mautic\Api;
 
 /**
- * Notes Context
+ * Marketing Messages Context
  */
-class Notes extends Api
+class Messages extends Api
 {
     /**
      * {@inheritdoc}
      */
-    protected $endpoint = 'notes';
+    protected $endpoint = 'messages';
 
     /**
      * {@inheritdoc}
      */
-    protected $listName = 'notes';
+    protected $listName = 'messages';
 
     /**
      * {@inheritdoc}
      */
-    protected $itemName = 'note';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $searchCommands = array(
-        'ids',
-    );
+    protected $itemName = 'message';
 }

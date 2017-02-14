@@ -78,6 +78,13 @@ class Api implements LoggerAwareInterface
     protected $baseUrl;
 
     /**
+     * Array of available search commands
+     *
+     * @var array
+     */
+    protected $searchCommands = array();
+
+    /**
      * @var ApiAuth
      */
     private $auth;
@@ -127,6 +134,28 @@ class Api implements LoggerAwareInterface
     }
 
     /**
+     * Get the array of available search commands
+     *
+     * @return array
+     */
+    public function getSearchCommands()
+    {
+        return $this->searchCommands;
+    }
+
+    /**
+     * Check if the search command is available
+     *
+     * @param string $command
+     *
+     * @return boolean
+     */
+    public function hasSearchCommand($command)
+    {
+        return in_array($command, $this->searchCommands);
+    }
+
+    /**
      * Returns list name
      *
      * @return string
@@ -159,7 +188,7 @@ class Api implements LoggerAwareInterface
             $url .= '/';
         }
 
-        if (substr($url, -4, 4) != 'api/') {
+        if (substr($url,-4,4) != 'api/') {
             $url .= 'api/';
         }
 
@@ -219,7 +248,7 @@ class Api implements LoggerAwareInterface
                 $error = array(
                     'code'    => 500,
                     'message' => sprintf(
-                        'URL is incomplete.  Please use %s, set the base URL as the third argument to MauticApi::getContext(), or make $endpoint a complete URL.',
+                        'URL is incomplete.  Please use %s, set the base URL as the third argument to $MauticApi->newApi(), or make $endpoint a complete URL.',
                         __CLASS__.'setBaseUrl()'
                     )
                 );

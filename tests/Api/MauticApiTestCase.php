@@ -33,12 +33,14 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
     protected function getAuth()
     {
         $this->config = include __DIR__.'/../local.config.php';
+        $authMethod   = isset($this->config['AuthMethod']) ? $this->config['AuthMethod'] : 'OAuth';
+
         if (file_exists(__DIR__.'/../local.tokens.php')) {
             $this->config = array_merge($this->config, include __DIR__.'/../local.tokens.php');
         }
 
-        /** @var OAuth $auth */
-        $auth = ApiAuth::initiate($this->config);
+        $apiAuth = new ApiAuth();
+        $auth    = $apiAuth->newAuth($this->config, $authMethod );
 
         if (empty($this->config['refreshToken']) && !$auth->isAuthorized()) {
             $this->assertTrue($authorized, 'Authorization failed. Check credentials in local.config.php.');
@@ -66,7 +68,8 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
     {
         list($auth, $apiUrl) = $this->getAuth();
 
-        return MauticApi::getContext($context, $auth, $apiUrl);
+        $api = new MauticApi();
+        return $api->newApi($context, $auth, $apiUrl);
     }
 
     protected function assertErrors($response, $failureMessage = '')
@@ -294,5 +297,15 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         //now delete the category
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
+    }
+
+    public function testSearchCommands() {
+        $commands = $this->api->getSearchCommands();
+
+        foreach ($commands as $command) {
+            $this->assertTrue($this->api->hasSearchCommand($command));
+        }
+
+        $this->assertFalse($this->api->hasSearchCommand('this:command:should:not:exist'));
     }
 }

@@ -6,7 +6,7 @@
 
 ## Mautic Setup
 The API must be enabled in Mautic. Within Mautic, go to the Configuration page (located in the Settings menu) and under API Settings enable
-Mautic's API.  You can also choose which OAuth protocol to use here.  After saving the configuration, go to the API Credentials page
+Mautic's API. If you intend on using Basic Authentication, ensure you enable it. You can also choose which OAuth protocol to use here.  After saving the configuration, go to the API Credentials page
 (located in the Settings menu) and create a new client.  Enter the callback/redirect URI that the request will be sent from.  Click Apply
 then copy the Client ID and Client Secret to the application that will be using the API.
 
@@ -31,7 +31,7 @@ $publicKey = '';
 $secretKey = ''; 
 $callback  = ''; 
 
-// ApiAuth::initiate will accept an array of OAuth settings
+// ApiAuth->newAuth() will accept an array of Auth settings
 $settings = array(
     'baseUrl'          => '',       // Base URL of the Mautic instance
     'version'          => 'OAuth2', // Version of the OAuth can be OAuth2 or OAuth1a. OAuth2 is the default value.
@@ -76,6 +76,45 @@ try {
 } catch (Exception $e) {
     // Do Error handling
 }
+```
+
+### Using Basic Authentication Instead
+Instead of messing around with OAuth, you may simply elect to use BasicAuth instead.
+
+Here is the BasicAuth version of the code above.
+
+```php
+<?php
+
+// Bootup the Composer autoloader
+include __DIR__ . '/vendor/autoload.php';  
+
+use Mautic\Auth\ApiAuth;
+
+session_start();
+
+// ApiAuth->newAuth() will accept an array of Auth settings
+$settings = array(
+    'userName'   => '',             // Create a new user       
+    'password'   => ''              // Make it a secure password
+);
+
+// Initiate the auth object specifying to use BasicAuth
+$initAuth = new ApiAuth();
+$auth = $initAuth->newAuth($settings, 'BasicAuth');
+
+// Nothing else to do ... It's ready to use.
+// Just pass the auth object to the API context you are creating.
+```
+
+**Note:** If the credentials are incorrect an error response will be returned.
+
+```php
+ array('error' => array(
+       'code'    => 403,
+       'message' => 'access_denied: OAuth2 authentication required' )
+ )
+ 
 ```
 
 ## API Requests

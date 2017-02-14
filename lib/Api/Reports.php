@@ -31,6 +31,16 @@ class Reports extends Api
     protected $itemName = 'report';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = array(
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+    );
+
+    /**
      * @var array
      */
     protected $endpointsSupported = array(

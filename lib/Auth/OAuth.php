@@ -92,7 +92,7 @@ class OAuth extends ApiAuth implements AuthInterface
     /**
      * OAuth2 scope
      *
-     * @var string
+     * @var array
      */
     protected $_scope = array();
 
@@ -775,6 +775,7 @@ class OAuth extends ApiAuth implements AuthInterface
 
         //Set post fields for POST/PUT/PATCH/DELETE requests
         $query = array();
+        $header = array();
         if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
 
             //Set file to upload
@@ -1034,8 +1035,17 @@ class OAuth extends ApiAuth implements AuthInterface
      */
     private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
     {
-        //Sort by key
-        ksort($parameters);
+        // December 2016 - Fix for issue #75
+        //
+        // recursive call identified by these 2 conditions.
+        if ($returnarray && ('' != $key)) {
+            // Ref: Spec: 9.1.1 (1)
+            // If two or more parameters share the same name, they are sorted by their value
+            sort($parameters, SORT_STRING);
+        } else {
+            // Sort by key
+            ksort($parameters);
+        }
 
         foreach ($parameters as $k => $v) {
             if (is_array($v)) {
@@ -1144,9 +1154,9 @@ class OAuth extends ApiAuth implements AuthInterface
             foreach ($qparts as $k => $v) {
                 $cleanParams[$k] = $v ? $v : '';
             }
-            $params = array_merge($params, $cleanParams);
-            $parts  = explode('?', $url, 2);
-            $url    = $parts[0];
+            $params   = array_merge($params, $cleanParams);
+            $urlParts = explode('?', $url, 2);
+            $url      = $urlParts[0];
         }
 
         return array($url, $params);

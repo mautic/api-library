@@ -38,6 +38,20 @@ class Emails extends Api
     );
 
     /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = array(
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+        'lang',
+    );
+
+
+    /**
      * Send email to the assigned lists
      *
      * @param int $id
