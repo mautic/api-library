@@ -31,9 +31,8 @@ class Stats extends Api
      * @param string $table database table name
      * @param int    $start
      * @param int    $limit
-     * @param string $orderBy
-     * @param string $orderByDir
-     * @param bool   $publishedOnly
+     * @param array  $order
+     * @param array  $where
      *
      * @return array|mixed
      */
