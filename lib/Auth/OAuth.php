@@ -1009,8 +1009,17 @@ class OAuth extends ApiAuth implements AuthInterface
      */
     private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
     {
-        //Sort by key
-        ksort($parameters);
+        // December 2016 - Fix for issue #75
+        //
+        // recursive call identified by these 2 conditions.
+        if ($returnarray && ('' != $key)) {
+            // Ref: Spec: 9.1.1 (1)
+            // If two or more parameters share the same name, they are sorted by their value
+            sort($parameters, SORT_STRING);
+        } else {
+            // Sort by key
+            ksort($parameters);
+        }
 
         foreach ($parameters as $k => $v) {
             if (is_array($v)) {
