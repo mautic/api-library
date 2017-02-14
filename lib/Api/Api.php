@@ -154,14 +154,14 @@ class Api implements LoggerAwareInterface
      */
     public function setBaseUrl($url)
     {
-        if(substr($url, -1) != '/') {
+        if (substr($url, -1) != '/') {
             $url .= '/';
         }
-        
-        if(substr($url,-4,4) != 'api/'){
+
+        if (substr($url,-4,4) != 'api/') {
             $url .= 'api/';
         }
-        
+
         $this->baseUrl = $url;
 
         return $this;
@@ -202,7 +202,7 @@ class Api implements LoggerAwareInterface
                 'error' => array(
                     'code'    => 500,
                     'message' => sprintf(
-                        'URL is incomplete.  Please use %s, set the base URL as the third argument to MauticApi::getContext(), or make $endpoint a complete URL.',
+                        'URL is incomplete.  Please use %s, set the base URL as the third argument to $MauticApi->newApi(), or make $endpoint a complete URL.',
                         __CLASS__.'setBaseUrl()'
                     )
                 )
@@ -311,6 +311,7 @@ class Api implements LoggerAwareInterface
      * @param string $orderBy
      * @param string $orderByDir
      * @param bool   $publishedOnly
+     * @param bool   $minimal
      *
      * @return array|mixed
      */

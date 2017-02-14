@@ -677,9 +677,9 @@ class OAuth extends ApiAuth implements AuthInterface
         //Redirect to authorization URL
         if (!$this->_do_not_redirect) {
             header('Location: '.$authUrl);
-            exit; 
-        } else { 
-            throw new AuthorizationRequiredException($authUrl); 
+            exit;
+        } else {
+            throw new AuthorizationRequiredException($authUrl);
         }
     }
 
@@ -1126,7 +1126,8 @@ class OAuth extends ApiAuth implements AuthInterface
                 $cleanParams[$k] = $v ? $v : '';
             }
             $params = array_merge($params, $cleanParams);
-            $url = explode('?', $url, 2)[0];
+            $urlParts = explode('?', $url, 2);
+            $url = $urlParts[0];
         }
 
         return array($url, $params);
