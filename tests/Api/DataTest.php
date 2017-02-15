@@ -76,7 +76,7 @@ class DataTest extends MauticApiTestCase
         $this->api = $this->getContext('data');
     }
 
-    protected function assertPayload($response, array $payload = array())
+    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
     {
         $this->assertErrors($response);
         $this->assertTrue(isset($response[$this->api->listName()]), 'The '.$this->api->listName().' array does not exist.');
