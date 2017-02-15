@@ -1,23 +1,65 @@
 <?php
-/**
- * @package     Mautic
- * @copyright   2014 Mautic, NP. All rights reserved.
- * @author      Mautic
- * @link        http://mautic.org
- * @license     MIT http://opensource.org/licenses/MIT
+
+/*
+ * @copyright   2014 Mautic Contributors. All rights reserved
+ * @author      Mautic, Inc.
+ *
+ * @link        https://mautic.org
+ *
+ * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
 namespace Mautic\Auth;
 
 use Mautic\Exception\AuthorizationRequiredException;
 use Mautic\Exception\IncorrectParametersReturnedException;
-use Mautic\Exception\UnexpectedResponseFormatException;
 
 /**
  * OAuth Client modified from https://code.google.com/p/simple-php-oauth/
  */
-class OAuth extends ApiAuth implements AuthInterface
+class OAuth extends AbstractAuth
 {
+    /**
+     * Access token returned by OAuth server
+     *
+     * @var string
+     */
+    protected $_access_token;
+
+    /**
+     * Access token secret returned by OAuth server
+     *
+     * @var string
+     */
+    protected $_access_token_secret;
+
+    /**
+     * Set to true if a refresh token was used to update an access token
+     *
+     * @var bool
+     */
+    protected $_access_token_updated = false;
+
+    /**
+     * Access token URL
+     *
+     * @var string
+     */
+    protected $_access_token_url;
+
+    /**
+     * Authorize URL
+     *
+     * @var string
+     */
+    protected $_authorize_url;
+
+    /**
+     * Callback or Redirect URL
+     *
+     * @var string
+     */
+    protected $_callback;
 
     /**
      * Consumer or client key
@@ -34,25 +76,9 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_client_secret;
 
     /**
-     * Callback or Redirect URL
-     *
-     * @var string
+     * @var bool
      */
-    protected $_callback;
-
-    /**
-     * Access token returned by OAuth server
-     *
-     * @var string
-     */
-    protected $_access_token;
-
-    /**
-     * Access token secret returned by OAuth server
-     *
-     * @var string
-     */
-    protected $_access_token_secret;
+    protected $_do_not_redirect = false;
 
     /**
      * Unix timestamp for when token expires
@@ -62,27 +88,6 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_expires;
 
     /**
-     * OAuth2 refresh token
-     *
-     * @var string
-     */
-    protected $_refresh_token;
-
-    /**
-     * OAuth2 token type
-     *
-     * @var string
-     */
-    protected $_token_type;
-
-    /**
-     * Set to true if a refresh token was used to update an access token
-     *
-     * @var bool
-     */
-    protected $_access_token_updated = false;
-
-    /**
      * OAuth2 redirect type
      *
      * @var string
@@ -90,25 +95,11 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_redirect_type = 'code';
 
     /**
-     * OAuth2 scope
-     *
-     * @var array
-     */
-    protected $_scope = array();
-
-    /**
-     * Authorize URL
+     * OAuth2 refresh token
      *
      * @var string
      */
-    protected $_authorize_url;
-
-    /**
-     * Access token URL
-     *
-     * @var string
-     */
-    protected $_access_token_url;
+    protected $_refresh_token;
 
     /**
      * Request token URL for OAuth1
@@ -118,26 +109,186 @@ class OAuth extends ApiAuth implements AuthInterface
     protected $_request_token_url;
 
     /**
-     * If set to true, $_SESSION['debug'] will be populated
-     *
-     * @var bool
-     */
-    protected $_debug = false;
-    protected $_do_not_redirect = false;
-
-    /**
-     * Holds string of HTTP response headers
-     *
-     * @var string
-     */
-    protected $_httpResponseHeaders;
-
-    /**
-     * Holds array of HTTP response CURL info
+     * OAuth2 scope
      *
      * @var array
      */
-    protected $_httpResponseInfo;
+    protected $_scope = array();
+
+    /**
+     * OAuth2 token type
+     *
+     * @var string
+     */
+    protected $_token_type;
+
+    /**
+     * Check to see if the access token was updated from a refresh token
+     *
+     * @return bool
+     */
+    public function accessTokenUpdated()
+    {
+        return $this->_access_token_updated;
+    }
+
+    /**
+     * Returns access token data
+     *
+     * @return array
+     */
+    public function getAccessTokenData()
+    {
+        if ($this->isOauth1()) {
+            return array(
+                'access_token'        => $this->_access_token,
+                'access_token_secret' => $this->_access_token_secret,
+                'expires'             => $this->_expires,
+            );
+        }
+
+        return array(
+            'access_token'  => $this->_access_token,
+            'expires'       => $this->_expires,
+            'token_type'    => $this->_token_type,
+            'refresh_token' => $this->_refresh_token
+        );
+    }
+
+    /**
+     * Returns array of HTTP response headers
+     *
+     * @return array
+     */
+    public function getResponseHeaders()
+    {
+        return $this->parseHeaders($this->_httpResponseHeaders);
+    }
+
+    /**
+     * Returns array of HTTP response headers
+     *
+     * @return array
+     */
+    public function getResponseInfo()
+    {
+        return $this->_httpResponseInfo;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAuthorized()
+    {
+        //Check for existing access token
+        if (!empty($this->_request_token_url)) {
+            if (strlen($this->_access_token) > 0 && strlen($this->_access_token_secret) > 0) {
+                return true;
+            }
+        }
+
+        //Check to see if token in session has expired
+        if (!empty($this->_expires) && $this->_expires < time()) {
+            return false;
+        }
+
+        if (strlen($this->_access_token) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Set an existing/already retrieved access token
+     *
+     * @param array $accessTokenDetails
+     *
+     * @return $this
+     */
+    public function setAccessTokenDetails(array $accessTokenDetails)
+    {
+        $this->_access_token        = isset($accessTokenDetails['access_token']) ? $accessTokenDetails['access_token'] : null;
+        $this->_access_token_secret = isset($accessTokenDetails['access_token_secret']) ? $accessTokenDetails['access_token_secret'] : null;
+        $this->_expires             = isset($accessTokenDetails['expires']) ? $accessTokenDetails['expires'] : null;
+        $this->_refresh_token       = isset($accessTokenDetails['refresh_token']) ? $accessTokenDetails['refresh_token'] : null;
+
+        return $this;
+    }
+
+    /**
+     * Set access token URL
+     *
+     * @param $url
+     *
+     * @return $this
+     */
+    public function setAccessTokenUrl($url)
+    {
+        $this->_access_token_url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Set authorization URL
+     *
+     * @param $url
+     *
+     * @return $this
+     */
+    public function setAuthorizeUrl($url)
+    {
+        $this->_authorize_url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Set redirect type for OAuth2
+     *
+     * @param $type
+     *
+     * @return $this
+     */
+    public function setRedirectType($type)
+    {
+        $this->_redirect_type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Set request token URL
+     *
+     * @param $url
+     *
+     * @return $this
+     */
+    public function setRequestTokenUrl($url)
+    {
+        $this->_request_token_url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Set OAuth2 scope
+     *
+     * @param array|string $scope
+     *
+     * @return $this
+     */
+    public function setScope($scope)
+    {
+        if (!is_array($scope)) {
+            $this->_scope = explode(',', $scope);
+        } else {
+            $this->_scope = $scope;
+        }
+
+        return $this;
+    }
 
     /**
      * @param string $baseUrl URL of the Mautic instance
@@ -204,176 +355,6 @@ class OAuth extends ApiAuth implements AuthInterface
                 )
             );
         }
-    }
-
-    /**
-     * Set authorization URL
-     *
-     * @param $url
-     *
-     * @return $this
-     */
-    public function setAuthorizeUrl($url)
-    {
-        $this->_authorize_url = $url;
-
-        return $this;
-    }
-
-    /**
-     * Set request token URL
-     *
-     * @param $url
-     *
-     * @return $this
-     */
-    public function setRequestTokenUrl($url)
-    {
-        $this->_request_token_url = $url;
-
-        return $this;
-    }
-
-    /**
-     * Set access token URL
-     *
-     * @param $url
-     *
-     * @return $this
-     */
-    public function setAccessTokenUrl($url)
-    {
-        $this->_access_token_url = $url;
-
-        return $this;
-    }
-
-    /**
-     * Set redirect type for OAuth2
-     *
-     * @param $type
-     *
-     * @return $this
-     */
-    public function setRedirectType($type)
-    {
-        $this->_redirect_type = $type;
-
-        return $this;
-    }
-
-    /**
-     * Set OAuth2 scope
-     *
-     * @param array|string $scope
-     *
-     * @return $this
-     */
-    public function setScope($scope)
-    {
-        if (!is_array($scope)) {
-            $this->_scope = explode(',', $scope);
-        } else {
-            $this->_scope = $scope;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set an existing/already retrieved access token
-     *
-     * @param array $accessTokenDetails
-     *
-     * @return $this
-     */
-    public function setAccessTokenDetails(array $accessTokenDetails)
-    {
-        $this->_access_token        = isset($accessTokenDetails['access_token']) ? $accessTokenDetails['access_token'] : null;
-        $this->_access_token_secret = isset($accessTokenDetails['access_token_secret']) ? $accessTokenDetails['access_token_secret'] : null;
-        $this->_expires             = isset($accessTokenDetails['expires']) ? $accessTokenDetails['expires'] : null;
-        $this->_refresh_token       = isset($accessTokenDetails['refresh_token']) ? $accessTokenDetails['refresh_token'] : null;
-
-        return $this;
-    }
-
-    /**
-     * Returns access token data
-     *
-     * @return array
-     */
-    public function getAccessTokenData()
-    {
-        if ($this->isOauth1()) {
-            return array(
-                'access_token'        => $this->_access_token,
-                'access_token_secret' => $this->_access_token_secret,
-                'expires'             => $this->_expires,
-            );
-        }
-
-        return array(
-            'access_token'  => $this->_access_token,
-            'expires'       => $this->_expires,
-            'token_type'    => $this->_token_type,
-            'refresh_token' => $this->_refresh_token
-        );
-    }
-
-    /**
-     * Enables debug mode
-     *
-     * @return $this
-     */
-    public function enableDebugMode()
-    {
-        $this->_debug = true;
-
-        return $this;
-    }
-
-    /**
-     * Check to see if the access token was updated from a refresh token
-     *
-     * @return bool
-     */
-    public function accessTokenUpdated()
-    {
-        return $this->_access_token_updated;
-    }
-
-    /**
-     * Returns $_SESSION['oauth']['debug'] if $this->_debug = true
-     *
-     * @return array
-     */
-    public function getDebugInfo()
-    {
-        return ($this->_debug && !empty($_SESSION['oauth']['debug'])) ? $_SESSION['oauth']['debug'] : array();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAuthorized()
-    {
-        //Check for existing access token
-        if (!empty($this->_request_token_url)) {
-            if (strlen($this->_access_token) > 0 && strlen($this->_access_token_secret) > 0) {
-                return true;
-            }
-        }
-
-        //Check to see if token in session has expired
-        if (!empty($this->_expires) && $this->_expires < time()) {
-            return false;
-        }
-
-        if (strlen($this->_access_token) > 0) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -475,55 +456,151 @@ class OAuth extends ApiAuth implements AuthInterface
     }
 
     /**
-     * Request token for OAuth1
+     * Authorize app
      *
-     * @param string $responseType
+     * @param array  $scope
+     * @param string $scope_separator
+     * @param null   $attach
      *
-     * @throws IncorrectParametersReturnedException
+     * @throws AuthorizationRequiredException
      */
-    protected function requestToken($responseType = 'flat')
+    protected function authorize(array $scope = array(), $scope_separator = ',', $attach = null)
     {
-        $this->log('requestToken()');
+        $authUrl = $this->_authorize_url;
 
-        //Make the request
-        $settings = array(
-            'responseType'    => $responseType,
-            'includeCallback' => true,
-            'includeVerifier' => false
-        );
-        $params   = $this->makeRequest($this->_request_token_url, array(), 'POST', $settings);
+        //Build authorization URL
+        if ($this->isOauth1()) {
+            //OAuth 1.0
+            $authUrl .= '?oauth_token='.$_SESSION['oauth']['token'];
 
-        //Add token and secret to the session
-        if (is_array($params) && isset($params['oauth_token']) && isset($params['oauth_token_secret'])) {
-            $this->log('token set as '.$params['oauth_token']);
+            if (!empty($this->_callback)) {
+                $authUrl .= '&oauth_callback='.urlencode($this->_callback);
+            }
 
-            $_SESSION['oauth']['token']        = $params['oauth_token'];
-            $_SESSION['oauth']['token_secret'] = $params['oauth_token_secret'];
+        } else {
+            //OAuth 2.0
+            $authUrl .= '?client_id='.$this->_client_id.'&redirect_uri='.urlencode($this->_callback);
+            $state                      = md5(time().mt_rand());
+            $_SESSION['oauth']['state'] = $state;
+            if ($this->_debug) {
+                $_SESSION['oauth']['debug']['generated_state'] = $state;
+            }
+
+            $authUrl .= '&state='.$state.'&scope='.implode($scope_separator, $scope).$attach;
+            $authUrl .= '&response_type='.$this->_redirect_type;
+        }
+
+        $this->log('redirecting to auth url '.$authUrl);
+
+        //Redirect to authorization URL
+        if (!$this->_do_not_redirect) {
+            header('Location: '.$authUrl);
+            exit;
+        } else {
+            throw new AuthorizationRequiredException($authUrl);
+        }
+    }
+
+    /**
+     * @param $isPost
+     * @param $parameters
+     *
+     * @return array
+     */
+    protected function getQueryParameters($isPost, $parameters)
+    {
+        $query = parent::getQueryParameters($isPost, $parameters);
+
+        if (isset($parameters['file'])) {
+            // Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
+            $query['access_token'] = $parameters['access_token'];
+        }
+
+        return $query;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isOauth1()
+    {
+        return strlen($this->_request_token_url) > 0;
+    }
+
+    /**
+     * Build the HTTP response array out of the headers string
+     *
+     * @param  string $headersStr
+     *
+     * @return array
+     */
+    protected function parseHeaders($headersStr)
+    {
+        $headersArr = array();
+        $headersHlpr = explode("\r\n", $headersStr);
+
+        foreach ($headersHlpr as $header) {
+            $pos = strpos($header, ':');
+            if ($pos === false) {
+                $headersArr[] = trim($header);
+            } else {
+                $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, ($pos + 1)));
+            }
+        }
+
+        return $headersArr;
+    }
+
+    /**
+     * @param       $url
+     * @param array $headers
+     * @param array $parameters
+     * @param array $method
+     * @param array $settings
+     *
+     * @return array
+     */
+    protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings)
+    {
+        $includeCallback = (isset($settings['includeCallback'])) ? $settings['includeCallback'] : false;
+        $includeVerifier = (isset($settings['includeVerifier'])) ? $settings['includeVerifier'] : false;
+
+        //Set OAuth parameters/headers
+        if ($this->isOauth1()) {
+            //OAuth 1.0
+            $this->log('making request using OAuth1.0a spec');
+
+            //Get standard OAuth headers
+            $oAuthHeaders = $this->getOauthHeaders($includeCallback);
+
+            if ($includeVerifier && isset($_GET['oauth_verifier'])) {
+                $oAuthHeaders['oauth_verifier'] = $_GET['oauth_verifier'];
+
+                if ($this->_debug) {
+                    $_SESSION['oauth']['debug']['oauth_verifier'] = $_GET['oauth_verifier'];
+                }
+            }
+
+            //Add the parameters
+            $oAuthHeaders                    = array_merge($oAuthHeaders, $parameters);
+            $base_info                       = $this->buildBaseString($url, $method, $oAuthHeaders);
+            $composite_key                   = $this->getCompositeKey();
+            $oAuthHeaders['oauth_signature'] = base64_encode(hash_hmac('sha1', $base_info, $composite_key, true));
+            $headers[]                       = $this->buildAuthorizationHeader($oAuthHeaders);
+            $headers[]                       = 'Expect:';
 
             if ($this->_debug) {
-                $_SESSION['oauth']['debug']['token']        = $params['oauth_token'];
-                $_SESSION['oauth']['debug']['token_secret'] = $params['oauth_token_secret'];
+                $_SESSION['oauth']['debug']['basestring'] = $base_info;
+                $_SESSION['oauth']['debug']['headers']    = $headers;
             }
         } else {
-            //Throw exception if the required parameters were not found
-            $this->log('request did not return oauth tokens');
+            //OAuth 2.0
+            $this->log('making request using OAuth2 spec');
 
-            if ($this->_debug) {
-                $_SESSION['oauth']['debug']['response'] = $params;
-            }
-
-            if (is_array($params)) {
-                if (isset($params['error'])) {
-                    $response = $params['error'];
-                } else {
-                    $response = '???';
-                }
-            } else {
-                $response = $params;
-            }
-
-            throw new IncorrectParametersReturnedException('Incorrect access token parameters returned: '.$response);
+            $parameters['access_token'] = $this->_access_token;
         }
+
+        return array($headers, $parameters);
     }
 
     /**
@@ -658,352 +735,81 @@ class OAuth extends ApiAuth implements AuthInterface
     }
 
     /**
-     * Authorize app
+     * Request token for OAuth1
      *
-     * @param array  $scope
-     * @param string $scope_separator
-     * @param string $attach
-     */
-    protected function authorize(array $scope = array(), $scope_separator = ',', $attach = null)
-    {
-        $authUrl = $this->_authorize_url;
-
-        //Build authorization URL
-        if ($this->isOauth1()) {
-            //OAuth 1.0
-            $authUrl .= '?oauth_token='.$_SESSION['oauth']['token'];
-
-            if (!empty($this->_callback)) {
-                $authUrl .= '&oauth_callback='.urlencode($this->_callback);
-            }
-
-        } else {
-            //OAuth 2.0
-            $authUrl .= '?client_id='.$this->_client_id.'&redirect_uri='.urlencode($this->_callback);
-            $state                      = md5(time().mt_rand());
-            $_SESSION['oauth']['state'] = $state;
-            if ($this->_debug) {
-                $_SESSION['oauth']['debug']['generated_state'] = $state;
-            }
-
-            $authUrl .= '&state='.$state.'&scope='.implode($scope_separator, $scope).$attach;
-            $authUrl .= '&response_type='.$this->_redirect_type;
-        }
-
-        $this->log('redirecting to auth url '.$authUrl);
-
-        //Redirect to authorization URL
-        if (!$this->_do_not_redirect) {
-            header('Location: '.$authUrl);
-            exit;
-        } else {
-            throw new AuthorizationRequiredException($authUrl);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
+     * @param string $responseType
      *
-     * @throws UnexpectedResponseFormatException
+     * @throws IncorrectParametersReturnedException
      */
-    public function makeRequest($url, array $parameters = array(), $method = 'GET', array $settings = array())
+    protected function requestToken($responseType = 'flat')
     {
-        $this->log('makeRequest('.$url.', '.http_build_query($parameters).', '.$method.',...)');
+        $this->log('requestToken()');
 
-        list($url, $parameters) = $this->separateUrlParams($url, $parameters);
-
-        $includeCallback = (isset($settings['includeCallback'])) ? $settings['includeCallback'] : false;
-        $includeVerifier = (isset($settings['includeVerifier'])) ? $settings['includeVerifier'] : false;
-
-        //make sure $method is capitalized for congruency
-        $method = strtoupper($method);
-        $headers = (isset($settings['headers']) && is_array($settings['headers'])) ? $settings['headers'] : array();
-
-        //Set OAuth parameters/headers
-        if ($this->isOauth1()) {
-            //OAuth 1.0
-            $this->log('making request using OAuth1.0a spec');
-
-            //Get standard OAuth headers
-            $oAuthHeaders = $this->getOauthHeaders($includeCallback);
-
-            if ($includeVerifier && isset($_GET['oauth_verifier'])) {
-                $oAuthHeaders['oauth_verifier'] = $_GET['oauth_verifier'];
-
-                if ($this->_debug) {
-                    $_SESSION['oauth']['debug']['oauth_verifier'] = $_GET['oauth_verifier'];
-                }
-            }
-
-            //Add the parameters
-            $oAuthHeaders                    = array_merge($oAuthHeaders, $parameters);
-            $base_info                  = $this->buildBaseString($url, $method, $oAuthHeaders);
-            $composite_key              = $this->getCompositeKey();
-            $oAuthHeaders['oauth_signature'] = base64_encode(hash_hmac('sha1', $base_info, $composite_key, true));
-            $headers[]                   = $this->buildAuthorizationHeader($oAuthHeaders);
-            $headers[]                     = 'Expect:';
-
-            if ($this->_debug) {
-                $_SESSION['oauth']['debug']['basestring'] = $base_info;
-                $_SESSION['oauth']['debug']['headers']    = $headers;
-            }
-        } else {
-            //OAuth 2.0
-            $this->log('making request using OAuth2 spec');
-
-            $parameters['access_token'] = $this->_access_token;
-        }
-
-        //Set default CURL options
-        $options = array(
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_HEADER         => true
+        //Make the request
+        $settings = array(
+            'responseType'    => $responseType,
+            'includeCallback' => true,
+            'includeVerifier' => false
         );
+        $params   = $this->makeRequest($this->_request_token_url, array(), 'POST', $settings);
 
-        // CURLOPT_FOLLOWLOCATION cannot be activated when an open_basedir is set
-        if (ini_get('open_basedir')) {
-            $options[CURLOPT_FOLLOWLOCATION] = false;
+        //Add token and secret to the session
+        if (is_array($params) && isset($params['oauth_token']) && isset($params['oauth_token_secret'])) {
+            $this->log('token set as '.$params['oauth_token']);
+
+            $_SESSION['oauth']['token']        = $params['oauth_token'];
+            $_SESSION['oauth']['token_secret'] = $params['oauth_token_secret'];
+
+            if ($this->_debug) {
+                $_SESSION['oauth']['debug']['token']        = $params['oauth_token'];
+                $_SESSION['oauth']['debug']['token_secret'] = $params['oauth_token_secret'];
+            }
         } else {
-            $options[CURLOPT_FOLLOWLOCATION] = true;
-        }
+            //Throw exception if the required parameters were not found
+            $this->log('request did not return oauth tokens');
 
-        //Set custom REST method if not GET or POST
-        if (!in_array($method, array('GET', 'POST'))) {
-            $options[CURLOPT_CUSTOMREQUEST] = $method;
-        }
+            if ($this->_debug) {
+                $_SESSION['oauth']['debug']['response'] = $params;
+            }
 
-        //Set post fields for POST/PUT/PATCH/DELETE requests
-        $query = array();
-        $header = array();
-        if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
-
-            //Set file to upload
-            // Sending file data requires an array to set
-            // the Content-Type header to multipart/form-data
-            if (!empty($parameters['file']) && file_exists($parameters['file'])) {
-                $options[CURLOPT_INFILESIZE] = filesize($parameters['file']);
-                $parameters['file']          = $this->createCurlFile($parameters['file']);
-                $uploadHeaders               = array("Content-Type:multipart/form-data");
-
-                if ($this->isOauth1()) {
-                    array_merge($headers, $uploadHeaders);
+            if (is_array($params)) {
+                if (isset($params['error'])) {
+                    $response = $params['error'];
                 } else {
-                    $headers = $uploadHeaders;
-
-                    // Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
-                    $query['access_token'] = $parameters['access_token'];
+                    $response = '???';
                 }
             } else {
-                $parameters = http_build_query($parameters, '', '&');
+                $response = $params;
             }
 
-            $options[CURLOPT_POST]       = true;
-            $options[CURLOPT_POSTFIELDS] = $parameters;
-
-            if (is_array($parameters)) {
-                $parameters = print_r($parameters, true);
-            }
-
-            $this->log('Posted parameters = '.$parameters);
-        } else {
-            $query = $parameters;
+            throw new IncorrectParametersReturnedException('Incorrect access token parameters returned: '.$response);
         }
-
-        //Create a query string for GET/DELETE requests
-        if (count($query) > 0) {
-            $queryGlue = strpos($url, '?') === false ? '?' : '&';
-            $url       = $url.$queryGlue.http_build_query($query);
-            $this->log('URL updated to '.$url);
-        }
-
-        // Set the URL
-        $options[CURLOPT_URL] = $url;
-
-        $headers[] = 'Accept: application/json';
-        $options[CURLOPT_HTTPHEADER] = $headers;
-
-        //Make CURL request
-        $curl = curl_init();
-        curl_setopt_array($curl, $options);
-
-        $response                   = curl_exec($curl);
-        $responseArray              = explode("\r\n\r\n", $response);
-        $body                       = array_pop($responseArray);
-        $this->_httpResponseHeaders = implode("\r\n\r\n", $responseArray);
-        $this->_httpResponseInfo    = curl_getinfo($curl);
-
-        curl_close($curl);
-
-        if ($this->_debug) {
-            $_SESSION['oauth']['debug']['info']            = $this->_httpResponseInfo;
-            $_SESSION['oauth']['debug']['returnedHeaders'] = $this->_httpResponseHeaders;
-            $_SESSION['oauth']['debug']['returnedBody']    = $body;
-        }
-
-        $responseGood = false;
-
-        //Check to see if the response is JSON
-
-        $parsed = json_decode($body, true);
-
-        if ($parsed === null) {
-            if (strpos($body, '=') !== false) {
-                parse_str($body, $parsed);
-                $responseGood = true;
-            }
-        } else {
-            $responseGood = true;
-        }
-
-        //Show error when http_code is not appropriate
-        if (!in_array($this->_httpResponseInfo['http_code'], array(200, 201))) {
-            if ($responseGood) {
-                return $parsed;
-            }
-
-            throw new UnexpectedResponseFormatException($body);
-        }
-
-        return ($responseGood) ? $parsed : $body;
     }
 
     /**
-     * @return array
-     */
-    public function getRequestInfo()
-    {
-        return $this->_httpResponseInfo;
-    }
-
-    /**
-     * Build the HTTP response array out of the headers string
+     * Separates parameters from base URL
      *
-     * @param  string $headersStr
+     * @param $url
+     * @param $params
      *
      * @return array
      */
-    protected function parseHeaders($headersStr)
+    protected function separateUrlParams($url, $params)
     {
-        $headersArr  = array();
-        $headersHlpr = explode("\r\n", $headersStr);
+        $a = parse_url($url);
 
-        foreach ($headersHlpr as $header) {
-            $pos = strpos($header, ':');
-            if ($pos === false) {
-                $headersArr[] = trim($header);
-            } else {
-                $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, ($pos + 1)));
+        if (!empty($a['query'])) {
+            parse_str($a['query'], $qparts);
+            $cleanParams = array();
+            foreach ($qparts as $k => $v) {
+                $cleanParams[$k] = $v ? $v : '';
             }
+            $params   = array_merge($params, $cleanParams);
+            $urlParts = explode('?', $url, 2);
+            $url      = $urlParts[0];
         }
 
-        return $headersArr;
-    }
-
-    /**
-     * Returns array of HTTP response headers
-     *
-     * @return array
-     */
-    public function getResponseHeaders()
-    {
-        return $this->parseHeaders($this->_httpResponseHeaders);
-    }
-
-    /**
-     * Returns array of HTTP response headers
-     *
-     * @return array
-     */
-    public function getResponseInfo()
-    {
-        return $this->_httpResponseInfo;
-    }
-
-    /**
-     * Build the CURL file based on PHP version
-     *
-     * @param  string $filename
-     * @param  string $mimetype
-     * @param  string $postname
-     *
-     * @return string|\CURLFile
-     */
-    protected function createCurlFile($filename, $mimetype = '', $postname = '')
-    {
-        if (!function_exists('curl_file_create')) {
-            // For PHP < 5.5
-            return "@$filename;filename="
-                .($postname ?: basename($filename))
-                .($mimetype ? ";type=$mimetype" : '');
-        }
-
-        // For PHP >= 5.5
-        return curl_file_create($filename, $mimetype, $postname);
-    }
-
-    /**
-     * Get composite key for OAuth 1 signature signing
-     *
-     * @return string
-     */
-    private function getCompositeKey()
-    {
-        if (isset($this->_access_token_secret) && strlen($this->_access_token_secret) > 0) {
-            $composite_key = $this->encode($this->_client_secret).'&'.$this->encode($this->_access_token_secret);
-        } elseif (isset($_SESSION['oauth']['token_secret'])) {
-            $composite_key = $this->encode($this->_client_secret).'&'.$this->encode($_SESSION['oauth']['token_secret']);
-        } else {
-            $composite_key = $this->encode($this->_client_secret).'&';
-        }
-
-        return $composite_key;
-    }
-
-    /**
-     * Get OAuth 1.0 Headers
-     *
-     * @param bool $includeCallback
-     *
-     * @return array
-     */
-    private function getOauthHeaders($includeCallback = false)
-    {
-        $oauth = array(
-            'oauth_consumer_key'     => $this->_client_id,
-            'oauth_nonce'            => $this->generateNonce(),
-            'oauth_signature_method' => 'HMAC-SHA1',
-            'oauth_timestamp'        => time(),
-            'oauth_version'          => '1.0'
-        );
-
-        if (isset($this->_access_token)) {
-            $oauth['oauth_token'] = $this->_access_token;
-        } elseif (isset($_SESSION['oauth']['token'])) {
-            $oauth['oauth_token'] = $_SESSION['oauth']['token'];
-        }
-
-        if ($includeCallback) {
-            $oauth['oauth_callback'] = $this->_callback;
-        }
-
-        return $oauth;
-    }
-
-    /**
-     * Build base string for OAuth 1 signature signing
-     *
-     * @param string $baseURI
-     * @param string $method
-     * @param array  $params
-     *
-     * @return string
-     */
-    private function buildBaseString($baseURI, $method, $params)
-    {
-        $r = $this->normalizeParameters($params, true);
-
-        return $method.'&'.$this->encode($baseURI).'&'.$this->encode($r);
+        return array($url, $params);
     }
 
     /**
@@ -1023,49 +829,19 @@ class OAuth extends ApiAuth implements AuthInterface
     }
 
     /**
-     * Normalize parameters
+     * Build base string for OAuth 1 signature signing
      *
-     * @param array  $parameters
-     * @param bool   $encode
-     * @param bool   $returnarray
-     * @param array  $normalized
-     * @param string $key
+     * @param string $baseURI
+     * @param string $method
+     * @param array  $params
      *
-     * @return array|string
+     * @return string
      */
-    private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
+    private function buildBaseString($baseURI, $method, $params)
     {
-        // December 2016 - Fix for issue #75
-        //
-        // recursive call identified by these 2 conditions.
-        if ($returnarray && ('' != $key)) {
-            // Ref: Spec: 9.1.1 (1)
-            // If two or more parameters share the same name, they are sorted by their value
-            sort($parameters, SORT_STRING);
-        } else {
-            // Sort by key
-            ksort($parameters);
-        }
+        $r = $this->normalizeParameters($params, true);
 
-        foreach ($parameters as $k => $v) {
-            if (is_array($v)) {
-                $normalized = $this->normalizeParameters($v, $encode, true, $normalized, $k);
-            } else {
-                if ($key) {
-                    //Multidimensional array; using foo=baz&foo=bar rather than foo[bar]=baz&foo[baz]=bar as this is
-                    //what the server expects when creating the signature
-                    $k = $key;
-                }
-
-                if ($encode) {
-                    $normalized[] = $this->encode($k).'='.$this->encode($v);
-                } else {
-                    $normalized[] = $k.'='.$v;
-                }
-            }
-        }
-
-        return $returnarray ? $normalized : implode('&', $normalized);
+        return $method.'&'.$this->encode($baseURI).'&'.$this->encode($r);
     }
 
     /**
@@ -1119,46 +895,96 @@ class OAuth extends ApiAuth implements AuthInterface
     }
 
     /**
-     * @param string $message
-     */
-    protected function log($message)
-    {
-        if ($this->_debug) {
-            $_SESSION['oauth']['debug']['flow'][date('m-d H:i:s')][] = $message;
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isOauth1()
-    {
-        return strlen($this->_request_token_url) > 0;
-    }
-
-    /**
-     * Separates parameters from base URL
+     * Get composite key for OAuth 1 signature signing
      *
-     * @param $url
-     * @param $params
+     * @return string
+     */
+    private function getCompositeKey()
+    {
+        if (isset($this->_access_token_secret) && strlen($this->_access_token_secret) > 0) {
+            $composite_key = $this->encode($this->_client_secret).'&'.$this->encode($this->_access_token_secret);
+        } elseif (isset($_SESSION['oauth']['token_secret'])) {
+            $composite_key = $this->encode($this->_client_secret).'&'.$this->encode($_SESSION['oauth']['token_secret']);
+        } else {
+            $composite_key = $this->encode($this->_client_secret).'&';
+        }
+
+        return $composite_key;
+    }
+
+    /**
+     * Get OAuth 1.0 Headers
+     *
+     * @param bool $includeCallback
      *
      * @return array
      */
-    protected function separateUrlParams($url, $params)
+    private function getOauthHeaders($includeCallback = false)
     {
-        $a = parse_url($url);
+        $oauth = array(
+            'oauth_consumer_key'     => $this->_client_id,
+            'oauth_nonce'            => $this->generateNonce(),
+            'oauth_signature_method' => 'HMAC-SHA1',
+            'oauth_timestamp'        => time(),
+            'oauth_version'          => '1.0'
+        );
 
-        if (!empty($a['query'])) {
-            parse_str($a['query'], $qparts);
-            $cleanParams = array();
-            foreach ($qparts as $k => $v) {
-                $cleanParams[$k] = $v ? $v : '';
-            }
-            $params   = array_merge($params, $cleanParams);
-            $urlParts = explode('?', $url, 2);
-            $url      = $urlParts[0];
+        if (isset($this->_access_token)) {
+            $oauth['oauth_token'] = $this->_access_token;
+        } elseif (isset($_SESSION['oauth']['token'])) {
+            $oauth['oauth_token'] = $_SESSION['oauth']['token'];
         }
 
-        return array($url, $params);
+        if ($includeCallback) {
+            $oauth['oauth_callback'] = $this->_callback;
+        }
+
+        return $oauth;
+    }
+
+    /**
+     * Normalize parameters
+     *
+     * @param array  $parameters
+     * @param bool   $encode
+     * @param bool   $returnarray
+     * @param array  $normalized
+     * @param string $key
+     *
+     * @return array|string
+     */
+    private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
+    {
+        // December 2016 - Fix for issue #75
+        //
+        // recursive call identified by these 2 conditions.
+        if ($returnarray && ('' != $key)) {
+            // Ref: Spec: 9.1.1 (1)
+            // If two or more parameters share the same name, they are sorted by their value
+            sort($parameters, SORT_STRING);
+        } else {
+            // Sort by key
+            ksort($parameters);
+        }
+
+        foreach ($parameters as $k => $v) {
+            if (is_array($v)) {
+                $normalized = $this->normalizeParameters($v, $encode, true, $normalized, $k);
+            } else {
+                if ($key) {
+                    //Multidimensional array; using foo=baz&foo=bar rather than foo[bar]=baz&foo[baz]=bar as this is
+                    //what the server expects when creating the signature
+                    $k = $key;
+                }
+
+                if ($encode) {
+                    $normalized[] = $this->encode($k).'='.$this->encode($v);
+                } else {
+                    $normalized[] = $k.'='.$v;
+                }
+            }
+        }
+
+        return $returnarray ? $normalized : implode('&', $normalized);
     }
 }
