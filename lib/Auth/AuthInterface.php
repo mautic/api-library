@@ -14,16 +14,6 @@ namespace Mautic\Auth;
 interface AuthInterface
 {
     /**
-     * @return mixed
-     */
-    public function getResponseHeaders();
-
-    /**
-     * @return mixed
-     */
-    public function getResponseInfo();
-
-    /**
      * Check if current authorization is still valid
      *
      * @return bool
