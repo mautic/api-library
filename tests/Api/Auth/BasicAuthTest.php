@@ -26,7 +26,7 @@ class BasicAuthTest extends MauticApiTestCase
     * Verify that the error handling in setup method is working
     * - No Username
     *
-    * @expectedException Mautic\Exception\RequiredParameterMissingException
+    * @expectedException \Mautic\Exception\RequiredParameterMissingException
     * @expectedExceptionCode 500
     */
     public function testParameterExceptionErrorNoUserName()
@@ -40,7 +40,7 @@ class BasicAuthTest extends MauticApiTestCase
     * Verify that the error handling in setup method is working
     * - No Password
     *
-    * @expectedException Mautic\Exception\RequiredParameterMissingException
+    * @expectedException \Mautic\Exception\RequiredParameterMissingException
     * @expectedExceptionCode 500
     */
     public function testParameterExceptionErrorNoPassword()
@@ -54,7 +54,7 @@ class BasicAuthTest extends MauticApiTestCase
     * Verify that the error handling in setup method is working
     * - Empty Username
     *
-    * @expectedException Mautic\Exception\RequiredParameterMissingException
+    * @expectedException \Mautic\Exception\RequiredParameterMissingException
     * @expectedExceptionCode 500
     */
     public function testParameterExceptionErrorEmptyUserName()
@@ -68,7 +68,7 @@ class BasicAuthTest extends MauticApiTestCase
     * Verify that the error handling in setup method is working
     * - Empty password
     *
-    * @expectedException Mautic\Exception\RequiredParameterMissingException
+    * @expectedException \Mautic\Exception\RequiredParameterMissingException
     * @expectedExceptionCode 500
     */
     public function testParameterExceptionErrorEmptyPassword()
