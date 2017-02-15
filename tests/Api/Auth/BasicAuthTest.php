@@ -88,17 +88,6 @@ class BasicAuthTest extends MauticApiTestCase
         // get local config
         $config = include $this->configFile;
 
-        // Make sure the parameters exist and are set
-        //
-        // AuthMethod - set to 'BasicAuth'
-        $toTest = 'AuthMethod';
-        $this->assertTrue(isset($config[$toTest]), $toTest .' Check failed. Check '. $toTest .' in local.config.php.');
-        if ('BasicAuth' != $config[$toTest]) {
-            return;
-        }
-
-        $this->assertEquals('BasicAuth', $config[$toTest], 'Expected value for '. $toTest .' not found. Check '. $toTest .' in local.config.php.');
-        //
         // userName & password - ! empty
         $toCheck = array('userName','password');
         foreach($toCheck as $toTest) {
@@ -117,8 +106,6 @@ class BasicAuthTest extends MauticApiTestCase
         $auth   = $apiAuth->newAuth($config, 'BasicAuth' );
 
         $this->assertTrue($auth->isAuthorized(), 'Authorization failed. Check credentials in local.config.php.');
-        $this->assertTrue($auth->validateAccessToken(), 'validateAccessToken test failed. Check credentials in local.config.php.');
-        $this->assertTrue(is_array($auth->getAccessTokenData()), 'getAccessTokenData test failed. Check credentials in local.config.php.');
     }
 
     /**
@@ -126,16 +113,15 @@ class BasicAuthTest extends MauticApiTestCase
     */
     public function testGetList()
     {
-        // get local config
-        $config = include $this->configFile;
-        $toTest = 'AuthMethod';
-        $this->assertTrue(isset($config[$toTest]), $toTest .' Check failed. Check '. $toTest .' in local.config.php.');
-        // Skip if not using BasiAuth
-        if ('BasicAuth' != $config[$toTest]) {
-            return;
-        }
-
         $this->api = $this->getContext('contactFields');
         $this->standardTestGetList();
+    }
+
+    /**
+     * Ignore this
+     */
+    public function testSearchCommands()
+    {
+        // ignore
     }
 }
