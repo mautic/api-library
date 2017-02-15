@@ -319,7 +319,7 @@ class Api implements LoggerAwareInterface
 
             // Ensure a code is present in the error array
             if (!empty($response['errors'])) {
-                $info = $this->auth->getRequestInfo();
+                $info = $this->auth->getResponseInfo();
                 foreach ($response['errors'] as $key => $error) {
                     if (!isset($response['errors'][$key]['code'])) {
                         $response['errors'][$key]['code'] = $info['http_code'];
