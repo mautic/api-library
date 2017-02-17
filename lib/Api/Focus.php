@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -9,7 +9,7 @@
 
 namespace Mautic\Api;
 
-/**
+/*
  * Emails Context
  */
 class Focus extends Api
