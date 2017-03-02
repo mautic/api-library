@@ -30,6 +30,17 @@ class Focus extends Api
      */
     protected $itemName = 'focusitem';
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = array(
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+    );
 
     /**
      * @param $id
