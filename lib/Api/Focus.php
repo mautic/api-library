@@ -41,14 +41,4 @@ class Focus extends Api
         'is:uncategorized',
         'category',
     );
-
-    /**
-     * @param $id
-     * @return array|mixed
-     */
-    public function generateJs($id)
-    {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/js', [] , 'POST');
-    }
-
 }
