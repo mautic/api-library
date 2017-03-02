@@ -23,12 +23,12 @@ class Focus extends Api
     /**
      * {@inheritdoc}
      */
-    protected $listName = 'focusitems';
+    protected $listName = 'focus';
 
     /**
      * {@inheritdoc}
      */
-    protected $itemName = 'focusitem';
+    protected $itemName = 'focus';
 
     /**
      * {@inheritdoc}

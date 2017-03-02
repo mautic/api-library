@@ -11,6 +11,8 @@ namespace Mautic\Tests\Api;
 
 class FocusTest extends MauticApiTestCase
 {
+    protected $skipPayloadAssertion = array('htmlMode');
+
     public function setUp()
     {
         $this->api = $this->getContext('focus');
@@ -19,56 +21,38 @@ class FocusTest extends MauticApiTestCase
             'type' => 'notice',
             'website' => 'http://',
             'style' => 'bar',
+            'form' => 1,
+            'htmlMode' => 1,
+            'html' => '<div><strong style="color:red">html mode enabled</strong></div>',
+            'css' => '.mf-bar-collapser {border-radius: 0 !important}',
             'properties' => array(
-                array(
-                    'bar' => array(
-                        array(
-                            'allow_hide' => 1,
-                            'sticky' => 1,
-                            'size' => 'large',
-                            'placement' => 'top',
-                        ),
+                'bar' =>
+                    array(
+                        'allow_hide' => 1,
+                        'sticky' => 1,
+                        'size' => 'large',
+                        'placement' => 'top',
                     ),
-                    'modal' => array(
-                        array(
-                            'placement' => 'top',
-                        ),
+                'modal' =>
+                    array(
+                        'placement' => 'top',
                     ),
-                    'notification' => array(
-                        array(
-                            'placement' => 'top_left',
-                        ),
+                'notification' =>
+                    array(
+                        'placement' => 'top_left',
                     ),
-                    'page' => array(),
-                    'animate' => 1,
-                    'link_activation' => 1,
-                    'colors' => array(
-                        array(
-                            'primary' => '27184e',
-                            'text' => '',
-                            'button' => '',
-                            'button_text' => '',
-                        ),
-                    ),
-                    'content' => array(
-                        array(
-                            'headline' => '27184e',
-                            'tagline' => '',
-                            'link_text' => '',
-                            'link_url' => '',
-                            'link_new_window' => '',
-                            'font' => 'Arial, Helvetica, sans-serif',
-                        ),
-                    ),
-                    'when' => 'immediately',
-                    'timeout' => '',
-                    'frequency' => 'everypage',
-                    'stop_after_conversion' => 1,
+                'animate' => 1,
+                'link_activation' => 1,
+                'colors' => array(
+                    'primary' => '27184e',
                 ),
-                'form' => '',
-                'htmlMode' => '1',
-                'html' => '<div><strong style="color:red">html mode enabled</strong></div>',
-                'css' => '.mf-bar-collapser {border-radius: 0 !important}',
+                'content' => array(
+                    'headline' => '',
+                    'font' => 'Arial, Helvetica, sans-serif',
+                ),
+                'when' => 'immediately',
+                'frequency' => 'everypage',
+                'stop_after_conversion' => 1,
             ),
         );
     }
