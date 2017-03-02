@@ -9,8 +9,13 @@
 
 namespace Mautic\Tests\Api;
 
+use Mautic\Api\CampaignEvents;
+
 class CampaignsTest extends MauticApiTestCase
 {
+    /** @var  CampaignEvents */
+    protected $eventApi;
+
     protected $requiredItems = array(
         'segments' => array(
             'item' => 'list',
@@ -42,8 +47,11 @@ class CampaignsTest extends MauticApiTestCase
 
     protected $skipPayloadAssertion = array('events', 'forms', 'lists', 'canvasSettings', 'dateModified', 'dateAdded');
 
-    public function setUp() {
-        $this->api = $this->getContext('campaigns');
+    public function setUp()
+    {
+        $this->api      = $this->getContext('campaigns');
+        $this->eventApi = $this->getContext('campaignEvents');
+
         $this->testPayload = array(
             'name' => 'test',
             'description' => 'Created via API',
@@ -196,7 +204,9 @@ class CampaignsTest extends MauticApiTestCase
 
     public function testGetListOfSpecificIds()
     {
-        $this->standardTestGetListOfSpecificIds();
+        $this->setUpPayloadClass();
+        $this->standardTestGetListOfSpecificIds(array($this, 'testGetListOfSpecificEventIds'));
+        $this->clearPayloadItems();
     }
 
     public function testCreateGetAndDelete()
@@ -245,6 +255,65 @@ class CampaignsTest extends MauticApiTestCase
         $this->clearPayloadItems();
     }
 
+    public function testAddAndRemove()
+    {
+        $this->setUpPayloadClass();
+
+        // Create contact
+        $contactsContext = $this->getContext('contacts');
+        $response = $contactsContext->create(array('firstname' => 'API campagin test'));
+        $this->assertErrors($response);
+        $contact = $response['contact'];
+
+        // Create campaign
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $campaign = $response[$this->api->itemName()];
+
+        // Add the contact to the campaign
+        $response = $this->api->addContact($campaign['id'], $contact['id']);
+        $this->assertErrors($response);
+
+        // Test get contact campaigns API endpoint
+        $contactContext = $this->getContext('contacts');
+        $response = $contactContext->getContactCampaigns($contact['id']);
+        $this->assertErrors($response);
+        $this->assertEquals($response['total'], 1);
+        $this->assertFalse(empty($response['campaigns']));
+
+        // Test get campaign contacts API endpoint
+        $response = $this->api->getContacts($campaign['id']);
+        $this->assertErrors($response);
+        $this->assertEquals($response['total'], 1);
+        $this->assertEquals(count($response['contacts']), 1);
+        $this->assertEquals($response['contacts'][0]['campaign_id'], $campaign['id']);
+        $this->assertEquals($response['contacts'][0]['lead_id'], $contact['id']);
+
+        // Remove the contact from the campaign
+        $response = $this->api->removeContact($campaign['id'], $contact['id']);
+        $this->assertErrors($response);
+
+        // Delete the contact and the campaign
+        $response = $contactsContext->delete($contact['id']);
+        $this->assertErrors($response);
+        $response = $this->api->delete($campaign['id']);
+        $this->assertErrors($response);
+        $this->clearPayloadItems();
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action) {
+            switch ($action) {
+                case 'create':
+                    foreach ($batch as &$item) {
+                        unset($item['events'], $item['canvasSettings']);
+                    }
+                    break;
+            }
+        });
+    }
+
     public function testEventAndSourceDeleteViaPut()
     {
         $this->setUpPayloadClass();
@@ -284,9 +353,19 @@ class CampaignsTest extends MauticApiTestCase
         $this->clearPayloadItems();
     }
 
-    public function testAddAndRemove()
+    public function testEventGetList()
+    {
+        $originalApi = $this->api;
+        $this->api = $this->eventApi;
+        $this->standardTestGetList();
+        $this->api = $originalApi;
+    }
+
+    public function testCampaignContactGetList($cleanup = true)
     {
         $this->setUpPayloadClass();
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
 
         // Create contact
         $contactsContext = $this->getContext('contacts');
@@ -303,16 +382,94 @@ class CampaignsTest extends MauticApiTestCase
         $response = $this->api->addContact($campaign['id'], $contact['id']);
         $this->assertErrors($response);
 
-        // Test get contact campaigns API endpoint
-        $contactContext = $this->getContext('contacts');
-        $response = $contactContext->getContactCampaigns($contact['id']);
-        $this->assertErrors($response);
-        $this->assertEquals($response['total'], 1);
-        $this->assertFalse(empty($response['campaigns']));
+        $campaignEvents = $campaign['events'];
+        $eventIds = array();
+        foreach ($campaignEvents as $event) {
+            $eventIds[] = $event['id'];
+        }
 
-        // Remove the contact from the campaign
-        $response = $this->api->removeContact($campaign['id'], $contact['id']);
+        $response = $this->eventApi->getContactCampaignEvents($campaign['id'], $contact['id']);
         $this->assertErrors($response);
+        $campaignEvents = $response['events'];
+        $eventLogIds = array();
+        foreach ($campaignEvents as $event) {
+            $eventLogIds[] = $event['id'];
+        }
+
+        $this->assertEquals($eventIds, $eventLogIds);
+
+        if ($cleanup) {
+            // Delete the contact and the campaign
+            $response = $contactsContext->delete($contact['id']);
+            $this->assertErrors($response);
+            $response = $this->api->delete($campaign['id']);
+            $this->assertErrors($response);
+            $this->clearPayloadItems();
+        } else {
+            return array(
+                'campaign' => $campaign,
+                'events'   => $campaignEvents,
+                'contact'  => $contact
+            );
+        }
+    }
+
+    public function testCampaignContactEditEvent()
+    {
+        $contactsContext = $this->getContext('contacts');
+        $response = $this->testCampaignContactGetList(false);
+        $campaign = $response['campaign'];
+        $contact  = $response['contact'];
+        $events   = $response['events'];
+
+        $log = array(
+            'triggerDate' => '2016-01-10 00:00:00'
+        );
+
+        // Edit an event and should get a log entry returned with same triggerDate
+
+        $response = $this->eventApi->editContactEvent($contact['id'], $events[1]['id'], $log);
+        $this->assertErrors($response);
+        $this->assertNotEmpty($response[$this->eventApi->itemName()]['contactLog']);
+        $this->assertTrue(isset($response[$this->eventApi->itemName()]['contactLog'][0]['triggerDate']), var_export($response, true));
+        $date = new \DateTime($log['triggerDate'], new \DateTimeZone('UTC'));
+        $this->assertEquals($response[$this->eventApi->itemName()]['contactLog'][0]['triggerDate'], $date->format('c'));
+        $this->assertEquals($response[$this->eventApi->itemName()]['contactLog'][0]['isScheduled'], 1);
+
+        // Ensure that decisions cannot be scheduled
+        $response = $this->eventApi->editContactEvent($contact['id'], $events[0]['id'], $log);
+        $this->assertNotEmpty($response['errors']);
+
+        // Batch edit the events
+        $log = array(
+            array(
+                'contactId' => $contact['id'],
+                'eventId'   => $events[0]['id'],
+                'dateTriggered' => '2016-01-10 00:00:00'
+            ),
+            array(
+                'contactId' => $contact['id'],
+                'eventId'   => $events[1]['id'],
+                'triggerDate' => '2016-01-11 00:00:00'
+            )
+        );
+
+        $response = $this->eventApi->editEvents($log);
+        $this->assertErrors($response, var_export($events, true).var_export($response, true));
+        foreach ($response[$this->eventApi->listName()] as $event) {
+            $this->assertNotEmpty($event['contactLog']);
+            $log = $event['contactLog'][0];
+
+            if ($event['id'] === $events[0]['id']) {
+                $date = new \DateTime($log['dateTriggered'], new \DateTimeZone('UTC'));
+                $this->assertEquals($log['dateTriggered'], $date->format('c'));
+            } elseif ($event['id'] === $events[1]['id']) {
+                $date = new \DateTime($log['triggerDate'], new \DateTimeZone('UTC'));
+                $this->assertEquals($log['triggerDate'], $date->format('c'));
+            } else {
+                $this->assertFalse(false, 'Event ID not recognized in the log.', var_export($event, true));
+            }
+        }
 
         // Delete the contact and the campaign
         $response = $contactsContext->delete($contact['id']);
@@ -320,5 +477,25 @@ class CampaignsTest extends MauticApiTestCase
         $response = $this->api->delete($campaign['id']);
         $this->assertErrors($response);
         $this->clearPayloadItems();
+    }
+
+    public function testBCEndpoints()
+    {
+        $this->api->bcTesting = array('addContact', 'removeContact');
+        $this->testAddAndRemove();
+        $this->api->bcTesting = false;
+    }
+
+    protected function getListOfSpecificEventIds($response)
+    {
+        // Get a list of event IDs
+        $eventIds = array();
+        foreach ($response['campaign']['events'] as $event) {
+            $eventIds[] = $event['id'];
+        }
+        $search   = 'ids:'.implode(',', $eventIds);
+        $response = $this->eventApi->getList($search);
+        $this->assertErrors($response);
+        $this->assertEquals(count($eventIds), $response['total']);
     }
 }

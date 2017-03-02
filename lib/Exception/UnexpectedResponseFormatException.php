@@ -12,17 +12,10 @@ namespace Mautic\Exception;
 /**
  * Exception representing an unexpected HTTP response
  */
-class UnexpectedResponseFormatException extends \Exception
+class UnexpectedResponseFormatException extends AbstractApiException
 {
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = 'The response returned is in an unexpected format.', $code = 500, \Exception $previous = null)
-    {
-        if (empty($message)) {
-            $message = 'The response returned is in an unexpected format.';
-        }
-
-        parent::__construct($message, $code, $previous);
-    }
+    const DEFAULT_MESSAGE = 'The response returned is in an unexpected format.';
 }

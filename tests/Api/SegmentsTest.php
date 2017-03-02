@@ -9,8 +9,15 @@
 
 namespace Mautic\Tests\Api;
 
+use Mautic\Api\Segments;
+
 class SegmentsTest extends MauticApiTestCase
 {
+    /**
+     * @var Segments
+     */
+    protected $api;
+
     public function setUp() {
         $this->api = $this->getContext('segments');
         $this->testPayload = array(
@@ -133,5 +140,17 @@ class SegmentsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $response = $this->api->delete($segment['id']);
         $this->assertErrors($response);
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
+
+    public function testBCEndpoints()
+    {
+        $this->api->bcTesting = array('addContact', 'removeContact');
+        $this->testAddAndRemove();
+        $this->api->bcTesting = false;
     }
 }

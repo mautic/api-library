@@ -29,4 +29,16 @@ class Assets extends Api
      * {@inheritdoc}
      */
     protected $itemName = 'asset';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = array(
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+    );
 }

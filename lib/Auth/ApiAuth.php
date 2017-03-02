@@ -1,10 +1,12 @@
 <?php
-/**
- * @package     Mautic
- * @copyright   2014 Mautic, NP. All rights reserved.
- * @author      Mautic
- * @link        http://mautic.org
- * @license     MIT http://opensource.org/licenses/MIT
+
+/*
+ * @copyright   2014 Mautic Contributors. All rights reserved
+ * @author      Mautic, Inc.
+ *
+ * @link        https://mautic.org
+ *
+ * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
 namespace Mautic\Auth;
@@ -20,7 +22,7 @@ class ApiAuth
      * @param array  $parameters
      * @param string $authMethod
      *
-     * @return $this
+     * @return AuthInterface
      *
      * @deprecated
      */
@@ -37,7 +39,7 @@ class ApiAuth
      * @param array  $parameters
      * @param string $authMethod
      *
-     * @return $this
+     * @return AuthInterface
      */
     public function newAuth($parameters = array(), $authMethod = 'OAuth')
     {

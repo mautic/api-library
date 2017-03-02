@@ -11,9 +11,14 @@ namespace Mautic\Tests\Api;
 
 use Mautic\Api\Contacts;
 
-class ContactsTest extends MauticApiTestCase
+class ContactsTest extends AbstractCustomFieldsTest
 {
     protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags');
+
+    /**
+     * @var Contacts
+     */
+    protected $api;
 
     public function setUp()
     {
@@ -39,8 +44,15 @@ class ContactsTest extends MauticApiTestCase
         $this->assertTrue(isset($response['filters']));
         $this->assertEquals(count($response['events']), count($expectedEvents));
 
-        foreach ($expectedEvents as $key => $event) {
-            $this->assertEquals($response['events'][$key]['event'], $event);
+        foreach ($expectedEvents as $key => $eventName) {
+            $actual = 'oops Missing';
+            foreach ($response['events'] as $event) {
+                if ($eventName == $event['event']) {
+                    $actual = $event['event'];
+                    break;
+                }
+            }
+            $this->assertEquals($eventName, $actual);
         }
     }
 
@@ -56,7 +68,7 @@ class ContactsTest extends MauticApiTestCase
 
     public function testGetListOfSpecificSegment()
     {
-        
+
         $segmentApi = $this->getContext('segments');
 
         // Create Segment
@@ -259,7 +271,7 @@ class ContactsTest extends MauticApiTestCase
     public function testSubtractPoints()
     {
         $pointToSub = 5;
-        
+
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $contact = $response[$this->api->itemName()];
@@ -274,5 +286,17 @@ class ContactsTest extends MauticApiTestCase
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
+
+    public function testBCEndpoints()
+    {
+        $this->api->bcTesting = array('addDnc', 'removeDnc');
+        $this->testDncAddRemoveEndpoints();
+        $this->api->bcTesting = false;
     }
 }

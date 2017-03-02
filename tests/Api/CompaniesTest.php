@@ -9,7 +9,7 @@
 
 namespace Mautic\Tests\Api;
 
-class CompaniesTest extends MauticApiTestCase
+class CompaniesTest extends AbstractCustomFieldsTest
 {
     public function setUp() {
         $this->api = $this->getContext('companies');
@@ -18,23 +18,6 @@ class CompaniesTest extends MauticApiTestCase
             'companyemail' => 'test@company.com',
             'companycity' => 'Raleigh',
         );
-    }
-
-    protected function assertPayload($response, array $payload = array())
-    {
-        $this->assertErrors($response);
-
-        if (empty($payload)) {
-            $payload = $this->testPayload;
-        }
-
-        $this->assertFalse(empty($response[$this->api->itemName()]['id']), 'The '.$this->api->itemName().' id is empty.');
-        $this->assertFalse(empty($response[$this->api->itemName()]['fields']['all']), 'The '.$this->api->itemName().' fields are missing.');
-
-        foreach ($payload as $itemProp => $itemVal) {
-            $this->assertTrue(isset($response[$this->api->itemName()]['fields']['all'][$itemProp]), 'The ["'.$this->api->itemName().'" => "'.$itemProp.'"] doesn\'t exist in the response.');
-            $this->assertSame($response[$this->api->itemName()]['fields']['all'][$itemProp], $itemVal);
-        }
     }
 
     public function testGetList()
@@ -95,5 +78,17 @@ class CompaniesTest extends MauticApiTestCase
         $this->assertErrors($response);
         $response = $this->api->delete($company['id']);
         $this->assertErrors($response);
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
+    }
+
+    public function testBCEndpoints()
+    {
+        $this->api->bcTesting = array('addContact', 'removeContact');
+        $this->testAddAndRemove();
+        $this->api->bcTesting = false;
     }
 }
