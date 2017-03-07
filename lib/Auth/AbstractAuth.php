@@ -40,6 +40,13 @@ abstract class AbstractAuth implements AuthInterface
     protected $_httpResponseInfo;
 
     /**
+     * Timeout for a cURL request
+     *
+     * @var int
+     */
+    protected $_curlTimeout = null;
+
+    /**
      * @param       $url
      * @param array $headers
      * @param array $parameters
@@ -115,6 +122,10 @@ abstract class AbstractAuth implements AuthInterface
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_HEADER         => true
         );
+
+        if ($this->_curlTimeout !== null) {
+            $options[CURLOPT_TIMEOUT] = $this->_curlTimeout;
+        }
 
         // CURLOPT_FOLLOWLOCATION cannot be activated when an open_basedir is set
         $options[CURLOPT_FOLLOWLOCATION] = (ini_get('open_basedir')) ? false : true;
@@ -310,5 +321,15 @@ abstract class AbstractAuth implements AuthInterface
         }
 
         return array($url, $params);
+    }
+
+    /**
+     * Set the timeout for a cURL request
+     *
+     * @param int $timeout
+     */
+    public function setCurlTimeout($timeout)
+    {
+        $this->_curlTimeout = $timeout;
     }
 }
