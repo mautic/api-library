@@ -296,7 +296,7 @@ class Api implements LoggerAwareInterface
                     'error'  => $error
                 );
             } elseif (!empty($response['errors'])) {
-                $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors']));
+                $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors'], true));
             }
 
             // @deprecated 2.6.0 BC error handling
