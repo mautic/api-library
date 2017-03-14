@@ -76,7 +76,7 @@ class MessagesTest extends MauticApiTestCase
             foreach ($response[$this->api->itemName()]['channels'] as $responseChannel) {
                 // All channels will be returned, even the empty ones
                 if (isset($this->testPayload['channels'][$responseChannel['channel']])) {
-                    unset($responseChannel['id']);
+                    unset($responseChannel['id'], $responseChannel['channelName']);
                     $this->assertSame($this->testPayload['channels'][$responseChannel['channel']], $responseChannel);
                 }
             }
