@@ -33,7 +33,6 @@ class FilesTest extends MauticApiTestCase
 
     public function testGetListSubdir()
     {
-        $this->api = $this->getContext('files');
         $this->api->setFolder('images/flags');
         $response = $this->api->getList();
         $this->assertTrue(isset($response['files']));
@@ -42,7 +41,6 @@ class FilesTest extends MauticApiTestCase
 
     public function testGetListAssetFiles()
     {
-        $this->api = $this->getContext('files');
         $this->api->setFolder('assets');
         $response   = $this->api->getList();
         $this->assertErrors($response);
@@ -50,7 +48,6 @@ class FilesTest extends MauticApiTestCase
 
     public function testCreateAndDeleteImage()
     {
-        $this->api = $this->getContext('files');
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
         $this->assertFalse(empty($response[$this->api->itemName()]['link']), 'The '.$this->api->itemName().' link is empty.');
@@ -62,8 +59,6 @@ class FilesTest extends MauticApiTestCase
 
     public function testCreateAndDeletePhpScript()
     {
-        $this->api = $this->getContext('files');
-
         // Get this PHP script to send
         $this->testPayload['file'] = dirname(__DIR__).'/Api/FilesTest.php';
         $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
@@ -74,7 +69,6 @@ class FilesTest extends MauticApiTestCase
 
     public function testCreateAndDeleteImageInSubdir()
     {
-        $this->api = $this->getContext('files');
         $this->api->setFolder('images/test_api_dir');
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
@@ -87,7 +81,6 @@ class FilesTest extends MauticApiTestCase
 
     public function testCreateAndDeleteAsset()
     {
-        $this->api = $this->getContext('files');
         $this->api->setFolder('assets');
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
