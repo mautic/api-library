@@ -11,7 +11,7 @@ namespace Mautic\Tests\Api;
 
 class FocusTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('htmlMode');
+    protected $skipPayloadAssertion = array('htmlMode', 'properties');
 
     public function setUp()
     {
@@ -21,7 +21,6 @@ class FocusTest extends MauticApiTestCase
             'type' => 'notice',
             'website' => 'http://',
             'style' => 'bar',
-            'form' => 1,
             'htmlMode' => 1,
             'html' => '<div><strong style="color:red">html mode enabled</strong></div>',
             'css' => '.mf-bar-collapser {border-radius: 0 !important}',
