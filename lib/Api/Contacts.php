@@ -65,7 +65,7 @@ class Contacts extends Api
         'email',
         'segment',
         'company',
-        'onwer',
+        'owner',
         'ip',
         'common',
     );
