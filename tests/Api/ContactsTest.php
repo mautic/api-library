@@ -179,8 +179,6 @@ class ContactsTest extends AbstractCustomFieldsTest
         $response = $this->api->edit($contactBc['id'], $this->testPayload);
         $this->assertPayload($response);
         $contactBe = $response[$this->api->itemName()];
-
-        $this->assertErrors($contactBe);
     }
 
     public function testDncAddInCreate()
