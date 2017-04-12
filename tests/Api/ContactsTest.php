@@ -26,6 +26,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->testPayload = array(
             'firstname' => 'test',
             'lastname'  => 'test',
+            'email'  => 'test@mautic.api',
             'points'    => 3,
             'tags'      => array(
                 'APItag1',
@@ -161,6 +162,25 @@ class ContactsTest extends AbstractCustomFieldsTest
         // Test Delete
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
+    }
+
+    public function testMergingDuplicateContacts()
+    {
+        // Create contact A
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $contactA = $response[$this->api->itemName()];
+
+        // Create contact B
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+        $contactBc = $response[$this->api->itemName()];
+
+        $response = $this->api->edit($contactBc['id'], $this->testPayload);
+        $this->assertPayload($response);
+        $contactBe = $response[$this->api->itemName()];
+
+        $this->assertErrors($contactBe);
     }
 
     public function testDncAddInCreate()
