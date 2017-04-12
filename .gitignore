@@ -9,3 +9,4 @@
 /tests/local.tokens.php
 /tests/phpunit.phar
 /vendor
+.DS_Store
