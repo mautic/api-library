@@ -166,19 +166,32 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testMergingDuplicateContacts()
     {
+        // Check if there is some contact with the email
+        $response = $this->api->getList('email:'.$this->testPayload['email']);
+        $this->assertErrors($response);
+        $duplicates = $response[$this->api->listName()];
+
         // Create contact A
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
         $contactA = $response[$this->api->itemName()];
 
+        // If there are some duplicates, the contactA should update one of them instead of creating a new contact
+        if ($duplicates) {
+            $this->assertTrue(isset($duplicates[$contactA['id']]));
+        }
+
         // Create contact B
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
-        $contactBc = $response[$this->api->itemName()];
+        $contactB = $response[$this->api->itemName()];
 
-        $response = $this->api->edit($contactBc['id'], $this->testPayload);
-        $this->assertPayload($response);
-        $contactBe = $response[$this->api->itemName()];
+        // Since contactA has the same email as AssetB, their ID should be the same.
+        $this->assertSame($contactA['id'], $contactB['id']);
+
+        // Clean after this test - we have to delete only one contact, because contactA === contactB
+        $response = $this->api->delete($contactA['id']);
+        $this->assertErrors($response);
     }
 
     public function testDncAddInCreate()
