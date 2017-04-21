@@ -89,6 +89,7 @@ class StatsTest extends MauticApiTestCase
             'push_notification_stats',
             'sms_message_stats',
             'stage_lead_action_log',
+            'tweet_stats',
             'video_hits',
             'webhook_logs',
         );
