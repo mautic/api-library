@@ -102,7 +102,7 @@ abstract class AbstractAuth implements AuthInterface
     /**
      * {@inheritdoc}
      *
-     * @throws UnexpectedResponseFormatException
+     * @throws UnexpectedResponseFormatException|Exception
      */
     public function makeRequest($url, array $parameters = array(), $method = 'GET', array $settings = array())
     {
@@ -192,28 +192,51 @@ abstract class AbstractAuth implements AuthInterface
 
         $responseGood = false;
 
-        //Check to see if the response is JSON
-        $parsed = json_decode($body, true);
+        // Handle zip file response
+        if (!empty($this->_httpResponseInfo['content_type']) && $this->_httpResponseInfo['content_type'] === 'application/zip') {
+            $file = tempnam(sys_get_temp_dir(), 'mautic_api_');
 
-        if ($parsed === null) {
-            if (strpos($body, '=') !== false) {
-                parse_str($body, $parsed);
+            if (!is_writable($file)) {
+                throw new \Exception($file.' is not writable');
+            }
+
+            if (!$handle = fopen($file, 'w')) {
+                throw new \Exception('Cannot open file '.$file);
+            }
+
+            if (fwrite($handle, $body) === false) {
+                throw new \Exception('Cannot write into file '.$file);
+            }
+
+            fclose($handle);
+
+            return array(
+                'file' => $file,
+            );
+        } else {
+            //Check to see if the response is JSON
+            $parsed = json_decode($body, true);
+
+            if ($parsed === null) {
+                if (strpos($body, '=') !== false) {
+                    parse_str($body, $parsed);
+                    $responseGood = true;
+                }
+            } else {
                 $responseGood = true;
             }
-        } else {
-            $responseGood = true;
-        }
 
-        //Show error when http_code is not appropriate
-        if (!in_array($this->_httpResponseInfo['http_code'], array(200, 201))) {
-            if ($responseGood) {
-                return $parsed;
+            //Show error when http_code is not appropriate
+            if (!in_array($this->_httpResponseInfo['http_code'], array(200, 201))) {
+                if ($responseGood) {
+                    return $parsed;
+                }
+
+                throw new UnexpectedResponseFormatException($body);
             }
 
-            throw new UnexpectedResponseFormatException($body);
+            return ($responseGood) ? $parsed : $body;
         }
-
-        return ($responseGood) ? $parsed : $body;
     }
 
     /**
