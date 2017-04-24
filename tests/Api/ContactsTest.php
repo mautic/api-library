@@ -62,9 +62,31 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->standardTestGetList();
     }
 
+    /**
+     * We cannot use standard method since contacts with the same email are merged into one
+     */
     public function testGetListOfSpecificIds()
     {
-        $this->standardTestGetListOfSpecificIds();
+        // Create some items first
+        $itemIds = array();
+        for ($i = 0; $i <= 2; $i++) {
+            $testPayload = $this->testPayload;
+            $testPayload['email'] = $i.$this->testPayload['email'];
+            $response = $this->api->create($testPayload);
+            $this->assertErrors($response);
+            $itemIds[] = $response[$this->api->itemName()]['id'];
+        }
+
+        $search   = 'ids:'.implode(',', $itemIds);
+        $response = $this->api->getList($search);
+        $this->assertErrors($response);
+        $this->assertEquals(count($itemIds), $response['total']);
+
+        foreach ($response[$this->api->listName()] as $item) {
+            $this->assertTrue(in_array($item['id'], $itemIds));
+            $this->api->delete($item['id']);
+            $this->assertErrors($response);
+        }
     }
 
     public function testGetListOfSpecificSegment()
@@ -84,8 +106,11 @@ class ContactsTest extends AbstractCustomFieldsTest
         $itemIds = array();
         for ($i = 0; $i <= 2; $i++) {
 
+            $testPayload = $this->testPayload;
+            $testPayload['email'] = $i.$this->testPayload['email'];
+
             // Create some items
-            $response = $this->api->create($this->testPayload);
+            $response = $this->api->create($testPayload);
             $this->assertErrors($response);
             $itemIds[] = $response[$this->api->itemName()]['id'];
 
