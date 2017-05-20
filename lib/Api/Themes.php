@@ -92,7 +92,6 @@ class Themes extends Api
      */
     public function setTemporaryFilePath($temporaryFilePath)
     {
-        $temporaryFilePath = realpath($temporaryFilePath);
         $this->temporaryFilePath = $temporaryFilePath;
     }
 }

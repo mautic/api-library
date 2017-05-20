@@ -38,7 +38,7 @@ class ThemesTest extends MauticApiTestCase
         $this->assertTrue(file_exists($response['file']));
 
         // Test setTemporaryFilePath
-        $dir = getenv('HOME') . DIRECTORY_SEPARATOR . 'mytempdir';
+        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'mytempdir';
         $this->api->setTemporaryFilePath($dir);
         $response = $this->api->get('blank');
         $this->assertErrors($response);
