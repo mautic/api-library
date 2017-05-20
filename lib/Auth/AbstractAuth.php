@@ -195,6 +195,11 @@ abstract class AbstractAuth implements AuthInterface
         // Handle zip file response
         if (!empty($this->_httpResponseInfo['content_type']) && $this->_httpResponseInfo['content_type'] === 'application/zip') {
             $temporaryFilePath = isset($settings['temporaryFilePath']) ? $settings['temporaryFilePath'] : sys_get_temp_dir();
+            if (!file_exists($temporaryFilePath)){
+                if (!@mkdir($temporaryFilePath) && !is_dir($temporaryFilePath)) {
+                    throw new \Exception('Cannot create directory ' . $temporaryFilePath);
+                };
+            }
             $file = tempnam($temporaryFilePath, 'mautic_api_');
 
             if (!is_writable($file)) {
