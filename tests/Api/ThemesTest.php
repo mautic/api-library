@@ -37,6 +37,16 @@ class ThemesTest extends MauticApiTestCase
         $this->assertFalse(empty($response['file']));
         $this->assertTrue(file_exists($response['file']));
 
+        // Test setTemporaryFilePath
+        $dir = getenv('HOME') . DIRECTORY_SEPARATOR . 'mytempdir';
+        mkdir($dir);
+        $this->api->setTemporaryFilePath($dir);
+        $response = $this->api->get('blank');
+        $this->assertErrors($response);
+        $this->assertFalse(empty($response['file']));
+        $this->assertTrue(file_exists($response['file']));
+        $this->assertEquals($dir, dirname($response['file']));
+
         // Create a new theme from the theme we just got
         $tmpFile = dirname(__DIR__).'/'.$themeName.'.zip';
         $this->assertTrue(rename($response['file'], $tmpFile), 'could not create '.$tmpFile);

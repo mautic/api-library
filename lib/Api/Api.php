@@ -254,7 +254,11 @@ class Api implements LoggerAwareInterface
                 );
             } else {
                 try {
-                    $response = $this->auth->makeRequest($url, $parameters, $method);
+                    $settings = [];
+                    if (method_exists($this, 'getTemporaryFilePath')) {
+                        $settings['temporaryFilePath'] = $this->getTemporaryFilePath();
+                    }
+                    $response = $this->auth->makeRequest($url, $parameters, $method, $settings);
 
                     $this->getLogger()->debug('API Response', array('response' => $response));
 
