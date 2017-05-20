@@ -30,6 +30,9 @@ class Themes extends Api
      */
     protected $itemName = 'theme';
 
+    protected $temporaryFilePath = null;
+
+
     /**
      * {@inheritdoc}
      */
@@ -74,5 +77,21 @@ class Themes extends Api
     public function deleteBatch(array $ids)
     {
         return $this->actionNotSupported('deleteBatch');
+    }
+
+    /**
+     * @return null
+     */
+    public function getTemporaryFilepath()
+    {
+        return $this->temporaryFilePath ?: sys_get_temp_dir();
+    }
+
+    /**
+     * @param null $temporaryFilePath
+     */
+    public function setTemporaryFilePath($temporaryFilePath)
+    {
+        $this->temporaryFilePath = $temporaryFilePath;
     }
 }
