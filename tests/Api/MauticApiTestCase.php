@@ -141,7 +141,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
                 'The ["'.$this->api->itemName().'" => "'.$itemProp.'"] doesn\'t exist in the response: '.var_export($item, true)
             );
 
-            $this->assertSame($item[$itemProp], $itemVal);
+            $this->assertSame($item[$itemProp], $itemVal, '>>> '.$itemProp.':');
         }
     }
 

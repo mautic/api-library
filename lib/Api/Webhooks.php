@@ -43,12 +43,12 @@ class Webhooks extends Api
     );
 
     /**
-     * Get list of available webhook events
+     * Get list of available webhook triggers
      *
      * @return array|mixed
      */
-    public function getEvents()
+    public function getTriggers()
     {
-        return $this->makeRequest($this->endpoint.'/events');
+        return $this->makeRequest($this->endpoint.'/triggers');
     }
 }

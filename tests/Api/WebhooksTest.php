@@ -11,14 +11,17 @@ namespace Mautic\Tests\Api;
 
 class WebhooksTest extends MauticApiTestCase
 {
+    protected $skipPayloadAssertion = array('dateModified', 'modifiedBy', 'modifiedByUser');
+
     public function setUp() {
         $this->api = $this->getContext('webhooks');
         $this->testPayload = array(
             'name' => 'test',
             'description' => 'Created via API',
             'webhookUrl' => 'http://some.url',
-            'events' => array(
-                ''
+            'triggers' => array(
+                'mautic.lead_post_save_update',
+                'mautic.lead_post_save_new',
             )
         );
     }
@@ -57,22 +60,54 @@ class WebhooksTest extends MauticApiTestCase
         $this->standardTestBatchEndpoints();
     }
 
-    public function testGetWebhookEvents()
+    public function testAddingTriggerToWebhook()
     {
-        $response = $this->api->getEvents();
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
 
-        $this->assertTrue(isset($response['events']));
+        $editTo = $response[$this->api->itemName()];
 
-        $this->assertTrue(isset($response['events']['mautic.lead_post_delete']));
-        $this->assertTrue(isset($response['events']['mautic.lead_points_change']));
-        $this->assertTrue(isset($response['events']['mautic.lead_post_save_update']));
-        $this->assertTrue(isset($response['events']['mautic.email_on_open']));
-        $this->assertTrue(isset($response['events']['mautic.form_on_submit']));
-        $this->assertTrue(isset($response['events']['mautic.lead_post_save_new']));
-        $this->assertTrue(isset($response['events']['mautic.page_on_hit']));
+        $editTo['triggers'][] = 'mautic.email_on_open';
 
-        $this->assertTrue(isset($response['events']['mautic.page_on_hit']['label']));
-        $this->assertTrue(isset($response['events']['mautic.page_on_hit']['description']));
+        $response = $this->api->edit($response[$this->api->itemName()]['id'], $editTo);
+        $this->assertPayload($response, $editTo);
+
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testRemovingTriggerFromWebhook()
+    {
+        $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
+
+        $editTo = $response[$this->api->itemName()];
+
+        $editTo['triggers'] = ['mautic.email_on_open'];
+
+        $response = $this->api->edit($response[$this->api->itemName()]['id'], $editTo, true);
+        $this->assertPayload($response, $editTo);
+
+        $response = $this->api->delete($response[$this->api->itemName()]['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testGetWebhookTriggers()
+    {
+        $response = $this->api->getTriggers();
+
+        $this->assertTrue(isset($response['triggers']));
+
+        $this->assertTrue(isset($response['triggers']['mautic.lead_post_save_new']));
+        $this->assertTrue(isset($response['triggers']['mautic.lead_post_save_update']));
+        $this->assertTrue(isset($response['triggers']['mautic.lead_post_delete']));
+        $this->assertTrue(isset($response['triggers']['mautic.lead_points_change']));
+        $this->assertTrue(isset($response['triggers']['mautic.email_on_open']));
+        $this->assertTrue(isset($response['triggers']['mautic.form_on_submit']));
+        $this->assertTrue(isset($response['triggers']['mautic.page_on_hit']));
+
+        $this->assertTrue(isset($response['triggers']['mautic.page_on_hit']['label']));
+        $this->assertTrue(isset($response['triggers']['mautic.page_on_hit']['description']));
 
     }
 }
