@@ -17,6 +17,9 @@ class WebhooksTest extends MauticApiTestCase
             'name' => 'test',
             'description' => 'Created via API',
             'webhookUrl' => 'http://some.url',
+            'events' => array(
+                ''
+            )
         );
     }
 
@@ -52,5 +55,24 @@ class WebhooksTest extends MauticApiTestCase
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints();
+    }
+
+    public function testGetWebhookEvents()
+    {
+        $response = $this->api->getEvents();
+
+        $this->assertTrue(isset($response['events']));
+
+        $this->assertTrue(isset($response['events']['mautic.lead_post_delete']));
+        $this->assertTrue(isset($response['events']['mautic.lead_points_change']));
+        $this->assertTrue(isset($response['events']['mautic.lead_post_save_update']));
+        $this->assertTrue(isset($response['events']['mautic.email_on_open']));
+        $this->assertTrue(isset($response['events']['mautic.form_on_submit']));
+        $this->assertTrue(isset($response['events']['mautic.lead_post_save_new']));
+        $this->assertTrue(isset($response['events']['mautic.page_on_hit']));
+
+        $this->assertTrue(isset($response['events']['mautic.page_on_hit']['label']));
+        $this->assertTrue(isset($response['events']['mautic.page_on_hit']['description']));
+
     }
 }

@@ -41,4 +41,14 @@ class Webhooks extends Api
         'is:uncategorized',
         'category',
     );
+
+    /**
+     * Get list of available webhook events
+     *
+     * @return array|mixed
+     */
+    public function getEvents()
+    {
+        return $this->makeRequest($this->endpoint.'/events');
+    }
 }
