@@ -23,7 +23,6 @@ class FocusTest extends MauticApiTestCase
             'style' => 'bar',
             'htmlMode' => 1,
             'html' => '<div><strong style="color:red">html mode enabled</strong></div>',
-            'css' => '.mf-bar-collapser {border-radius: 0 !important}',
             'properties' => array(
                 'bar' =>
                     array(
