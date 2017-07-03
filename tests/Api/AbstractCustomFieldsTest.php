@@ -31,6 +31,6 @@ abstract class AbstractCustomFieldsTest extends MauticApiTestCase
         }
 
         $this->assertTrue(isset($item[$itemProp]), $itemProp.' doesn\'t exist in the response: '.var_export($item, true));
-        $this->assertSame($item[$itemProp], $itemVal);
+        $this->assertEquals($item[$itemProp], $itemVal);
     }
 }
