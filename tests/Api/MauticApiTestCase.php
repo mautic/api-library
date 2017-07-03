@@ -33,31 +33,32 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
     protected function getAuth()
     {
         $this->config = include __DIR__.'/../local.config.php';
-        $authMethod   = isset($this->config['AuthMethod']) ? $this->config['AuthMethod'] : 'OAuth';
+        $authMethod = isset($this->config['AuthMethod']) ? $this->config['AuthMethod'] : 'OAuth';
 
         if (file_exists(__DIR__.'/../local.tokens.php')) {
             $this->config = array_merge($this->config, include __DIR__.'/../local.tokens.php');
         }
 
         $apiAuth = new ApiAuth();
-        $auth    = $apiAuth->newAuth($this->config, $authMethod );
+        $auth = $apiAuth->newAuth($this->config, $authMethod);
+        if ($authMethod != 'BasicAuth') {
+            if (empty($this->config['refreshToken']) && !$auth->isAuthorized()) {
+                $this->assertTrue($authorized, 'Authorization failed. Check credentials in local.config.php.');
+            } else {
+                try {
+                    $auth->validateAccessToken();
+                } catch (\Exception $e) {
+                    $this->assertTrue(false, $e->getMessage());
+                }
 
-        if (empty($this->config['refreshToken']) && !$auth->isAuthorized()) {
-            $this->assertTrue($authorized, 'Authorization failed. Check credentials in local.config.php.');
-        } else {
-            try {
-                $auth->validateAccessToken();
-            } catch (\Exception $e) {
-                $this->assertTrue(false, $e->getMessage());
-            }
+                if ($auth->accessTokenUpdated()) {
+                    $tokens = $auth->getAccessTokenData();
+                    $tokens['accessToken'] = (isset($tokens['access_token'])) ? $tokens['access_token'] : null;
+                    $tokens['accessTokenExpires'] = (isset($tokens['expires'])) ? $tokens['expires'] : null;
+                    $tokens['refreshToken'] = (isset($tokens['refresh_token'])) ? $tokens['refresh_token'] : null;
 
-            if ($auth->accessTokenUpdated()) {
-                $tokens = $auth->getAccessTokenData();
-                $tokens['accessToken'] = (isset($tokens['access_token'])) ? $tokens['access_token'] : null;
-                $tokens['accessTokenExpires'] = (isset($tokens['expires'])) ? $tokens['expires'] : null;
-                $tokens['refreshToken'] =  (isset($tokens['refresh_token'])) ? $tokens['refresh_token'] : null;
-
-                file_put_contents(__DIR__.'/../local.tokens.php', '<?php return '.var_export($tokens, true).';');
+                    file_put_contents(__DIR__.'/../local.tokens.php', '<?php return '.var_export($tokens, true).';');
+                }
             }
         }
 
@@ -69,6 +70,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         list($auth, $apiUrl) = $this->getAuth();
 
         $api = new MauticApi();
+
         return $api->newApi($context, $auth, $apiUrl);
     }
 
@@ -94,16 +96,30 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $this->assertFalse(empty($response['success']), 'Response does not contain success => true');
     }
 
-    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
-    {
+    protected function assertPayload(
+        $response,
+        array $payload = array(),
+        $isBatch = false,
+        $idColumn = 'id',
+        $callback = null
+    ) {
         $this->assertErrors($response);
 
         if ($idColumn) {
             if ($isBatch) {
-                $this->assertFalse(empty($response[$this->api->listName()]), $this->api->listName().' was not found in the response: '.var_export($response, true));
-                $this->assertFalse(empty($response[$this->api->listName()][0][$idColumn]), '['.$this->api->listName().'][0]['.$idColumn.'] is empty: '.var_export($response, true));
+                $this->assertFalse(
+                    empty($response[$this->api->listName()]),
+                    $this->api->listName().' was not found in the response: '.var_export($response, true)
+                );
+                $this->assertFalse(
+                    empty($response[$this->api->listName()][0][$idColumn]),
+                    '['.$this->api->listName().'][0]['.$idColumn.'] is empty: '.var_export($response, true)
+                );
             } else {
-                $this->assertFalse(empty($response[$this->api->itemName()][$idColumn]), '['.$this->api->itemName().']['.$idColumn.']  is empty: '.var_export($response, true));
+                $this->assertFalse(
+                    empty($response[$this->api->itemName()][$idColumn]),
+                    '['.$this->api->itemName().']['.$idColumn.']  is empty: '.var_export($response, true)
+                );
             }
         }
 
@@ -138,7 +154,10 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         } else {
             $this->assertTrue(
                 array_key_exists($itemProp, $item),
-                'The ["'.$this->api->itemName().'" => "'.$itemProp.'"] doesn\'t exist in the response: '.var_export($item, true)
+                'The ["'.$this->api->itemName().'" => "'.$itemProp.'"] doesn\'t exist in the response: '.var_export(
+                    $item,
+                    true
+                )
             );
 
             $this->assertSame($item[$itemProp], $itemVal, '>>> '.$itemProp.':');
@@ -161,7 +180,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
             $callback($response);
         }
 
-        $search   = 'ids:'.implode(',', $itemIds);
+        $search = 'ids:'.implode(',', $itemIds);
         $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
@@ -193,9 +212,15 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
             $first = reset($response[$this->api->listName()]);
 
             if (isset($first['fields']) && isset($first['fields']['all'])) {
-                $this->assertTrue(!$response['total'] || !empty($first['fields']['all'][$fieldKey]), $fieldKey.'; ' .var_export($response, true));
+                $this->assertTrue(
+                    !$response['total'] || !empty($first['fields']['all'][$fieldKey]),
+                    $fieldKey.'; '.var_export($response, true)
+                );
             } else {
-                $this->assertTrue(!$response['total'] || !empty($first[$fieldKey]), $fieldKey.'; '.var_export($response, true));
+                $this->assertTrue(
+                    !$response['total'] || !empty($first[$fieldKey]),
+                    $fieldKey.'; '.var_export($response, true)
+                );
             }
         }
     }
@@ -231,7 +256,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
             $batch = array(
                 $this->testPayload,
                 $this->testPayload,
-                $this->testPayload
+                $this->testPayload,
             );
         }
 
@@ -299,7 +324,8 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $this->assertErrors($response);
     }
 
-    public function testSearchCommands() {
+    public function testSearchCommands()
+    {
         $commands = $this->api->getSearchCommands();
 
         foreach ($commands as $command) {
