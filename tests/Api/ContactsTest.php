@@ -24,9 +24,10 @@ class ContactsTest extends AbstractCustomFieldsTest
     {
         $this->api = $this->getContext('contacts');
         $this->testPayload = array(
-            'firstname' => 'test',
-            'lastname'  => 'test',
-            'email'  => 'test@mautic.api',
+            'firstname' => 'John',
+            'lastname'  => 'APIDoe',
+            'address2'  => 'Sam & Sons',
+            'email'     => 'test@mautic.api',
             'points'    => 3,
             'tags'      => array(
                 'APItag1',
@@ -177,8 +178,15 @@ class ContactsTest extends AbstractCustomFieldsTest
     {
         // Test Create
         $response = $this->api->create($this->testPayload);
+
         $this->assertPayload($response);
         $this->assertEquals(count($response[$this->api->itemName()]['tags']), count($this->testPayload['tags']));
+        $this->assertEquals($response[$this->api->itemName()]['fields']['core']['firstname']['value'], $this->testPayload['firstname']);
+        $this->assertEquals($response[$this->api->itemName()]['fields']['core']['lastname']['value'], $this->testPayload['lastname']);
+        $this->assertEquals($response[$this->api->itemName()]['fields']['core']['address2']['value'], $this->testPayload['address2']);
+        $this->assertEquals($response[$this->api->itemName()]['fields']['all']['firstname'], $this->testPayload['firstname']);
+        $this->assertEquals($response[$this->api->itemName()]['fields']['all']['lastname'], $this->testPayload['lastname']);
+        $this->assertEquals($response[$this->api->itemName()]['fields']['all']['address2'], $this->testPayload['address2']);
 
         // Test Get
         $response = $this->api->get($response[$this->api->itemName()]['id']);
