@@ -20,7 +20,8 @@ class FormsTest extends MauticApiTestCase
             'fields' => array(
                 array(
                     'label' => 'field name',
-                    'type' => 'text'
+                    'type' => 'text',
+                    'alias' => 'my_field'
                 )
             ),
             'actions' => array(
@@ -52,6 +53,7 @@ class FormsTest extends MauticApiTestCase
                 end($itemVal);
                 $key = key($itemVal);
                 $this->assertSame($itemVal[$key]['label'], $item['fields'][$key]['label']);
+                $this->assertSame($itemVal[$key]['alias'], $item['fields'][$key]['alias']);
                 break;
             case 'actions':
                 end($itemVal);
