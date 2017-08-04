@@ -175,15 +175,41 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
     }
 
-    public function testGetAllEvents()
+    public function testGetActivityForContact()
     {
-        $response = $this->api->getAllEvents();
+        $response = $this->api->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->api->itemName()];
+
+        $response = $this->api->getActivityForContact($contact['id']);
+        $this->assertEventResponse($response, array('lead.create', 'lead.identified'));
+
+        $response = $this->api->delete($contact['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testGetActivityForContactAdvanced()
+    {
+        $response = $this->api->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->api->itemName()];
+
+        $response = $this->api->getActivityForContact($contact['id'], '', array('lead.identified'));
+        $this->assertEventResponse($response, array('lead.identified'));
+
+        $response = $this->api->delete($contact['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testGetActivity()
+    {
+        $response = $this->api->getActivity();
         $this->assertEventResponse($response, null);
     }
 
-    public function testGetAllEventsAdvanced()
+    public function testGetActivityAdvanced()
     {
-        $response = $this->api->getAllEvents('', array('page.hit'));
+        $response = $this->api->getActivity('', array('page.hit'));
         $this->assertEventResponse($response, array('page.hit'));
     }
 

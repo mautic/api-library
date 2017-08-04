@@ -130,6 +130,8 @@ class Contacts extends Api
      * @param int    $page
      *
      * @return array|mixed
+     *
+     * @deprecated 2.10.0 Use getActivityForContact instead. The response is slightly different.
      */
     public function getEvents(
         $id,
@@ -140,23 +142,32 @@ class Contacts extends Api
         $orderByDir = 'ASC',
         $page = 1
     ) {
-        $parameters = array(
-            'filters' => array(
-                'search'        => $search,
-                'includeEvents' => $includeEvents,
-                'excludeEvents' => $excludeEvents,
-            ),
-            'order'   => array(
-                $orderBy,
-                $orderByDir,
-            ),
-            'page'    => $page
-        );
+        return $this->fetchActivity('/'.$id.'/events', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page);
+    }
 
-        return $this->makeRequest(
-            $this->endpoint.'/'.$id.'/events',
-            $parameters
-        );
+    /**
+     * Get a list of contact activity events for all contacts
+     *
+     * @param int    $id Contact ID
+     * @param string $search
+     * @param array  $includeEvents
+     * @param array  $excludeEvents
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int    $page
+     *
+     * @return array|mixed
+     */
+    public function getActivityForContact(
+        $id,
+        $search = '',
+        array $includeEvents = array(),
+        array $excludeEvents = array(),
+        $orderBy = '',
+        $orderByDir = 'ASC',
+        $page = 1
+    ) {
+        return $this->fetchActivity('/'.$id.'/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page);
     }
 
     /**
@@ -172,7 +183,32 @@ class Contacts extends Api
      *
      * @return array|mixed
      */
-    public function getAllEvents(
+    public function getActivity(
+        $search = '',
+        array $includeEvents = array(),
+        array $excludeEvents = array(),
+        $orderBy = '',
+        $orderByDir = 'ASC',
+        $page = 1
+    ) {
+        return $this->fetchActivity('/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page);
+    }
+
+    /**
+     * Get a list of contact activity events for all contacts
+     *
+     * @param string $path of the URL after the endpoint
+     * @param string $search
+     * @param array  $includeEvents
+     * @param array  $excludeEvents
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int    $page
+     *
+     * @return array|mixed
+     */
+    protected function fetchActivity(
+        $path,
         $search = '',
         array $includeEvents = array(),
         array $excludeEvents = array(),
@@ -193,10 +229,7 @@ class Contacts extends Api
             'page'    => $page
         );
 
-        return $this->makeRequest(
-            $this->endpoint.'/events',
-            $parameters
-        );
+        return $this->makeRequest($this->endpoint.$path, $parameters);
     }
 
     /**
