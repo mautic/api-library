@@ -213,6 +213,21 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertEventResponse($response, array('page.hit'));
     }
 
+    public function testGetActivityWithDateRange()
+    {
+        $dateFrom = new \DateTime('-1 week');
+        $dateTo   = new \DateTime('-1 day');
+        $response = $this->api->getActivity('', array(), array(), '', 'ASC', 1, $dateFrom, $dateTo);
+
+        $this->assertEventResponse($response);
+
+        foreach ($response['events'] as $event) {
+            $timestamp = new \DateTime($event['timestamp']);
+            $this->assertGreaterThanOrEqual($dateFrom, $timestamp);
+            $this->assertLessThanOrEqual($dateTo, $timestamp);
+        }
+    }
+
     public function testCreateGetAndDelete()
     {
         // Test Create

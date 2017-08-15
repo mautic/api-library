@@ -148,13 +148,15 @@ class Contacts extends Api
     /**
      * Get a list of contact activity events for all contacts
      *
-     * @param int    $id Contact ID
-     * @param string $search
-     * @param array  $includeEvents
-     * @param array  $excludeEvents
-     * @param string $orderBy
-     * @param string $orderByDir
-     * @param int    $page
+     * @param int       $id Contact ID
+     * @param string    $search
+     * @param array     $includeEvents
+     * @param array     $excludeEvents
+     * @param string    $orderBy
+     * @param string    $orderByDir
+     * @param int       $page
+     * @param \DateTime $dateFrom
+     * @param \DateTime $dateTo
      *
      * @return array|mixed
      */
@@ -165,21 +167,25 @@ class Contacts extends Api
         array $excludeEvents = array(),
         $orderBy = '',
         $orderByDir = 'ASC',
-        $page = 1
+        $page = 1,
+        \DateTime $dateFrom = null,
+        \DateTime $dateTo = null
     ) {
-        return $this->fetchActivity('/'.$id.'/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page);
+        return $this->fetchActivity('/'.$id.'/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page, $dateFrom, $dateTo);
     }
 
     /**
      * Get a list of contact engagement events.
      * Not related to a specific contact ID
      *
-     * @param string $search
-     * @param array  $includeEvents
-     * @param array  $excludeEvents
-     * @param string $orderBy
-     * @param string $orderByDir
-     * @param int    $page
+     * @param string    $search
+     * @param array     $includeEvents
+     * @param array     $excludeEvents
+     * @param string    $orderBy
+     * @param string    $orderByDir
+     * @param int       $page
+     * @param \DateTime $dateFrom
+     * @param \DateTime $dateTo
      *
      * @return array|mixed
      */
@@ -189,21 +195,25 @@ class Contacts extends Api
         array $excludeEvents = array(),
         $orderBy = '',
         $orderByDir = 'ASC',
-        $page = 1
+        $page = 1,
+        \DateTime $dateFrom = null,
+        \DateTime $dateTo = null
     ) {
-        return $this->fetchActivity('/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page);
+        return $this->fetchActivity('/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page, $dateFrom, $dateTo);
     }
 
     /**
      * Get a list of contact activity events for all contacts
      *
-     * @param string $path of the URL after the endpoint
-     * @param string $search
-     * @param array  $includeEvents
-     * @param array  $excludeEvents
-     * @param string $orderBy
-     * @param string $orderByDir
-     * @param int    $page
+     * @param string    $path of the URL after the endpoint
+     * @param string    $search
+     * @param array     $includeEvents
+     * @param array     $excludeEvents
+     * @param string    $orderBy
+     * @param string    $orderByDir
+     * @param int       $page
+     * @param \DateTime $dateFrom
+     * @param \DateTime $dateTo
      *
      * @return array|mixed
      */
@@ -214,7 +224,9 @@ class Contacts extends Api
         array $excludeEvents = array(),
         $orderBy = '',
         $orderByDir = 'ASC',
-        $page = 1
+        $page = 1,
+        \DateTime $dateFrom = null,
+        \DateTime $dateTo = null
     ) {
         $parameters = array(
             'filters' => array(
@@ -228,6 +240,14 @@ class Contacts extends Api
             ),
             'page'    => $page
         );
+
+        if ($dateFrom) {
+            $parameters['filters']['dateFrom'] = $dateFrom->format('Y-m-d H:i:s');
+        }
+
+        if ($dateTo) {
+            $parameters['filters']['dateTo'] = $dateTo->format('Y-m-d H:i:s');
+        }
 
         return $this->makeRequest($this->endpoint.$path, $parameters);
     }
