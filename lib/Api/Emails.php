@@ -58,6 +58,20 @@ class Emails extends Api
     }
 
     /**
+     * Send custom email to a specific contact
+     *
+     * @param int $id
+     * @param int $contactId
+     * @param array $data
+     *
+     * @return array|mixed
+     */
+    public function sendCustomToContact($id, $contactId, $data = [])
+    {
+        return $this->makeRequest($this->endpoint.'/contact/'.$contactId.'/send/custom', $data, 'POST');
+    }
+
+    /**
      * Send email to a specific lead
      *
      * @deprecated use sendToContact instead
