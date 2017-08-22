@@ -6,5 +6,7 @@
 /composer.lock
 /phpunit.xml
 /tests/local.config.php
+/tests/local.tokens.php
 /tests/phpunit.phar
 /vendor
+.DS_Store

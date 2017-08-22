@@ -30,6 +30,26 @@ class Emails extends Api
      */
     protected $itemName = 'email';
 
+    /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'emails/(.*?)/contact/(.*?)/send' => 'emails/$1/send/contact/$2', // 2.6.0
+    );
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = array(
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+        'lang',
+    );
+
 
     /**
      * Send email to the assigned lists
@@ -54,11 +74,11 @@ class Emails extends Api
      */
     public function sendToContact($id, $contactId, $data = [])
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/send/contact/'.$contactId, $data, 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', $data, 'POST');
     }
 
     /**
-     * Send custom email to a specific contact
+     * Send custom content to a specific contact
      *
      * @param int $id
      * @param int $contactId

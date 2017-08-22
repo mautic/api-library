@@ -31,6 +31,14 @@ class Segments extends Api
     protected $itemName = 'list';
 
     /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'segments/(.*?)/contact/(.*?)/add'    => 'segments/$1/contact/add/$2', // 2.6.0
+        'segments/(.*?)/contact/(.*?)/remove' => 'segments/$1/contact/remove/$2', // 2.6.0
+    );
+
+    /**
      * Add a contact to the segment
      *
      * @param int $segmentId Segment ID
@@ -40,7 +48,7 @@ class Segments extends Api
      */
     public function addContact($segmentId, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$segmentId.'/contact/add/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$segmentId.'/contact/'.$contactId.'/add', array(), 'POST');
     }
 
     /**
@@ -68,7 +76,7 @@ class Segments extends Api
      */
     public function removeContact($segmentId, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$segmentId.'/contact/remove/'.$contactId, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$segmentId.'/contact/'.$contactId.'/remove', array(), 'POST');
     }
 
     /**

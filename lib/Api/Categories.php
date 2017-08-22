@@ -29,4 +29,13 @@ class Categories extends Api
      * {@inheritdoc}
      */
     protected $itemName = 'category';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = array(
+        'ids',
+        'is:published',
+        'is:unpublished',
+    );
 }

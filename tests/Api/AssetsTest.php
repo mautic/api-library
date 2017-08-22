@@ -55,7 +55,7 @@ class AssetsTest extends MauticApiTestCase
 
         $response = $this->api->get($response[$this->api->itemName()]['id']);
         $this->assertPayload($response, $testPayload);
-        
+
         // Delete Asset
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
@@ -64,6 +64,11 @@ class AssetsTest extends MauticApiTestCase
     public function testCreateWithRemoteFileGetAndDelete()
     {
         $this->standardTestCreateGetAndDelete();
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
     }
 
     public function testEditPatch()

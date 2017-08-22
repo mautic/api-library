@@ -29,4 +29,17 @@ class Smses extends Api
      * {@inheritdoc}
      */
     protected $itemName = 'sms';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $searchCommands = array(
+        'ids',
+        'is:published',
+        'is:unpublished',
+        'is:mine',
+        'is:uncategorized',
+        'category',
+        'lang',
+    );
 }

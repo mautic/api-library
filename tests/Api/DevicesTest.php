@@ -21,7 +21,7 @@ class DevicesTest extends MauticApiTestCase
             'deviceOsShortName' => 'UBT',
             'deviceOsPlatform' => 'x64',
         );
-        
+
         // Create a contact for test
         $contactApi = $this->getContext('contacts');
         $response = $contactApi->create(array('firstname' => 'Device API test'));
@@ -77,5 +77,10 @@ class DevicesTest extends MauticApiTestCase
     public function testEditPut()
     {
         $this->standardTestEditPut();
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
     }
 }

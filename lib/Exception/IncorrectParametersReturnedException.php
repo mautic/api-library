@@ -12,13 +12,10 @@ namespace Mautic\Exception;
 /**
  * Exception representing an incorrect parameter set for an OAuth token request
  */
-class IncorrectParametersReturnedException extends \Exception
+class IncorrectParametersReturnedException extends AbstractApiException
 {
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = 'Incorrect parameters returned.', $code = 500, \Exception $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
+    const DEFAULT_MESSAGE = 'Incorrect parameters returned.';
 }

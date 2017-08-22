@@ -57,7 +57,7 @@ class ContactFieldsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $contact = $response['contact'];
 
-        
+
         $possibleValues = array(1 => 1, 0 => 0, 'yes' => 1, 'no' => 0, 'true' => 1, 'false' => 0);
         $boolField = array(
             'label' => $this->prefix.'API test Boolean field',
@@ -91,7 +91,7 @@ class ContactFieldsTest extends MauticApiTestCase
     public function testDefaultFieldValue()
     {
         $defaultValue = 'little kitten';
-        
+
         $fieldPayload = $this->testPayload;
         $fieldPayload['defaultValue'] = $defaultValue;
 
@@ -125,5 +125,10 @@ class ContactFieldsTest extends MauticApiTestCase
     public function testEditPut()
     {
         $this->standardTestEditPut();
+    }
+
+    public function testBatchEndpoints()
+    {
+        $this->standardTestBatchEndpoints();
     }
 }

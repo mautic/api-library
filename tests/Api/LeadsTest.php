@@ -13,16 +13,8 @@ class LeadsTest extends ContactsTest
 {
     public function setUp()
     {
+        parent::setUp();
         $this->api = $this->getContext('leads');
-        $this->testPayload = array(
-            'firstname' => 'test',
-            'lastname'  => 'test',
-            'points'    => 3,
-            'tags'      => array(
-                'APItag1',
-                'APItag2',
-            )
-        );
     }
 
     // Use the method from ContactsTest to test the 'leads' endpoint for BC
