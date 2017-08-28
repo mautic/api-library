@@ -21,7 +21,20 @@ class SegmentsTest extends MauticApiTestCase
     public function setUp() {
         $this->api = $this->getContext('segments');
         $this->testPayload = array(
-            'name' => 'API test'
+            'name' => 'List all GMail contacts',
+            'description' => 'Created via API Library unit tests',
+            'isGlobal' => true,
+            'filters' => array(
+                array(
+                    'glue' => 'and',
+                    'field' => 'email',
+                    'object' => 'lead',
+                    'type' => 'email',
+                    'filter' => '*@gmail.com',
+                    'display' => null,
+                    'operator' => 'like',
+                ),
+            ),
         );
     }
 
