@@ -250,6 +250,18 @@ class Contacts extends Api
     }
 
     /**
+     * Get a list of contacts with web activity last $minutes
+     *
+     * @param integer $minutes
+     *
+     * @return array|null
+     */
+    public function getContactsRecentWebActivity($minutes)
+    {
+        return $this->makeRequest($this->endpoint.'/recentwebactivity/'.$minutes);
+    }
+
+    /**
      * Add the points to a contact
      *
      * @param int   $id
