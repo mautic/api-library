@@ -86,7 +86,7 @@ class Emails extends Api
      */
     public function sendCustom($data = [])
     {
-        return $this->makeRequest($this->endpoint.'/send/custom', $data, 'POST');
+        return  $this->makeRequest($this->endpoint.'/send/custom', $data, 'POST');
     }
 
     /**
