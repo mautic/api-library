@@ -80,13 +80,24 @@ class Emails extends Api
     /**
      * Send custom content to a specific contact
      *
-     * @param int $id
+     * @param array $data
+     *
+     * @return array|mixed
+     */
+    public function sendCustom($data = [])
+    {
+        return $this->makeRequest($this->endpoint.'/send/custom', $data, 'POST');
+    }
+
+    /**
+     * Send custom content to a specific contact
+     *
      * @param int $contactId
      * @param array $data
      *
      * @return array|mixed
      */
-    public function sendCustomToContact($id, $contactId, $data = [])
+    public function sendCustomToContact($contactId, $data = [])
     {
         return $this->makeRequest($this->endpoint.'/contact/'.$contactId.'/send/custom', $data, 'POST');
     }
