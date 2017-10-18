@@ -69,4 +69,80 @@ class Forms extends Api
     {
         return $this->makeRequest($this->endpoint.'/'.$formId.'/actions/delete', array('actions' => $actionIds), 'DELETE');
     }
+
+    /**
+     * Get a single submission
+     *
+     * @param int $formId
+     * @param int $submissionId
+     *
+     * @return array|mixed
+     */
+    public function getSubmission($formId, $submissionId)
+    {
+        return $this->makeRequest("{$this->endpoint}/$formId/submissions/$submissionId");
+    }
+
+    /**
+     * Get a list of form submissions
+     *
+     * @param int    $formId
+     * @param string $search
+     * @param int    $start
+     * @param int    $limit
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param bool   $publishedOnly
+     * @param bool   $minimal
+     *
+     * @return array|mixed
+     */
+    public function getSubmissions($formId, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
+    {
+        $parameters = array(
+            'search'        => $search,
+            'start'         => $start,
+            'limit'         => $limit,
+            'orderBy'       => $orderBy,
+            'orderByDir'    => $orderByDir,
+            'publishedOnly' => $publishedOnly,
+            'minimal'       => $minimal
+        );
+
+        $parameters = array_filter($parameters);
+
+        return $this->makeRequest("{$this->endpoint}/$formId/submissions", $parameters);
+    }
+
+    /**
+     * Get a list of form submissions for specific form and contact
+     *
+     * @param int    $formId
+     * @param int    $contactId
+     * @param string $search
+     * @param int    $start
+     * @param int    $limit
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param bool   $publishedOnly
+     * @param bool   $minimal
+     *
+     * @return array|mixed
+     */
+    public function getSubmissionsForContact($formId, $contactId, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
+    {
+        $parameters = array(
+            'search'        => $search,
+            'start'         => $start,
+            'limit'         => $limit,
+            'orderBy'       => $orderBy,
+            'orderByDir'    => $orderByDir,
+            'publishedOnly' => $publishedOnly,
+            'minimal'       => $minimal
+        );
+
+        $parameters = array_filter($parameters);
+
+        return $this->makeRequest("{$this->endpoint}/$formId/submissions/contact/$contactId", $parameters);
+    }
 }
