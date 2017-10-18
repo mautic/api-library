@@ -36,7 +36,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         );
     }
 
-    protected function assertEventResponse($response, $expectedEvents = array())
+    protected function assertEventResponse($response, $expectedEvents = null)
     {
         $this->assertErrors($response);
         $this->assertTrue(isset($response['events']));
@@ -44,17 +44,18 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertTrue(isset($response['types']));
         $this->assertTrue(isset($response['order']));
         $this->assertTrue(isset($response['filters']));
-        $this->assertEquals(count($response['events']), count($expectedEvents));
 
-        foreach ($expectedEvents as $key => $eventName) {
-            $actual = 'oops Missing';
-            foreach ($response['events'] as $event) {
-                if ($eventName == $event['event']) {
-                    $actual = $event['event'];
-                    break;
+        if ($expectedEvents) {
+            foreach ($expectedEvents as $key => $eventName) {
+                $actual = 'oops Missing';
+                foreach ($response['events'] as $event) {
+                    if ($eventName == $event['event']) {
+                        $actual = $event['event'];
+                        break;
+                    }
                 }
+                $this->assertEquals($eventName, $actual);
             }
-            $this->assertEquals($eventName, $actual);
         }
     }
 
@@ -172,6 +173,59 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
+    }
+
+    public function testGetActivityForContact()
+    {
+        $response = $this->api->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->api->itemName()];
+
+        $response = $this->api->getActivityForContact($contact['id']);
+        $this->assertEventResponse($response, array('lead.create', 'lead.identified'));
+
+        $response = $this->api->delete($contact['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testGetActivityForContactAdvanced()
+    {
+        $response = $this->api->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->api->itemName()];
+
+        $response = $this->api->getActivityForContact($contact['id'], '', array('lead.identified'));
+        $this->assertEventResponse($response, array('lead.identified'));
+
+        $response = $this->api->delete($contact['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testGetActivity()
+    {
+        $response = $this->api->getActivity();
+        $this->assertEventResponse($response, null);
+    }
+
+    public function testGetActivityAdvanced()
+    {
+        $response = $this->api->getActivity('', array('page.hit'));
+        $this->assertEventResponse($response, array('page.hit'));
+    }
+
+    public function testGetActivityWithDateRange()
+    {
+        $dateFrom = new \DateTime('-1 week');
+        $dateTo   = new \DateTime('-1 day');
+        $response = $this->api->getActivity('', array(), array(), '', 'ASC', 1, $dateFrom, $dateTo);
+
+        $this->assertEventResponse($response);
+
+        foreach ($response['events'] as $event) {
+            $timestamp = new \DateTime($event['timestamp']);
+            $this->assertGreaterThanOrEqual($dateFrom, $timestamp);
+            $this->assertLessThanOrEqual($dateTo, $timestamp);
+        }
     }
 
     public function testCreateGetAndDelete()
