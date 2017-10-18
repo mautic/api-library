@@ -6,6 +6,7 @@
 /composer.lock
 /phpunit.xml
 /tests/local.config.php
+/tests/local.config.php_*
 /tests/local.tokens.php
 /tests/phpunit.phar
 /vendor

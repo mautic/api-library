@@ -19,6 +19,7 @@ class WebhooksTest extends MauticApiTestCase
             'name' => 'test',
             'description' => 'Created via API',
             'webhookUrl' => 'http://some.url',
+            'eventsOrderbyDir' => 'DESC',
             'triggers' => array(
                 'mautic.lead_post_save_update',
                 'mautic.lead_post_save_new',
@@ -39,6 +40,21 @@ class WebhooksTest extends MauticApiTestCase
     public function testCreateGetAndDelete()
     {
         $this->standardTestCreateGetAndDelete();
+    }
+
+    public function testCreateWithWrongOrderDir()
+    {
+        $this->testPayload['eventsOrderbyDir'] = 'abrakadabra';
+        $response = $this->api->create($this->testPayload);
+
+        $this->assertFalse(empty($response['errors']));
+    }
+
+    public function testCreateWithUndefinedOrderDir()
+    {
+        unset($this->testPayload['eventsOrderbyDir']);
+
+        $this->standardTestCreateGetAndDelete($this->testPayload);
     }
 
     public function testEditPatch()
