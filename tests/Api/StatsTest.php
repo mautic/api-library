@@ -77,6 +77,7 @@ class StatsTest extends MauticApiTestCase
             'lead_companies_change_log',
             'lead_devices',
             'lead_donotcontact',
+            'lead_event_log',
             'lead_frequencyrules',
             'lead_lists_leads',
             'lead_points_change_log',
@@ -84,6 +85,7 @@ class StatsTest extends MauticApiTestCase
             'lead_utmtags',
             'page_hits',
             'page_redirects',
+            'plugin_citrix_events',
             'point_lead_action_log',
             'point_lead_event_log',
             'push_notification_stats',
@@ -93,7 +95,7 @@ class StatsTest extends MauticApiTestCase
             'video_hits',
             'webhook_logs',
         );
-        $tables         = $this->getTableList();
+        $tables = $this->getTableList();
         $this->assertTrue(!empty($tables));
         $this->assertSame(
             array_diff($expectedTables, $tables),
