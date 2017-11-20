@@ -12,6 +12,7 @@
 namespace Mautic\Auth;
 
 use Mautic\Exception\UnexpectedResponseFormatException;
+use Mautic\Response;
 
 /**
  * Class AbstractAuth
@@ -176,72 +177,25 @@ abstract class AbstractAuth implements AuthInterface
         $curl = curl_init();
         curl_setopt_array($curl, $options);
 
-        $response                   = curl_exec($curl);
-        $responseArray              = explode("\r\n\r\n", $response);
-        $body                       = array_pop($responseArray);
-        $this->_httpResponseHeaders = implode("\r\n\r\n", $responseArray);
-        $this->_httpResponseInfo    = curl_getinfo($curl);
+        $response = new Response(curl_exec($curl), curl_getinfo($curl));
+
+        $this->_httpResponseHeaders = $response->getHeaders();
+        $this->_httpResponseInfo    = $response->getInfo();
 
         curl_close($curl);
 
         if ($this->_debug) {
-            $_SESSION['oauth']['debug']['info']            = $this->_httpResponseInfo;
-            $_SESSION['oauth']['debug']['returnedHeaders'] = $this->_httpResponseHeaders;
-            $_SESSION['oauth']['debug']['returnedBody']    = $body;
+            $_SESSION['oauth']['debug']['info']            = $response->getInfo();
+            $_SESSION['oauth']['debug']['returnedHeaders'] = $response->getHeaders();
+            $_SESSION['oauth']['debug']['returnedBody']    = $response->getBody();
         }
-
-        $responseGood = false;
-
+        
         // Handle zip file response
-        if (!empty($this->_httpResponseInfo['content_type']) && $this->_httpResponseInfo['content_type'] === 'application/zip') {
+        if ($response->isZip()) {
             $temporaryFilePath = isset($settings['temporaryFilePath']) ? $settings['temporaryFilePath'] : sys_get_temp_dir();
-            if (!file_exists($temporaryFilePath)){
-                if (!@mkdir($temporaryFilePath) && !is_dir($temporaryFilePath)) {
-                    throw new \Exception('Cannot create directory ' . $temporaryFilePath);
-                };
-            }
-            $file = tempnam($temporaryFilePath, 'mautic_api_');
-
-            if (!is_writable($file)) {
-                throw new \Exception($file.' is not writable');
-            }
-
-            if (!$handle = fopen($file, 'w')) {
-                throw new \Exception('Cannot open file '.$file);
-            }
-
-            if (fwrite($handle, $body) === false) {
-                throw new \Exception('Cannot write into file '.$file);
-            }
-
-            fclose($handle);
-
-            return array(
-                'file' => $file,
-            );
+            return $response->saveToFile($temporaryFilePath);
         } else {
-            //Check to see if the response is JSON
-            $parsed = json_decode($body, true);
-
-            if ($parsed === null) {
-                if (strpos($body, '=') !== false) {
-                    parse_str($body, $parsed);
-                    $responseGood = true;
-                }
-            } else {
-                $responseGood = true;
-            }
-
-            //Show error when http_code is not appropriate
-            if (!in_array($this->_httpResponseInfo['http_code'], array(200, 201))) {
-                if ($responseGood) {
-                    return $parsed;
-                }
-
-                throw new UnexpectedResponseFormatException($body);
-            }
-
-            return ($responseGood) ? $parsed : $body;
+            return $response->getDecodedBody();
         }
     }
 
