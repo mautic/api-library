@@ -35,7 +35,7 @@ class UnexpectedResponseFormatException extends AbstractApiException
 
         if (empty($message)) {
             // Use message appropriate to the subclass with late binding
-            $message = static::DEFAULT_MESSAGE;
+            $message = self::DEFAULT_MESSAGE;
         }
 
         $message .= "\n\nResponse: ";
