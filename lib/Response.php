@@ -56,7 +56,6 @@ class Response
             $parsed = $this->decodeFromJson();
         } catch (UnexpectedResponseFormatException $e) {
             $parsed = $this->decodeFromUrlParams();
-            die(var_dump($parsed));
         }
 
         return $parsed;
@@ -124,6 +123,7 @@ class Response
      * @param string $path
      *
      * @return array
+     * @throws \Exception
      */
     public function saveToFile($path)
     {
