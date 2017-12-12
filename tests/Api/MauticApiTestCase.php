@@ -143,6 +143,13 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
+    protected function assertPayloadList($response)
+    {
+        $this->assertErrors($response);
+        $this->assertTrue(isset($response['total']));
+        $this->assertTrue(isset($response[$this->api->listName()]), var_export($response, true));
+    }
+
     protected function assertPayloadItem($itemProp, $callback, $itemVal, $item)
     {
         if (in_array($itemProp, $this->skipPayloadAssertion)) {
@@ -195,9 +202,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
     protected function standardTestGetList()
     {
         $response = $this->api->getList();
-        $this->assertErrors($response);
-        $this->assertTrue(isset($response['total']));
-        $this->assertTrue(isset($response[$this->api->listName()]), var_export($response, true));
+        $this->assertPayloadList($response);
 
         if (!empty($this->testPayload)) {
             reset($this->testPayload);
@@ -206,9 +211,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
             $qb->getWhereBuilder()->isNotEmpty($fieldKey);
 
             $response = $this->api->getCustomList($qb);
-            $this->assertErrors($response);
-            $this->assertTrue(isset($response['total']));
-            $this->assertTrue(isset($response[$this->api->listName()]), var_export($response, true));
+            $this->assertPayloadList($response);
             $first = reset($response[$this->api->listName()]);
 
             if (isset($first['fields']) && isset($first['fields']['all'])) {
