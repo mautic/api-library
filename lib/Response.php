@@ -123,7 +123,6 @@ class Response
      * @param string $path
      *
      * @return array
-     * @throws \Exception
      */
     public function saveToFile($path)
     {
@@ -170,7 +169,7 @@ class Response
     {
         if (!in_array($this->info['http_code'], array(200, 201))) {
             $message = 'The response has unexpected status code ('.$this->info['http_code'].').';
-            throw new UnexpectedResponseFormatException($this, $message);
+            throw new UnexpectedResponseFormatException($this, $message, $this->info['http_code']);
         }
 
         if ($this->isHtml()) {
