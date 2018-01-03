@@ -29,6 +29,7 @@ use Mautic\Exception\ActionNotSupportedException;
 use Mautic\Exception\RequiredParameterMissingException;
 use Mautic\Exception\UnexpectedResponseFormatException;
 use Mautic\Exception\IncorrectParametersReturnedException;
+use Mautic\Response;
 
 class ExceptionsTest extends MauticApiTestCase
 {
@@ -62,13 +63,13 @@ class ExceptionsTest extends MauticApiTestCase
 
     public function testUnexpectedResponseFormatException() {
         $expected = 'The response returned is in an unexpected format.';
-        $exception = new UnexpectedResponseFormatException();
+        $exception = new UnexpectedResponseFormatException(new Response('', []));
         $this->assertEquals($expected, $exception->getMessage(), 'This should return "'.$expected.'"' );
         $this->assertEquals(500, $exception->getCode());
     }
 
     public function testUnexpectedResponseFormatExceptionCustomMessage() {
-        $exception = new UnexpectedResponseFormatException(self::CUSTOM_ERROR_MESSAGE);
+        $exception = new UnexpectedResponseFormatException(new Response('', []), self::CUSTOM_ERROR_MESSAGE);
         $this->assertEquals(self::CUSTOM_ERROR_MESSAGE, $exception->getMessage(), 'This should return "'.self::CUSTOM_ERROR_MESSAGE.'"' );
         $this->assertEquals(500, $exception->getCode());
     }
