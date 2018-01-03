@@ -181,8 +181,12 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
         $contact = $response[$this->api->itemName()];
 
+        // Add some activity
+        $this->api->addDnc($contact['id'], 'email', Contacts::BOUNCED);
+        $this->api->addPoints($contact['id'], 3);
+
         $response = $this->api->getActivityForContact($contact['id']);
-        $this->assertEventResponse($response, array('lead.create', 'lead.identified'));
+        $this->assertEventResponse($response, array('lead.donotcontact', 'point.gained'));
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
@@ -194,8 +198,12 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
         $contact = $response[$this->api->itemName()];
 
-        $response = $this->api->getActivityForContact($contact['id'], '', array('lead.identified'));
-        $this->assertEventResponse($response, array('lead.identified'));
+        // Add some activity
+        $this->api->addDnc($contact['id'], 'email', Contacts::BOUNCED);
+        $this->api->addPoints($contact['id'], 3);
+
+        $response = $this->api->getActivityForContact($contact['id'], '', array('lead.donotcontact'));
+        $this->assertEventResponse($response, array('lead.donotcontact'));
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
