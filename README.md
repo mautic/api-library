@@ -11,10 +11,10 @@ Mautic's API. If you intend on using Basic Authentication, ensure you enable it.
 then copy the Client ID and Client Secret to the application that will be using the API.
 
 ## Authorization
-    
+
 ### Obtaining an access token
 The first step is to obtain authorization.  Mautic supports OAuth 1.0a and OAuth 2 however it is up to the administrator
-to decide which is enabled.  Thus it is best to have a configuration option within your project for the administrator 
+to decide which is enabled.  Thus it is best to have a configuration option within your project for the administrator
 to choose what method should be used by your code.
 
 ```php
@@ -27,9 +27,9 @@ use Mautic\Auth\ApiAuth;
 
 session_start();
 
-$publicKey = ''; 
-$secretKey = ''; 
-$callback  = ''; 
+$publicKey = '';
+$secretKey = '';
+$callback  = '';
 
 // ApiAuth->newAuth() will accept an array of Auth settings
 $settings = array(
@@ -114,7 +114,7 @@ $auth = $initAuth->newAuth($settings, 'BasicAuth');
        'code'    => 403,
        'message' => 'access_denied: OAuth2 authentication required' )
  )
- 
+
 ```
 
 ## API Requests
@@ -169,12 +169,12 @@ foreach ($fields as $field) {
 
 // Set the IP address the contact originated from if it is different than that of the server making the request
 $data['ipAddress'] = $ipAddress;
- 
-// Create the contact 
+
+// Create the contact
 $response = $contactApi->create($data);
 $contact = $response[$contactApi->itemName()];
 ```
-    
+
 ### Editing an item
 Currently, only Contacts support this
 
@@ -193,7 +193,7 @@ $contact = $response[$contactApi->itemName()];
 $response = $contactApi->edit($contactId, $updatedData, true);
 $contact = $response[$contactApi->itemName()];
 ```
-    
+
 ### Deleting an item
 
 ```php
@@ -228,8 +228,8 @@ Configure the unit tests config before running the unit tests. The tests fire re
 4. Click Submit to store the URL to the session.
 5. Fill in one of the OAuth credentials and authorize.
 6. Open the $_SESSION array and copy the 'access_token' to the local.config.php file.
-7. Then run `phpunit` to run the tests.
+7. Then run `vendor/bin/phpunit` to run the tests.
 
-Modify this command to run a specific test: `phpunit --filter testCreateGetAndDelete tests/Api/NotesTest.php`
+Modify this command to run a specific test: `vendor/bin/phpunit --filter testCreateGetAndDelete tests/Api/NotesTest.php`
 
-Modify this command to run all tests in one class: `phpunit --filter test tests/Api/NotesTest.php`
+Modify this command to run all tests in one class: `vendor/bin/phpunit --filter test tests/Api/NotesTest.php`
