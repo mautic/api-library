@@ -240,18 +240,19 @@ class ContactsTest extends AbstractCustomFieldsTest
     {
         // Test Create
         $response = $this->api->create($this->testPayload);
+        $contact = $response[$this->api->itemName()];
 
         $this->assertPayload($response);
-        $this->assertEquals(count($response[$this->api->itemName()]['tags']), count($this->testPayload['tags']));
-        $this->assertEquals($response[$this->api->itemName()]['fields']['core']['firstname']['value'], $this->testPayload['firstname']);
-        $this->assertEquals($response[$this->api->itemName()]['fields']['core']['lastname']['value'], $this->testPayload['lastname']);
-        $this->assertEquals($response[$this->api->itemName()]['fields']['core']['address2']['value'], $this->testPayload['address2']);
-        $this->assertEquals($response[$this->api->itemName()]['fields']['all']['firstname'], $this->testPayload['firstname']);
-        $this->assertEquals($response[$this->api->itemName()]['fields']['all']['lastname'], $this->testPayload['lastname']);
-        $this->assertEquals($response[$this->api->itemName()]['fields']['all']['address2'], $this->testPayload['address2']);
+        $this->assertEquals(count($contact['tags']), count($this->testPayload['tags']));
+        $this->assertEquals($contact['fields']['core']['firstname']['value'], $this->testPayload['firstname']);
+        $this->assertEquals($contact['fields']['core']['lastname']['value'], $this->testPayload['lastname']);
+        $this->assertEquals($contact['fields']['core']['address2']['value'], $this->testPayload['address2']);
+        $this->assertEquals($contact['fields']['all']['firstname'], $this->testPayload['firstname']);
+        $this->assertEquals($contact['fields']['all']['lastname'], $this->testPayload['lastname']);
+        $this->assertEquals($contact['fields']['all']['address2'], $this->testPayload['address2']);
 
         // Test Get
-        $response = $this->api->get($response[$this->api->itemName()]['id']);
+        $response = $this->api->get($contact['id']);
         $this->assertPayload($response);
 
         // Test Delete
@@ -416,7 +417,19 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testBatchEndpoints()
     {
-        $this->standardTestBatchEndpoints();
+        $contact1 = $this->testPayload;
+        $contact2 = $this->testPayload;
+        $contact3 = $this->testPayload;
+        $contact1['email'] = 'batch1@test.email';
+        $contact2['email'] = 'batch2@test.email';
+        $contact3['email'] = 'batch3@test.email';
+        $batch = array(
+            $contact1,
+            $contact2,
+            $contact3,
+        );
+
+        $this->standardTestBatchEndpoints($batch);
     }
 
     public function testBCEndpoints()
