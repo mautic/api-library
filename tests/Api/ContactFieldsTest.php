@@ -25,7 +25,11 @@ class ContactFieldsTest extends MauticApiTestCase
     protected function assertPayloadList($response)
     {
         parent::assertPayloadList($response);
+        $this->assertFieldPayloadList($response);
+    }
 
+    protected function assertFieldPayloadList($response)
+    {
         if (!empty($response[$this->api->listName()])) {
             foreach ($response[$this->api->listName()] as $item) {
                 $this->assertSame('lead', $item['object'], 'This field must be object of lead '.print_r($item, true));

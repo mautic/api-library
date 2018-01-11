@@ -24,10 +24,8 @@ class CompanyFieldTest extends ContactFieldsTest
         );
     }
 
-    protected function assertPayloadList($response)
+    protected function assertFieldPayloadList($response)
     {
-        parent::assertPayloadList($response);
-
         if (!empty($response[$this->api->listName()])) {
             foreach ($response[$this->api->listName()] as $item) {
                 $this->assertSame('company', $item['object'], 'This field must be object of company '.print_r($item, true));
