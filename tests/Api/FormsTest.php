@@ -206,33 +206,33 @@ class FormsTest extends MauticApiTestCase
 
     public function testFormSubmissions()
     {
-        $form = $this->getFormWithMostSubmissions();
+        $formId = $this->getFormIdWithSomeSubmissions();
 
         // There are no forms in the testing Mautic instance. Ignore this test.
-        if (!$form) {
+        if (!$formId) {
             return;
         }
 
-        $response = $this->api->getSubmissions($form['id']);
+        $response = $this->api->getSubmissions($formId);
         $this->assertErrors($response);
 
         foreach ($response['submissions'] as $submission) {
-            $this->assertSubmission($submission, $form['id']);
+            $this->assertSubmission($submission, $formId);
         }
 
         // Try to fetch the last submission
-        $response = $this->api->getSubmission($form['id'], $submission['id']);
+        $response = $this->api->getSubmission($formId, $submission['id']);
         $this->assertErrors($response);
         $this->assertEquals($submission['id'], $response['submission']['id']);
-        $this->assertSubmission($response['submission'], $form['id']);
+        $this->assertSubmission($response['submission'], $formId);
 
         // Try to fetch submissions for the lead from the last submission
-        $response = $this->api->getSubmissionsForContact($form['id'], $submission['lead']['id']);
+        $response = $this->api->getSubmissionsForContact($formId, $submission['lead']['id']);
         $this->assertErrors($response);
 
         foreach ($response['submissions'] as $contactSubmission) {
             $this->assertEquals($submission['lead']['id'], $contactSubmission['lead']['id']);
-            $this->assertSubmission($contactSubmission, $form['id']);
+            $this->assertSubmission($contactSubmission, $formId);
         }
 
     }
@@ -242,17 +242,16 @@ class FormsTest extends MauticApiTestCase
         $this->assertEquals($formId, $submission['form']['id']);
         $this->assertTrue(!empty($submission['id']));
         $this->assertTrue(isset($submission['ipAddress']));
-        $this->assertTrue(isset($submission['lead']));
         $this->assertTrue(!empty($submission['dateSubmitted']));
         $this->assertTrue(isset($submission['referer']));
         $this->assertTrue(!empty($submission['results']));
     }
 
-    protected function getFormWithMostSubmissions()
+    protected function getFormIdWithSomeSubmissions()
     {
-        $response = $this->api->getList('', 0, 1, 'submission_count', 'DESC');
+        $response = $this->getContext('stats')->get('form_submissions', 0, 1);
         $this->assertErrors($response);
 
-        return isset($response['forms'][0]) ? $response['forms'][0] : null;
+        return isset($response['stats'][0]['form_id']) ? $response['stats'][0]['form_id'] : null;
     }
 }

@@ -27,7 +27,7 @@ abstract class AbstractApiException extends \Exception
     {
         if (empty($message)) {
             // Use message appropriate to the subclass with late binding
-            $message = self::DEFAULT_MESSAGE;
+            $message = static::DEFAULT_MESSAGE;
         }
 
         parent::__construct($message, $code, $previous);

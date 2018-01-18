@@ -116,14 +116,13 @@ class Response
      */
     public function isHtml()
     {
-        return substr($this->body, 0, 1) === '<';
+        return substr(trim($this->body), 0, 1) === '<';
     }
 
     /**
      * @param string $path
      *
      * @return array
-     * @throws \Exception
      */
     public function saveToFile($path)
     {
@@ -159,7 +158,7 @@ class Response
     private function parseResponse($response)
     {
         $exploded = explode("\r\n\r\n", $response);
-        $this->body = trim(array_pop($exploded));
+        $this->body = array_pop($exploded);
         $this->headers = implode("\r\n\r\n", $exploded);
     }
 
@@ -170,7 +169,7 @@ class Response
     {
         if (!in_array($this->info['http_code'], array(200, 201))) {
             $message = 'The response has unexpected status code ('.$this->info['http_code'].').';
-            throw new UnexpectedResponseFormatException($this, $message);
+            throw new UnexpectedResponseFormatException($this, $message, $this->info['http_code']);
         }
 
         if ($this->isHtml()) {

@@ -115,9 +115,9 @@ Content-Type: text/html; charset=UTF-8';
 
     public function testParseResponse()
     {
-        $response = new Response($this->getHtmlResponse(), $this->getInfo());
+        $response = new Response($this->getJsonResponse(), $this->getInfo());
         $this->assertSame($this->headersWithRedirects, $response->getHeaders());
-        $this->assertSame($this->htmlBody, $response->getBody());
+        $this->assertSame($this->jsonBody, $response->getBody());
         $this->assertSame($this->getInfo(), $response->getInfo());
     }
 
@@ -125,6 +125,15 @@ Content-Type: text/html; charset=UTF-8';
     {
         $this->expectException(UnexpectedResponseFormatException::class);
         $response = new Response($this->getHtmlResponse(), $this->getInfo(500));
+    }
+
+    public function testValidation404()
+    {
+        try {
+            $response = new Response($this->getHtmlResponse(), $this->getInfo(404));
+        } catch(UnexpectedResponseFormatException $e) {
+            $this->assertSame(404, $e->getCode());
+        }
     }
 
     public function testDecodeFromUrlParamsWithParams()
@@ -165,15 +174,15 @@ Content-Type: text/html; charset=UTF-8';
     public function testDecodeFromJsonWithEmptyResponse()
     {
         $response = new Response($this->headersWithRedirects.$this->space, $this->getInfo());
+        $this->expectException(UnexpectedResponseFormatException::class);
         $body = $response->getDecodedBody();
-        $this->assertSame('', $body);
     }
 
     public function testDecodeFromJsonWithTextResponse()
     {
         $response = new Response($this->headersWithRedirects.$this->space.'OK', $this->getInfo());
+        $this->expectException(UnexpectedResponseFormatException::class);
         $body = $response->getDecodedBody();
-        $this->assertSame('OK', $body);
     }
 
     public function testSaveToFile()
