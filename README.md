@@ -119,7 +119,6 @@ $auth = $initAuth->newAuth($settings, 'BasicAuth');
 
 ## API Requests
 Now that you have an access token and the auth object, you can make API requests.  The API is broken down into contexts.
-Note that currently only the Contact context allows creating, editing and deleting items.  The others are read only.
 
 ### Get a context object
 
