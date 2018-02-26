@@ -402,7 +402,7 @@ class Contacts extends Api
      *
      * @return mixed
      */
-    public function removeDnc($id, $channel)
+    public function removeDnc($id, $channel = 'email')
     {
         return $this->makeRequest(
             'contacts/'.$id.'/dnc/'.$channel.'/remove',
