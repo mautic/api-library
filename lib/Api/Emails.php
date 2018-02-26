@@ -72,7 +72,7 @@ class Emails extends Api
      *
      * @return array|mixed
      */
-    public function sendToContact($id, $contactId, $data = [])
+    public function sendToContact($id, $contactId, $data = array())
     {
         return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', $data, 'POST');
     }
@@ -84,7 +84,7 @@ class Emails extends Api
      *
      * @return array|mixed
      */
-    public function sendCustom($data = [])
+    public function sendCustom($data = array())
     {
         return  $this->makeRequest($this->endpoint.'/send/custom', $data, 'POST');
     }
@@ -97,7 +97,7 @@ class Emails extends Api
      *
      * @return array|mixed
      */
-    public function sendCustomToContact($contactId, $data = [])
+    public function sendCustomToContact($contactId, $data = array())
     {
         return $this->makeRequest($this->endpoint.'/contact/'.$contactId.'/send/custom', $data, 'POST');
     }
