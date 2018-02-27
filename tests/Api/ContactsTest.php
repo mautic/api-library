@@ -13,7 +13,7 @@ use Mautic\Api\Contacts;
 
 class ContactsTest extends AbstractCustomFieldsTest
 {
-    protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags');
+    protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags', 'owner');
 
     /**
      * @var Contacts
@@ -28,6 +28,7 @@ class ContactsTest extends AbstractCustomFieldsTest
             'lastname'  => 'APIDoe',
             'address2'  => 'Sam & Sons',
             'email'     => 'test@mautic.api',
+            'owner'     => 1,
             'points'    => 3,
             'tags'      => array(
                 'APItag1',
@@ -240,6 +241,7 @@ class ContactsTest extends AbstractCustomFieldsTest
     {
         // Test Create
         $response = $this->api->create($this->testPayload);
+        $this->assertPayload($response);
         $contact = $response[$this->api->itemName()];
 
         $this->assertPayload($response);
@@ -250,6 +252,8 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertEquals($contact['fields']['all']['firstname'], $this->testPayload['firstname']);
         $this->assertEquals($contact['fields']['all']['lastname'], $this->testPayload['lastname']);
         $this->assertEquals($contact['fields']['all']['address2'], $this->testPayload['address2']);
+        $this->assertEquals($contact['points'], $this->testPayload['points']);
+        $this->assertEquals($contact['owner']['id'], $this->testPayload['owner']);
 
         // Test Get
         $response = $this->api->get($contact['id']);
