@@ -71,9 +71,9 @@ class Emails extends Api
      *
      * @return array|mixed
      */
-    public function sendToContact($id, $contactId)
+    public function sendToContact($id, $contactId, $parameters = array())
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', $parameters, 'POST');
     }
 
     /**
