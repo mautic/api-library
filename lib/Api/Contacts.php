@@ -83,7 +83,7 @@ class Contacts extends Api
      */
     public function getIdentified($search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
     {
-        $search .= ($search) ? "$search !is:anonymous" : '!is:anonymous';
+        $search = ($search) ? "$search !is:anonymous" : '!is:anonymous';
 
         return $this->getList($search, $start, $limit, $orderBy, $orderByDir, $publishedOnly, $minimal);
     }
