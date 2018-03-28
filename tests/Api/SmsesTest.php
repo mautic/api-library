@@ -11,6 +11,8 @@ namespace Mautic\Tests\Api;
 
 class SmsesTest extends MauticApiTestCase
 {
+    protected $endpoint = 'smses';
+
     public function setUp() {
         $this->api = $this->getContext('smses');
         $this->testPayload = array(
@@ -50,5 +52,14 @@ class SmsesTest extends MauticApiTestCase
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints();
+    }
+
+    public function testSendSMS() {
+        $requestResponse =  $this->api->makeRequest($this->endpoint.'/1/contact/1/send');        
+        $this->assertCount(1, $requestResponse['errors']);
+
+        $response = $this->api->sendSMS(1, 1);
+
+        $this->assertEquals($response, $requestResponse);
     }
 }
