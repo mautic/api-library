@@ -601,4 +601,8 @@ class Api implements LoggerAwareInterface
 
         return $this->actionNotSupported($action);
     }
+
+    public function getItemName() {
+        return $this->itemName;
+    }
 }
