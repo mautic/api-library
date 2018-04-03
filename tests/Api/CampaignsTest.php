@@ -34,6 +34,7 @@ class CampaignsTest extends MauticApiTestCase
             'item' => 'email',
             'payload' => array(
                 'name' => 'Company API test',
+                'subject' => 'Company API test',
                 'body' => 'Company API test'
             )
         ),

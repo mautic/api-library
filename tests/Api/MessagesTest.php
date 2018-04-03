@@ -47,6 +47,7 @@ class MessagesTest extends MauticApiTestCase
             $response = $api->create(
                 array(
                     'name' => 'MM API test', // required for all
+                    'subject' => 'MM API test', // required for email
                     'message' => 'test', // required for sms
                     'heading' => 'test' // required for notifications
                 )
