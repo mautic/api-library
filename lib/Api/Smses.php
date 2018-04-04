@@ -42,4 +42,23 @@ class Smses extends Api
         'category',
         'lang',
     );
+
+    /**
+     * @var array
+     */
+    protected $bcRegexEndpoints = array(
+        'smses/(.*?)/contact/(.*?)/send'    => 'smses/$1/contact/$2/send',
+    );
+
+    /**
+     * Send a message to contact
+     *
+     * @param int    $id
+     * @param int    $recipientId
+     *
+     * @return mixed
+     */
+    public function sendSMS($id, $recipientId) {
+        return $this->makeRequest($this->endpoint.'/'. intval($id) .'/contact/' . intval($recipientId) . '/send');        
+    }
 }

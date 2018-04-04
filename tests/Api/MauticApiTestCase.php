@@ -43,7 +43,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
         $auth = $apiAuth->newAuth($this->config, $authMethod);
         if ($authMethod != 'BasicAuth') {
             if (empty($this->config['refreshToken']) && !$auth->isAuthorized()) {
-                $this->assertTrue($authorized, 'Authorization failed. Check credentials in local.config.php.');
+                $this->assertTrue($auth->isAuthorized(), 'Authorization failed. Check credentials in local.config.php.');
             } else {
                 try {
                     $auth->validateAccessToken();
