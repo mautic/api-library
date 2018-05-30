@@ -961,7 +961,7 @@ class OAuth extends AbstractAuth
         if ($returnarray && ('' != $key)) {
             // Ref: Spec: 9.1.1 (1)
             // If two or more parameters share the same name, they are sorted by their value
-            sort($parameters, SORT_STRING);
+            sort($parameters);
         } else {
             // Sort by key
             ksort($parameters);
