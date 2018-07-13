@@ -13,7 +13,8 @@ class AssetsTest extends MauticApiTestCase
 {
     protected $skipPayloadAssertion = array('file');
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->api = $this->getContext('assets');
         $this->testPayload = array(
             'title' => 'Mautic Logo sent as a API request',
