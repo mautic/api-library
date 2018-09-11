@@ -23,9 +23,17 @@ class Plugins extends Api
 
 
     /**
+     * @return array
+     */
+    public function reload()
+    {
+        return $this->makeRequest($this->endpoint.'/reload');
+    }
+
+    /**
      * @param $integrationName
      *
-     * @return array|mixed
+     * @return array
      */
     public function getSettings($integrationName)
     {
