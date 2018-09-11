@@ -14,13 +14,10 @@ namespace Mautic\Api;
  */
 class Plugins extends Api
 {
-
-
     /**
      * {@inheritdoc}
      */
     protected $endpoint = 'plugins';
-
 
     /**
      * @return array
@@ -38,6 +35,17 @@ class Plugins extends Api
     public function getSettings($integrationName)
     {
         return $this->makeRequest($this->endpoint.'/settings/'.$integrationName);
+    }
+
+    /**
+     * @param $package
+     *
+     * @return array
+     */
+    public function install($package)
+    {
+        @set_time_limit(9999);
+        return $this->makeRequest($this->endpoint.'/install', ['package' => $package]);
     }
 
 }
