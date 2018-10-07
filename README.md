@@ -175,7 +175,7 @@ $contact = $response[$contactApi->itemName()];
 ```
 
 ### Editing an item
-Currently, only Contacts support this
+
 
 ```php
 <?php
