@@ -958,7 +958,7 @@ class OAuth extends AbstractAuth
 
         $normalized = array();
         foreach ($parameters as $key => $value) {
-            if (!empty($parentKey)) {
+            if ($parentKey !== '') {
                 // Multidimensional array; using foo=bar&foo=baz rather than foo[bar]=baz&foo[baz]=bar
                 $key = $parentKey;
             }
