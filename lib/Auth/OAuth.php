@@ -958,10 +958,15 @@ class OAuth extends AbstractAuth
 
         $normalized = array();
         foreach ($parameters as $key => $value) {
+            if (empty($value)) {
+                continue;
+            }
+
             if ($parentKey !== '') {
                 // Multidimensional array; using foo=bar&foo=baz rather than foo[bar]=baz&foo[baz]=bar
                 $key = $parentKey;
             }
+
             if (is_array($value)) {
                 $normalized[] = $this->normalizeParameters($value, $key);
             } else {
@@ -969,6 +974,7 @@ class OAuth extends AbstractAuth
             }
         }
 
+        $normalized = array_filter($normalized);
         sort($normalized, SORT_STRING);
 
         return implode('&', $normalized);
