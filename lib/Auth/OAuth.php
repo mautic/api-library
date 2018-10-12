@@ -822,8 +822,8 @@ class OAuth extends AbstractAuth
     private function buildAuthorizationHeader($oauth)
     {
         $r      = 'Authorization: OAuth ';
-        $values = $this->normalizeParameters($oauth, true, true);
-        $r .= implode(', ', $values);
+        $values = $this->normalizeParameters($oauth);
+        $r .= str_replace('&', ', ', $values);
 
         return $r;
     }
@@ -839,7 +839,7 @@ class OAuth extends AbstractAuth
      */
     private function buildBaseString($baseURI, $method, $params)
     {
-        $r = $this->normalizeParameters($params, true);
+        $r = $this->normalizeParameters($params);
 
         return $method.'&'.$this->encode($baseURI).'&'.$this->encode($r);
     }
@@ -945,46 +945,38 @@ class OAuth extends AbstractAuth
     /**
      * Normalize parameters
      *
-     * @param array  $parameters
-     * @param bool   $encode
-     * @param bool   $returnarray
-     * @param array  $normalized
-     * @param string $key
+     * @param array $parameters
+     * @param string $parentKey
      *
-     * @return array|string
+     * @return string
      */
-    private function normalizeParameters($parameters, $encode = false, $returnarray = false, $normalized = array(), $key = '')
+    private function normalizeParameters($parameters, $parentKey = '')
     {
-        // December 2016 - Fix for issue #75
-        //
-        // recursive call identified by these 2 conditions.
-        if ($returnarray && ('' != $key)) {
-            // Ref: Spec: 9.1.1 (1)
-            // If two or more parameters share the same name, they are sorted by their value
-            sort($parameters, SORT_STRING);
-        } else {
-            // Sort by key
-            ksort($parameters);
+        if (empty($parameters)) {
+            return '';
         }
 
-        foreach ($parameters as $k => $v) {
-            if (is_array($v)) {
-                $normalized = $this->normalizeParameters($v, $encode, true, $normalized, $k);
-            } else {
-                if ($key) {
-                    //Multidimensional array; using foo=baz&foo=bar rather than foo[bar]=baz&foo[baz]=bar as this is
-                    //what the server expects when creating the signature
-                    $k = $key;
-                }
+        $normalized = array();
+        foreach ($parameters as $key => $value) {
+            if (empty($value)) {
+                continue;
+            }
 
-                if ($encode) {
-                    $normalized[] = $this->encode($k).'='.$this->encode($v);
-                } else {
-                    $normalized[] = $k.'='.$v;
-                }
+            if ($parentKey !== '') {
+                // Multidimensional array; using foo=bar&foo=baz rather than foo[bar]=baz&foo[baz]=bar
+                $key = $parentKey;
+            }
+
+            if (is_array($value)) {
+                $normalized[] = $this->normalizeParameters($value, $key);
+            } else {
+                $normalized[] = $this->encode($key) . '=' . $this->encode($value);
             }
         }
 
-        return $returnarray ? $normalized : implode('&', $normalized);
+        $normalized = array_filter($normalized);
+        sort($normalized, SORT_STRING);
+
+        return implode('&', $normalized);
     }
 }
