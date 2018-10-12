@@ -42,4 +42,17 @@ class Smses extends Api
         'category',
         'lang',
     );
+
+    /**
+     * Send sms to a specific contact
+     *
+     * @param int $id
+     * @param int $contactId
+     *
+     * @return array|mixed
+     */
+    public function sendToContact($id, $contactId)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', array(), 'POST');
+    }
 }
