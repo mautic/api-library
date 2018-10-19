@@ -163,7 +163,7 @@ abstract class AbstractAuth implements AuthInterface
         //Create a query string for GET/DELETE requests
         if (count($query) > 0) {
             $queryGlue = strpos($url, '?') === false ? '?' : '&';
-            $url       = $url.$queryGlue.http_build_query($query);
+            $url       = $url.$queryGlue.http_build_query($parameters, '', '&');
             $this->log('URL updated to '.$url);
         }
 
@@ -189,7 +189,7 @@ abstract class AbstractAuth implements AuthInterface
             $_SESSION['oauth']['debug']['returnedHeaders'] = $response->getHeaders();
             $_SESSION['oauth']['debug']['returnedBody']    = $response->getBody();
         }
-        
+
         // Handle zip file response
         if ($response->isZip()) {
             $temporaryFilePath = isset($settings['temporaryFilePath']) ? $settings['temporaryFilePath'] : sys_get_temp_dir();
