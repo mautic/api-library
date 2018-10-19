@@ -163,7 +163,7 @@ abstract class AbstractAuth implements AuthInterface
         //Create a query string for GET/DELETE requests
         if (count($query) > 0) {
             $queryGlue = strpos($url, '?') === false ? '?' : '&';
-            $url       = $url.$queryGlue.http_build_query($parameters, '', '&');
+            $url       = $url.$queryGlue.http_build_query($query, '', '&');
             $this->log('URL updated to '.$url);
         }
 
