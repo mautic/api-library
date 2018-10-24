@@ -34,8 +34,8 @@ class ReportsTest extends MauticApiTestCase
     {
         $limit    = 5;
         $page     = 2;
-        $dateFrom = new \DateTimeImmutable('1 year ago', new \DateTimeZone('UTC'));
-        $dateTo   = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $dateFrom = new \DateTime('1 year ago', new \DateTimeZone('UTC'));
+        $dateTo   = new \DateTime('now', new \DateTimeZone('UTC'));
         $response = $this->api->get(1, $limit, $page, $dateFrom, $dateTo);
 
         $this->assertErrors($response);
@@ -45,8 +45,8 @@ class ReportsTest extends MauticApiTestCase
         $this->assertSame($limit, $response['limit']);
         $this->assertSame($page, $response['page']);
         // Mautic will modify the times slightly so check only for date.
-        $this->assertSame($dateFrom->format('Y-m-d'), (new \DateTimeImmutable($response['dateFrom']))->format('Y-m-d'), 'DateFrom does not match');
-        $this->assertSame($dateTo->format('Y-m-d'), (new \DateTimeImmutable($response['dateTo']))->format('Y-m-d'), 'DateTo does not match');
+        $this->assertSame($dateFrom->format('Y-m-d'), (new \DateTime($response['dateFrom']))->format('Y-m-d'), 'DateFrom does not match');
+        $this->assertSame($dateTo->format('Y-m-d'), (new \DateTime($response['dateTo']))->format('Y-m-d'), 'DateTo does not match');
     }
 
     public function testGetList()

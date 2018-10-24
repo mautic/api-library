@@ -54,12 +54,12 @@ class Reports extends Api
      * @param int $id
      * @param int $limit
      * @param int $page
-     * @param \DateTimeInterface|null $dateFrom
-     * @param \DateTimeInterface|null $dateTo
+     * @param \DateTime|null $dateFrom
+     * @param \DateTime|null $dateTo
      *
      * @return array|mixed
      */
-    public function get($id, $limit = 10, $page = 1, \DateTimeInterface $dateFrom = null, \DateTimeInterface $dateTo = null)
+    public function get($id, $limit = 10, $page = 1, \DateTime $dateFrom = null, \DateTime $dateTo = null)
     {
         $options = array(
             'limit' => (int) $limit,
