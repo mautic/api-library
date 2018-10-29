@@ -24,10 +24,8 @@ class ReportsTest extends MauticApiTestCase
         $this->assertGreaterThanOrEqual(0, $response['totalResults']);
         $this->assertGreaterThanOrEqual(0, count($response['totalResults']));
         $this->assertGreaterThanOrEqual(0, count($response['dataColumns']));
-        $this->assertSame(10, $response['limit']);
+        $this->assertSame(0, $response['limit']);
         $this->assertSame(1, $response['page']);
-        $this->assertSame(25, strlen($response['dateFrom']));
-        $this->assertSame(25, strlen($response['dateTo']));
     }
 
     public function testGetCustom()

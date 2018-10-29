@@ -51,20 +51,25 @@ class Reports extends Api
     /**
      * Get a single report data
      *
-     * @param int $id
-     * @param int $limit
-     * @param int $page
+     * @param int            $id
+     * @param int|null       $limit
+     * @param int|null       $page
      * @param \DateTime|null $dateFrom
      * @param \DateTime|null $dateTo
      *
      * @return array|mixed
      */
-    public function get($id, $limit = 10, $page = 1, \DateTime $dateFrom = null, \DateTime $dateTo = null)
+    public function get($id, $limit = null, $page = null, \DateTime $dateFrom = null, \DateTime $dateTo = null)
     {
-        $options = array(
-            'limit' => (int) $limit,
-            'page'  => (int) $page,
-        );
+        $options = array();
+
+        if ($limit) {
+            $options['limit'] = (int) $limit;
+        }
+
+        if ($page) {
+            $options['page'] = (int) $page;
+        }
 
         if ($dateFrom) {
             $options['dateFrom'] = $dateFrom->format('c');
