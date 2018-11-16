@@ -51,6 +51,20 @@ class Segments extends Api
         return $this->makeRequest($this->endpoint.'/'.$segmentId.'/contact/'.$contactId.'/add', array(), 'POST');
     }
 
+
+    /**
+     * Add a contact list of ids to the segment
+     * list of contact must be added in ids[] query parameter
+     * @param int $segmentId Segment ID
+     * @param array $contactIds
+     *
+     * @return array|mixed
+     */
+    public function addContacts($segmentId, $contactIds)
+    {
+        return $this->makeRequest($this->endpoint.'/'.$segmentId.'/contacts/add', $contactIds, 'POST');
+    }
+
     /**
      * Add a lead to the segment
      *
