@@ -131,7 +131,7 @@ class Campaigns extends Api
         return $this->makeRequest($this->endpoint.'/'.$id.'/contacts', $parameters);
     }
     
-     /**
+    /**
      * Clone an Existing campaign
      *
      * @param int $id        Campaign ID
