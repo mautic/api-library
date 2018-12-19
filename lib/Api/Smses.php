@@ -53,6 +53,6 @@ class Smses extends Api
      */
     public function sendToContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send', array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/send');
     }
 }
