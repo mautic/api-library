@@ -116,6 +116,13 @@ $auth = $initAuth->newAuth($settings, 'BasicAuth');
  )
 
 ```
+**Note:** You can also specify a CURLOPT_TIMEOUT in the request (default is set to wait indefinitely):
+```php
+$initAuth = new ApiAuth();
+$auth = $initAuth->newAuth($settings, 'BasicAuth');
+$timeout = 10;
+$auth->setCurlTimeout($timeout);
+```
 
 ## API Requests
 Now that you have an access token and the auth object, you can make API requests.  The API is broken down into contexts.
