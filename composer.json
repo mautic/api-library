@@ -16,10 +16,10 @@
   "require": {
     "php": ">=5.3.7",
     "ext-curl": "*",
-    "psr/log": "~1.0"
+    "psr/log": "~1.0",
+    "phpunit/phpunit": "^5"
   },
   "require-dev": {
-    "raveren/kint": "~0.9",
-    "phpunit/phpunit": "~4.8|~5.0"
+    "raveren/kint": "~0.9"
   }
 }

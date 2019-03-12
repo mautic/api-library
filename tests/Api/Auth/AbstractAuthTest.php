@@ -38,8 +38,14 @@ class AbstractAuthTest extends \PHPUnit_Framework_TestCase
     public function testJsonResponse()
     {
         $auth = $this->getMockForAbstractClass(AbstractAuth::class);
-        $response = $auth->makeRequest($this->config['apiUrl'].'contacts');
-        $this->assertTrue(is_array($response));
-        $this->assertFalse(empty($response));
+        try {
+            $response = $auth->makeRequest($this->config['apiUrl'].'contacts');
+            $this->assertTrue(is_array($response));
+            $this->assertFalse(empty($response));
+        } catch (UnexpectedResponseFormatException $exception) {
+            $response = json_decode($exception->getResponse()->getBody(), true);
+            $this->assertTrue(is_array($response));
+            $this->assertFalse(empty($response));
+        }
     }
 }

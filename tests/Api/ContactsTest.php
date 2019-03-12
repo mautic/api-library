@@ -218,6 +218,14 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testGetActivityAdvanced()
     {
+        // Ensure a page hit exists
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $this->config['baseUrl'].'/mtracking.gif?url='.urlencode('http://mautic.org'));
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        curl_exec($curl);
+
         $response = $this->api->getActivity('', array('page.hit'));
         $this->assertEventResponse($response, array('page.hit'));
     }
