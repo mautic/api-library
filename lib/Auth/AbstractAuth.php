@@ -155,18 +155,17 @@ abstract class AbstractAuth implements AuthInterface
             $options[CURLOPT_POSTFIELDS] = $parameters;
 
             $this->log('Posted parameters = '.print_r($parameters, true));
+            $this->log('Query parameters = '.print_r([], true));
+        } elseif (in_array($method, array('GET', 'DELETE'))) {
+            $this->log('Query parameters = '.print_r($parameters, true));
+
+            // Create a query string for GET/DELETE requests
+            if (is_array($parameters) && count($parameters) > 0) {
+                $queryGlue = strpos($url, '?') === false ? '?' : '&';
+                $url       = $url.$queryGlue.http_build_query($parameters, '', '&');
+                $this->log('URL updated to '.$url);
+            }
         }
-
-        $query = $this->getQueryParameters($isPost, $parameters);
-        $this->log('Query parameters = '.print_r($query, true));
-
-        //Create a query string for GET/DELETE requests
-        if (count($query) > 0) {
-            $queryGlue = strpos($url, '?') === false ? '?' : '&';
-            $url       = $url.$queryGlue.http_build_query($query, '', '&');
-            $this->log('URL updated to '.$url);
-        }
-
         // Set the URL
         $options[CURLOPT_URL] = $url;
 
@@ -233,17 +232,6 @@ abstract class AbstractAuth implements AuthInterface
 
         // For PHP >= 5.5
         return curl_file_create($filename, $mimetype, $postname);
-    }
-
-    /**
-     * @param $isPost
-     * @param $parameters
-     *
-     * @return array
-     */
-    protected function getQueryParameters($isPost, $parameters)
-    {
-        return ($isPost) ? array() : $parameters;
     }
 
     /**
