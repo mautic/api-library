@@ -167,7 +167,7 @@ abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
                 )
             );
 
-            $this->assertSame($item[$itemProp], $itemVal, '>>> '.$itemProp.':');
+            $this->assertEquals($item[$itemProp], $itemVal, '>>> '.$itemProp.':');
         }
     }
 
