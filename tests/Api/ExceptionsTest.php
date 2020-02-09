@@ -107,7 +107,6 @@ class ExceptionsTest extends MauticApiTestCase
     }
 
     public function testSearchCommands() {
-        // overwrite this inheritted method with no content
+        $this->markTestSkipped('Inherited method but not applicable');
     }
-
 }

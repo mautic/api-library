@@ -129,13 +129,6 @@ class ContactFieldsTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
-    public function testEditPatch()
-    {
-        $editTo = array(
-            'label' => 'test2',
-        );
-    }
-
     public function testEditPut()
     {
         $this->standardTestEditPut();

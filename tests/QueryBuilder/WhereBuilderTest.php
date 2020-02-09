@@ -12,8 +12,9 @@
 namespace Mautic\Tests\QueryBuilder;
 
 use Mautic\QueryBuilder\WhereBuilder;
+use PHPUnit\Framework\TestCase;
 
-class WhereBuilderTest extends \PHPUnit_Framework_TestCase
+class WhereBuilderTest extends TestCase
 {
     public function testClauses()
     {

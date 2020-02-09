@@ -122,6 +122,6 @@ class BasicAuthTest extends MauticApiTestCase
      */
     public function testSearchCommands()
     {
-        // ignore
+        $this->markTestSkipped('Inherited method but not applicable');
     }
 }

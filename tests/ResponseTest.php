@@ -11,8 +11,9 @@ namespace Mautic\Tests;
 
 use Mautic\Response;
 use Mautic\Exception\UnexpectedResponseFormatException;
+use PHPUnit\Framework\TestCase;
 
-class ResponseTest extends \PHPUnit_Framework_TestCase
+class ResponseTest extends TestCase
 {
     private $headersWithRedirects = 'HTTP/1.1 302 Found
 Date: Fri, 17 Nov 2017 14:09:31 GMT

@@ -11,12 +11,11 @@ namespace Mautic\Tests\Api;
 
 use Mautic\Api\Api;
 use Mautic\Auth\ApiAuth;
-use Mautic\Auth\OAuth;
 use Mautic\MauticApi;
 use Mautic\QueryBuilder\QueryBuilder;
-use Mautic\QueryBuilder\WhereBuilder;
+use PHPUnit\Framework\TestCase;
 
-abstract class MauticApiTestCase extends \PHPUnit_Framework_TestCase
+abstract class MauticApiTestCase extends TestCase
 {
     protected $config = null;
     protected $skipPayloadAssertion = array();

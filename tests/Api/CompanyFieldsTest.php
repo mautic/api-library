@@ -38,11 +38,11 @@ class CompanyFieldTest extends ContactFieldsTest
     // Except following, ignore them
     public function testBooleanField()
     {
-        return;
+        $this->markTestSkipped('Inherited method but not applicable');
     }
 
     public function testDefaultFieldValue()
     {
-        return;
+        $this->markTestSkipped('Inherited method but not applicable');
     }
 }

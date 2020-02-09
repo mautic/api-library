@@ -72,13 +72,6 @@ class AssetsTest extends MauticApiTestCase
         $this->standardTestBatchEndpoints();
     }
 
-    public function testEditPatch()
-    {
-        $editTo = array(
-            'title' => 'test2',
-        );
-    }
-
     public function testEditPut()
     {
         $this->standardTestEditPut();
