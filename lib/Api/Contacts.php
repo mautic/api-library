@@ -119,33 +119,6 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of a contact's engagement events
-     *
-     * @param int    $id Contact ID
-     * @param string $search
-     * @param array  $includeEvents
-     * @param array  $excludeEvents
-     * @param string $orderBy
-     * @param string $orderByDir
-     * @param int    $page
-     *
-     * @return array|mixed
-     *
-     * @deprecated 2.10.0 Use getActivityForContact instead. The response is slightly different.
-     */
-    public function getEvents(
-        $id,
-        $search = '',
-        array $includeEvents = array(),
-        array $excludeEvents = array(),
-        $orderBy = '',
-        $orderByDir = 'ASC',
-        $page = 1
-    ) {
-        return $this->fetchActivity('/'.$id.'/events', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page);
-    }
-
-    /**
      * Get a list of contact activity events for all contacts
      *
      * @param int       $id Contact ID
