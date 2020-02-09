@@ -1,7 +1,7 @@
 # Using the Mautic API Library
 
 ## Requirements
-* PHP 5.3.7 or newer
+* PHP 7.2 or newer
 * cURL support
 
 ## Mautic Setup
@@ -32,13 +32,13 @@ $secretKey = '';
 $callback  = '';
 
 // ApiAuth->newAuth() will accept an array of Auth settings
-$settings = array(
+$settings = [
     'baseUrl'          => '',       // Base URL of the Mautic instance
     'version'          => 'OAuth2', // Version of the OAuth can be OAuth2 or OAuth1a. OAuth2 is the default value.
     'clientKey'        => '',       // Client/Consumer key from Mautic
     'clientSecret'     => '',       // Client/Consumer secret key from Mautic
-    'callback'         => ''        // Redirect URI/Callback URI for this script
-);
+    'callback'         => '',       // Redirect URI/Callback URI for this script
+];
 
 /*
 // If you already have the access token, et al, pass them in as well to prevent the need for reauthorization
@@ -50,7 +50,7 @@ $settings['refreshToken']       = $refreshToken;
 
 // Initiate the auth object
 $initAuth = new ApiAuth();
-$auth = $initAuth->newAuth($settings);
+$auth     = $initAuth->newAuth($settings);
 
 // Initiate process for obtaining an access token; this will redirect the user to the $authorizationUrl and/or
 // set the access_tokens when the user is redirected back after granting authorization
@@ -94,14 +94,14 @@ use Mautic\Auth\ApiAuth;
 session_start();
 
 // ApiAuth->newAuth() will accept an array of Auth settings
-$settings = array(
+$settings = [
     'userName'   => '',             // Create a new user       
-    'password'   => ''              // Make it a secure password
-);
+    'password'   => '',             // Make it a secure password
+];
 
 // Initiate the auth object specifying to use BasicAuth
 $initAuth = new ApiAuth();
-$auth = $initAuth->newAuth($settings, 'BasicAuth');
+$auth     = $initAuth->newAuth($settings, 'BasicAuth');
 
 // Nothing else to do ... It's ready to use.
 // Just pass the auth object to the API context you are creating.
@@ -110,17 +110,23 @@ $auth = $initAuth->newAuth($settings, 'BasicAuth');
 **Note:** If the credentials are incorrect an error response will be returned.
 
 ```php
- array('error' => array(
-       'code'    => 403,
-       'message' => 'access_denied: OAuth2 authentication required' )
- )
+ [
+    'errors' => [
+        [
+            'code'    => 403,
+            'message' => 'access_denied: OAuth2 authentication required',
+            'type'    => 'access_denied',
+        ],
+    ],
+ ];
 
 ```
 **Note:** You can also specify a CURLOPT_TIMEOUT in the request (default is set to wait indefinitely):
 ```php
 $initAuth = new ApiAuth();
-$auth = $initAuth->newAuth($settings, 'BasicAuth');
-$timeout = 10;
+$auth     = $initAuth->newAuth($settings, 'BasicAuth');
+$timeout  = 10;
+
 $auth->setCurlTimeout($timeout);
 ```
 
@@ -137,7 +143,7 @@ use Mautic\MauticApi;
 // Create an api context by passing in the desired context (Contacts, Forms, Pages, etc), the $auth object from above
 // and the base URL to the Mautic server (i.e. http://my-mautic-server.com/api/)
 
-$api = new MauticApi();
+$api        = new MauticApi();
 $contactApi = $api->newApi('contacts', $auth, $apiUrl);
 ```
 
@@ -152,12 +158,12 @@ All of the above contexts support the following functions for retrieving items:
 <?php
 
 $response = $contactApi->get($id);
-$contact = $response[$contactApi->itemName()];
+$contact  = $response[$contactApi->itemName()];
 
 // getList accepts optional parameters for filtering, limiting, and ordering
-$response = $contactApi->getList($filter, $start, $limit, $orderBy, $orderByDir);
+$response      = $contactApi->getList($filter, $start, $limit, $orderBy, $orderByDir);
 $totalContacts = $response['total'];
-$contact = $response[$contactApi->listName()];
+$contact       = $response[$contactApi->listName()];
 ```
 
 ### Creating an item
@@ -178,7 +184,7 @@ $data['ipAddress'] = $ipAddress;
 
 // Create the contact
 $response = $contactApi->create($data);
-$contact = $response[$contactApi->itemName()];
+$contact  = $response[$contactApi->itemName()];
 ```
 
 ### Editing an item
@@ -187,17 +193,17 @@ $contact = $response[$contactApi->itemName()];
 ```php
 <?php
 
-$updatedData = array(
+$updatedData = [
     'firstname' => 'Updated Name'
-);
+];
 
 $response = $contactApi->edit($contactId, $updatedData);
-$contact = $response[$contactApi->itemName()];
+$contact  = $response[$contactApi->itemName()];
 
 // If you want to create a new contact in the case that $contactId no longer exists
 // $response will be populated with the new contact item
 $response = $contactApi->edit($contactId, $updatedData, true);
-$contact = $response[$contactApi->itemName()];
+$contact  = $response[$contactApi->itemName()];
 ```
 
 ### Deleting an item
@@ -206,7 +212,7 @@ $contact = $response[$contactApi->itemName()];
 <?php
 
 $response = $contactApi->delete($contactId);
-$contact = $response[$contactApi->itemName()];
+$contact  = $response[$contactApi->itemName()];
 ```
 
 ### Error handling
@@ -217,10 +223,10 @@ $contact = $response[$contactApi->itemName()];
 // $response returned by an API call should be checked for errors
 $response = $contactApi->delete($contactId);
 
-if (isset($response['error'])) {
-    echo $response['error']['code'] . ": " . $response['error']['message'];
-} else {
-    // do whatever with the info
+if (isset($response['errors'])) {
+    foreach ($response['errors'] as $error) {
+        echo $error['code'] . ": " . $error['message'];
+    }
 }
 ```
 
