@@ -226,7 +226,7 @@ class Api implements LoggerAwareInterface
             }
         }
 
-        $url = $this->baseUrl.$endpoint;
+        $url      = $this->baseUrl.$endpoint;
 
         // Don't make the call if we're unit testing a BC endpoint
         if (!$bcEndpoint || !$this->bcTesting || ($bcEndpoint && $this->bcTesting && $this->bcAttempt)) {
@@ -244,91 +244,61 @@ class Api implements LoggerAwareInterface
             }
             $this->bcAttempt = false;
 
-            if (strpos($url, 'http') === false) {
-                $error = array(
-                    'code'    => 500,
-                    'message' => sprintf(
-                        'URL is incomplete.  Please use %s, set the base URL as the third argument to $MauticApi->newApi(), or make $endpoint a complete URL.',
-                        __CLASS__.'setBaseUrl()'
-                    )
-                );
-            } else {
-                try {
-                    $settings = [];
-                    if (method_exists($this, 'getTemporaryFilePath')) {
-                        $settings['temporaryFilePath'] = $this->getTemporaryFilePath();
-                    }
-                    $response = $this->auth->makeRequest($url, $parameters, $method, $settings);
+        if (strpos($url, 'http') === false) {
+            $error = array(
+                'code'    => 500,
+                'message' => sprintf(
+                    'URL is incomplete.  Please use %s, set the base URL as the third argument to $MauticApi->newApi(), or make $endpoint a complete URL.',
+                    __CLASS__.'setBaseUrl()'
+                )
+            );
+        } else {
+            try {
+                $settings = [];
+                if (method_exists($this, 'getTemporaryFilePath')) {
+                    $settings['temporaryFilePath'] = $this->getTemporaryFilePath();
+                }
+                $response = $this->auth->makeRequest($url, $parameters, $method, $settings);
 
-                    $this->getLogger()->debug('API Response', array('response' => $response));
+                $this->getLogger()->debug('API Response', array('response' => $response));
 
-                    if (!is_array($response)) {
-                        $this->getLogger()->warning($response);
+                if (!is_array($response)) {
+                    $this->getLogger()->warning($response);
 
-                        //assume an error
-                        $error = array(
-                            'code'    => 500,
-                            'message' => $response
-                        );
-                    }
-
-                    // @deprecated support for 2.6.0 to be removed in 3.0
-                    if (!isset($response['errors']) && isset($response['error']) && isset($response['error_description'])) {
-                        $message = $response['error'].': '.$response['error_description'];
-
-                        $this->getLogger()->warning($message);
-
-                        $error = array(
-                            'code'    => 403,
-                            'message' => $message
-                        );
-                    }
-                } catch (\Exception $e) {
-                    $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
-
+                    //assume an error
                     $error = array(
-                        'code'    => $e->getCode(),
-                        'message' => $e->getMessage()
+                        'code'    => 500,
+                        'message' => $response
                     );
                 }
-            }
+            } catch (\Exception $e) {
+                $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), array('trace' => $e->getTraceAsString()));
 
-            if (!empty($error)) {
-                return array(
-                    'errors' => array($error),
-                    // @deprecated 2.6.0 to be removed 3.0
-                    'error'  => $error
+                $error = array(
+                    'code'    => $e->getCode(),
+                    'message' => $e->getMessage()
                 );
-            } elseif (!empty($response['errors'])) {
-                $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors'], true));
             }
+        }
 
-            // @deprecated 2.6.0 BC error handling
-            // @todo remove in 3.0
-            if (isset($response['error']) && !isset($response['errors'])) {
-                if (isset($response['error_description'])) {
-                    // BC Oauth2 error
-                    $response['errors'] = array(
-                        array(
-                            'message' => $response['error_description'],
-                            'type'    => $response['error']
-                        )
-                    );
-                } elseif (isset($response['message'])) {
-                    $response['errors'] = array(
-                        $response['error']
-                    );
+        if (!empty($error)) {
+            return array(
+                'errors' => array($error),
+                // @deprecated 2.6.0 to be removed 3.0
+                'error'  => $error
+            );
+        } elseif (!empty($response['errors'])) {
+            $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors'], true));
+        }
+
+        // Ensure a code is present in the error array
+        if (!empty($response['errors'])) {
+            $info = $this->auth->getResponseInfo();
+            foreach ($response['errors'] as $key => $error) {
+                if (!isset($response['errors'][$key]['code'])) {
+                    $response['errors'][$key]['code'] = $info['http_code'];
                 }
             }
-
-            // Ensure a code is present in the error array
-            if (!empty($response['errors'])) {
-                $info = $this->auth->getResponseInfo();
-                foreach ($response['errors'] as $key => $error) {
-                    if (!isset($response['errors'][$key]['code'])) {
-                        $response['errors'][$key]['code'] = $info['http_code'];
-                    }
-                }
             }
         }
 
