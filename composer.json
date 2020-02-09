@@ -14,12 +14,13 @@
     }
   },
   "require": {
-    "php": ">=5.3.7",
+    "php": ">=7.2.0",
     "ext-curl": "*",
-    "psr/log": "~1.0",
-    "phpunit/phpunit": "^5"
+    "psr/log": "~1.0"
   },
   "require-dev": {
-    "raveren/kint": "~0.9"
+    "raveren/kint": "~0.9",
+    "friendsofphp/php-cs-fixer": "~2.16.1",
+    "phpunit/phpunit": "~7.5.0"
   }
 }
