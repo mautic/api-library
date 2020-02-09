@@ -284,8 +284,6 @@ class Api implements LoggerAwareInterface
         if (!empty($error)) {
             return array(
                 'errors' => array($error),
-                // @deprecated 2.6.0 to be removed 3.0
-                'error'  => $error
             );
         } elseif (!empty($response['errors'])) {
             $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors'], true));
