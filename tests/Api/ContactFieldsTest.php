@@ -54,9 +54,9 @@ class ContactFieldsTest extends MauticApiTestCase
             'type' => 'lookup',
             'properties' => array(
                 'list' => array(
-                    array('label' => 'Mr', 'value' => 'mr'),
-                    array('label' => 'Mrs', 'value' => 'mrs'),
-                    array('label' => 'Miss', 'value' => 'miss'),
+                    'Mr',
+                    'Mrs',
+                    'Miss',
                 )
             )
         );
@@ -71,7 +71,6 @@ class ContactFieldsTest extends MauticApiTestCase
         $response = $contactContext->create(array('firstname' => 'Boolean Field', 'lastname' => 'API test'));
         $this->assertErrors($response);
         $contact = $response['contact'];
-
 
         $possibleValues = array(1 => 1, 0 => 0, 'yes' => 1, 'no' => 0, 'true' => 1, 'false' => 0);
         $boolField = array(
