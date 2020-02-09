@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,28 +12,30 @@ namespace Mautic\Tests\Api;
 
 class DevicesTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('lead');
+    protected $skipPayloadAssertion = ['lead'];
 
-    public function setUp() {
-        $this->api = $this->getContext('devices');
-        $this->testPayload = array(
-            'device' => 'desktop',
-            'deviceOsName' => 'Ubuntu',
+    public function setUp()
+    {
+        $this->api         = $this->getContext('devices');
+        $this->testPayload = [
+            'device'            => 'desktop',
+            'deviceOsName'      => 'Ubuntu',
             'deviceOsShortName' => 'UBT',
-            'deviceOsPlatform' => 'x64',
-        );
+            'deviceOsPlatform'  => 'x64',
+        ];
 
         // Create a contact for test
         $contactApi = $this->getContext('contacts');
-        $response = $contactApi->create(array('firstname' => 'Device API test'));
+        $response   = $contactApi->create(['firstname' => 'Device API test']);
         $this->assertErrors($response);
         $this->testPayload['lead'] = $response['contact']['id'];
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         // Delete a contact from test
         $this->api = $this->getContext('contacts');
-        $response = $this->api->delete($this->testPayload['lead']);
+        $response  = $this->api->delete($this->testPayload['lead']);
         $this->assertErrors($response);
     }
 
@@ -52,7 +55,7 @@ class DevicesTest extends MauticApiTestCase
         $this->assertPayload($response);
 
         // Test get contact devices endpoint
-        $contactContext = $this->getContext('contacts');
+        $contactContext  = $this->getContext('contacts');
         $responseDevices = $contactContext->getContactDevices($this->testPayload['lead']);
         $this->assertErrors($responseDevices);
         $this->assertEquals($responseDevices['total'], 1);
@@ -68,9 +71,9 @@ class DevicesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'deviceOsName' => 'Edubuntu',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 

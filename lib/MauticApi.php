@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -13,25 +14,26 @@ use Mautic\Auth\AuthInterface;
 use Mautic\Exception\ContextNotFoundException;
 
 /**
- * Mautic API Factory
+ * Mautic API Factory.
  */
 class MauticApi
 {
     /**
-     * Get an API context object
+     * Get an API context object.
      *
      * @param string        $apiContext API context (leads, forms, etc)
      * @param AuthInterface $auth       API Auth object
      * @param string        $baseUrl    Base URL for API endpoints
      *
      * @return Api\Api
+     *
      * @throws ContextNotFoundException
      *
      * @deprecated
      */
     public static function getContext($apiContext, AuthInterface $auth, $baseUrl = '')
     {
-        static $contexts = array();
+        static $contexts = [];
 
         $apiContext = ucfirst($apiContext);
 
@@ -49,13 +51,14 @@ class MauticApi
     }
 
     /**
-     * Get an API context object
+     * Get an API context object.
      *
      * @param string        $apiContext API context (leads, forms, etc)
      * @param AuthInterface $auth       API Auth object
      * @param string        $baseUrl    Base URL for API endpoints
      *
      * @return Api\Api
+     *
      * @throws ContextNotFoundException
      */
     public function newApi($apiContext, AuthInterface $auth, $baseUrl = '')

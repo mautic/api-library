@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Companies Context
+ * Companies Context.
  */
 class Companies extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,21 +33,21 @@ class Companies extends Api
     /**
      * @var array
      */
-    protected $bcRegexEndpoints = array(
+    protected $bcRegexEndpoints = [
         'companies/(.*?)/contact/(.*?)/add'    => 'companies/$1/contact/add/$2', // 2.6.0
-        'companies/(.*?)/contact/(.*?)/remove' => 'companies/$1/contact/remove/$2' // 2.6.0
-    );
+        'companies/(.*?)/contact/(.*?)/remove' => 'companies/$1/contact/remove/$2', // 2.6.0
+    ];
 
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:mine',
-    );
+    ];
 
     /**
-     * Add a contact to the company
+     * Add a contact to the company.
      *
      * @param int $id        Company ID
      * @param int $contactId Contact ID
@@ -56,11 +56,11 @@ class Companies extends Api
      */
     public function addContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', [], 'POST');
     }
 
     /**
-     * Remove a contact from the company
+     * Remove a contact from the company.
      *
      * @param int $id        Company ID
      * @param int $contactId Contact ID
@@ -69,6 +69,6 @@ class Companies extends Api
      */
     public function removeContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', [], 'POST');
     }
 }

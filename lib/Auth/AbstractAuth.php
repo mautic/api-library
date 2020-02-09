@@ -15,51 +15,48 @@ use Mautic\Exception\UnexpectedResponseFormatException;
 use Mautic\Response;
 
 /**
- * Class AbstractAuth
+ * Class AbstractAuth.
  */
 abstract class AbstractAuth implements AuthInterface
 {
     /**
-     * If set to true, $_SESSION['debug'] will be populated
+     * If set to true, $_SESSION['debug'] will be populated.
      *
      * @var bool
      */
     protected $_debug = false;
 
     /**
-     * Holds string of HTTP response headers
+     * Holds string of HTTP response headers.
      *
      * @var string
      */
     protected $_httpResponseHeaders;
 
     /**
-     * Holds array of HTTP response CURL info
+     * Holds array of HTTP response CURL info.
      *
      * @var array
      */
     protected $_httpResponseInfo;
 
     /**
-     * Timeout for a cURL request
+     * Timeout for a cURL request.
      *
      * @var int
      */
     protected $_curlTimeout = null;
 
     /**
-     * @param       $url
-     * @param array $headers
-     * @param array $parameters
-     * @param       $method
-     * @param array $settings
+     * @param $url
+     * @param $method
      *
      * @return mixed
      */
     abstract protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings);
 
     /**
-     * Enables debug mode
+     * Enables debug mode.
      *
      * @return $this
      */
@@ -71,17 +68,17 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
-     * Returns $_SESSION['oauth']['debug'] if $this->_debug = true
+     * Returns $_SESSION['oauth']['debug'] if $this->_debug = true.
      *
      * @return array
      */
     public function getDebugInfo()
     {
-        return ($this->_debug && !empty($_SESSION['oauth']['debug'])) ? $_SESSION['oauth']['debug'] : array();
+        return ($this->_debug && !empty($_SESSION['oauth']['debug'])) ? $_SESSION['oauth']['debug'] : [];
     }
 
     /**
-     * Returns array of HTTP response headers
+     * Returns array of HTTP response headers.
      *
      * @return array
      */
@@ -91,7 +88,7 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
-     * Returns array of HTTP response headers
+     * Returns array of HTTP response headers.
      *
      * @return array
      */
@@ -105,7 +102,7 @@ abstract class AbstractAuth implements AuthInterface
      *
      * @throws UnexpectedResponseFormatException|Exception
      */
-    public function makeRequest($url, array $parameters = array(), $method = 'GET', array $settings = array())
+    public function makeRequest($url, array $parameters = [], $method = 'GET', array $settings = [])
     {
         $this->log('makeRequest('.$url.', '.http_build_query($parameters).', '.$method.',...)');
 
@@ -113,18 +110,18 @@ abstract class AbstractAuth implements AuthInterface
 
         //make sure $method is capitalized for congruency
         $method  = strtoupper($method);
-        $headers = (isset($settings['headers']) && is_array($settings['headers'])) ? $settings['headers'] : array();
+        $headers = (isset($settings['headers']) && is_array($settings['headers'])) ? $settings['headers'] : [];
 
         list($headers, $parameters) = $this->prepareRequest($url, $headers, $parameters, $method, $settings);
 
         //Set default CURL options
-        $options = array(
+        $options = [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_HEADER         => true
-        );
+            CURLOPT_HEADER         => true,
+        ];
 
-        if ($this->_curlTimeout !== null) {
+        if (null !== $this->_curlTimeout) {
             $options[CURLOPT_TIMEOUT] = $this->_curlTimeout;
         }
 
@@ -132,13 +129,13 @@ abstract class AbstractAuth implements AuthInterface
         $options[CURLOPT_FOLLOWLOCATION] = (ini_get('open_basedir')) ? false : true;
 
         //Set custom REST method if not GET or POST
-        if (!in_array($method, array('GET', 'POST'))) {
+        if (!in_array($method, ['GET', 'POST'])) {
             $options[CURLOPT_CUSTOMREQUEST] = $method;
         }
 
         //Set post fields for POST/PUT/PATCH requests
         $isPost = false;
-        if (in_array($method, array('POST', 'PUT', 'PATCH'))) {
+        if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
             $isPost = true;
             // Set file to upload
             // Sending file data requires an array to set
@@ -146,7 +143,7 @@ abstract class AbstractAuth implements AuthInterface
             if (!empty($parameters['file']) && file_exists($parameters['file'])) {
                 $options[CURLOPT_INFILESIZE] = filesize($parameters['file']);
                 $parameters['file']          = $this->createCurlFile($parameters['file']);
-                $headers[]                   = "Content-Type: multipart/form-data";
+                $headers[]                   = 'Content-Type: multipart/form-data';
             } else {
                 $parameters = http_build_query($parameters, '', '&');
             }
@@ -162,7 +159,7 @@ abstract class AbstractAuth implements AuthInterface
 
         //Create a query string for GET/DELETE requests
         if (count($query) > 0) {
-            $queryGlue = strpos($url, '?') === false ? '?' : '&';
+            $queryGlue = false === strpos($url, '?') ? '?' : '&';
             $url       = $url.$queryGlue.http_build_query($query, '', '&');
             $this->log('URL updated to '.$url);
         }
@@ -193,6 +190,7 @@ abstract class AbstractAuth implements AuthInterface
         // Handle zip file response
         if ($response->isZip()) {
             $temporaryFilePath = isset($settings['temporaryFilePath']) ? $settings['temporaryFilePath'] : sys_get_temp_dir();
+
             return $response->saveToFile($temporaryFilePath);
         } else {
             return $response->getDecodedBody();
@@ -214,11 +212,11 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
-     * Build the CURL file based on PHP version
+     * Build the CURL file based on PHP version.
      *
-     * @param  string $filename
-     * @param  string $mimetype
-     * @param  string $postname
+     * @param string $filename
+     * @param string $mimetype
+     * @param string $postname
      *
      * @return string|\CURLFile
      */
@@ -243,7 +241,7 @@ abstract class AbstractAuth implements AuthInterface
      */
     protected function getQueryParameters($isPost, $parameters)
     {
-        return ($isPost) ? array() : (array) $parameters;
+        return ($isPost) ? [] : (array) $parameters;
     }
 
     /**
@@ -257,20 +255,20 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
-     * Build the HTTP response array out of the headers string
+     * Build the HTTP response array out of the headers string.
      *
-     * @param  string $headersStr
+     * @param string $headersStr
      *
      * @return array
      */
     protected function parseHeaders($headersStr)
     {
-        $headersArr  = array();
+        $headersArr  = [];
         $headersHlpr = explode("\r\n", $headersStr);
 
         foreach ($headersHlpr as $header) {
             $pos = strpos($header, ':');
-            if ($pos === false) {
+            if (false === $pos) {
                 $headersArr[] = trim($header);
             } else {
                 $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, ($pos + 1)));
@@ -281,7 +279,7 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
-     * Separates parameters from base URL
+     * Separates parameters from base URL.
      *
      * @param $url
      * @param $params
@@ -294,7 +292,7 @@ abstract class AbstractAuth implements AuthInterface
 
         if (!empty($a['query'])) {
             parse_str($a['query'], $qparts);
-            $cleanParams = array();
+            $cleanParams = [];
             foreach ($qparts as $k => $v) {
                 $cleanParams[$k] = $v ? $v : '';
             }
@@ -303,11 +301,11 @@ abstract class AbstractAuth implements AuthInterface
             $url      = $urlParts[0];
         }
 
-        return array($url, $params);
+        return [$url, $params];
     }
 
     /**
-     * Set the timeout for a cURL request
+     * Set the timeout for a cURL request.
      *
      * @param int $timeout
      */

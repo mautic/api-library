@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Pages Context
+ * Pages Context.
  */
 class Pages extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,7 +33,7 @@ class Pages extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:published',
         'is:unpublished',
@@ -41,5 +41,5 @@ class Pages extends Api
         'is:uncategorized',
         'category',
         'lang',
-    );
+    ];
 }

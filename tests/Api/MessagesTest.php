@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,46 +12,47 @@ namespace Mautic\Tests\Api;
 
 class MessagesTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('channels');
-    
-    protected $singularPlural = array(
-        'email' => 'emails',
-        'sms' => 'smses',
-        'notification' => 'notifications',
-    );
+    protected $skipPayloadAssertion = ['channels'];
 
-    public function setUp() {
-        $this->api = $this->getContext('messages');
-        $this->testPayload = array(
-            'name' => 'API message',
+    protected $singularPlural = [
+        'email'        => 'emails',
+        'sms'          => 'smses',
+        'notification' => 'notifications',
+    ];
+
+    public function setUp()
+    {
+        $this->api         = $this->getContext('messages');
+        $this->testPayload = [
+            'name'        => 'API message',
             'description' => 'Marketing message created via API unit test',
-            'channels' => array(
-                'email' => array(
-                    'channel' => 'email',
+            'channels'    => [
+                'email' => [
+                    'channel'   => 'email',
                     'channelId' => null,
                     'isEnabled' => true,
-                ),
-                'sms' => array(
-                    'channel' => 'sms',
+                ],
+                'sms' => [
+                    'channel'   => 'sms',
                     'channelId' => null,
                     'isEnabled' => false,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     protected function setUpPayloadClass()
     {
         foreach ($this->testPayload['channels'] as $key => $channel) {
             $contextName = $this->singularPlural[$channel['channel']];
-            $api = $this->getContext($contextName);
-            $response = $api->create(
-                array(
-                    'name' => 'MM API test', // required for all
+            $api         = $this->getContext($contextName);
+            $response    = $api->create(
+                [
+                    'name'    => 'MM API test', // required for all
                     'subject' => 'MM API test', // required for email
                     'message' => 'test', // required for sms
-                    'heading' => 'test' // required for notifications
-                )
+                    'heading' => 'test', // required for notifications
+                ]
             );
             $this->assertErrors($response);
             $this->testPayload['channels'][$key]['channelId'] = $response[$api->itemName()]['id'];
@@ -61,13 +63,13 @@ class MessagesTest extends MauticApiTestCase
     {
         foreach ($this->testPayload['channels'] as $key => $channel) {
             $contextName = $this->singularPlural[$channel['channel']];
-            $api = $this->getContext($contextName);
-            $response = $api->delete($this->testPayload['channels'][$key]['channelId']);
+            $api         = $this->getContext($contextName);
+            $response    = $api->delete($this->testPayload['channels'][$key]['channelId']);
             $this->assertErrors($response);
         }
     }
 
-    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
+    protected function assertPayload($response, array $payload = [], $isBatch = false, $idColumn = 'id', $callback = null)
     {
         parent::assertPayload($response, $payload, $isBatch, $idColumn, $callback);
 

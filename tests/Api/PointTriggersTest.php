@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,41 +12,42 @@ namespace Mautic\Tests\Api;
 
 class PointTriggersTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('pointTriggers');
-        $this->testPayload = array(
-            'name' => 'test',
-            'description' => 'created as a API test',
-            'points' => 5,
-            'color' => '4e5d9d',
+    public function setUp()
+    {
+        $this->api         = $this->getContext('pointTriggers');
+        $this->testPayload = [
+            'name'                 => 'test',
+            'description'          => 'created as a API test',
+            'points'               => 5,
+            'color'                => '4e5d9d',
             'triggerExistingLeads' => false,
-            'events' => array(
-                array(
-                    'name' => 'tag test event',
+            'events'               => [
+                [
+                    'name'        => 'tag test event',
                     'description' => 'created as a API test',
-                    'type' => 'lead.changetags',
-                    'order' => 1,
-                    'properties' => array(
-                        'add_tags' => array('tag-a'),
-                        'remove_tags' => array()
-                    )
-                ),
-                array(
-                    'name' => 'send email test event',
+                    'type'        => 'lead.changetags',
+                    'order'       => 1,
+                    'properties'  => [
+                        'add_tags'    => ['tag-a'],
+                        'remove_tags' => [],
+                    ],
+                ],
+                [
+                    'name'        => 'send email test event',
                     'description' => 'created as a API test',
-                    'type' => 'email.send',
-                    'order' => 2,
-                    'properties' => array(
-                        'email' => 1
-                    )
-                )
-            )
-        );
+                    'type'        => 'email.send',
+                    'order'       => 2,
+                    'properties'  => [
+                        'email' => 1,
+                    ],
+                ],
+            ],
+        ];
     }
 
-    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
+    protected function assertPayload($response, array $payload = [], $isBatch = false, $idColumn = 'id', $callback = null)
     {
-        parent::assertPayload($response, $payload, $isBatch, $idColumn, array($this, 'validateComponentsPayload'));
+        parent::assertPayload($response, $payload, $isBatch, $idColumn, [$this, 'validateComponentsPayload']);
     }
 
     protected function validateComponentsPayload($itemProp, $itemVal, $item)
@@ -62,7 +64,6 @@ class PointTriggersTest extends MauticApiTestCase
                 $this->assertSame($item[$itemProp], $itemVal);
         }
     }
-
 
     public function testGetList()
     {
@@ -81,10 +82,10 @@ class PointTriggersTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
-            'name' => 'test2',
-            'events' => $this->testPayload['events']
-        );
+        $editTo = [
+            'name'   => 'test2',
+            'events' => $this->testPayload['events'],
+        ];
         $this->standardTestEditPatch($editTo);
     }
 
@@ -118,7 +119,7 @@ class PointTriggersTest extends MauticApiTestCase
 
     public function testDeleteEvents()
     {
-        $eventIds  = array();
+        $eventIds   = [];
         $response   = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 

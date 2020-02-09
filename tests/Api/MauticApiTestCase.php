@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -17,30 +18,30 @@ use PHPUnit\Framework\TestCase;
 
 abstract class MauticApiTestCase extends TestCase
 {
-    protected $config = null;
-    protected $skipPayloadAssertion = array();
-    protected $testPayload = array();
+    protected $config               = null;
+    protected $skipPayloadAssertion = [];
+    protected $testPayload          = [];
 
-    /** @var  Api */
+    /** @var Api */
     protected $api;
 
     public function setUp()
     {
-        $this->testPayload = array();
+        $this->testPayload = [];
     }
 
     protected function getAuth()
     {
         $this->config = include __DIR__.'/../local.config.php';
-        $authMethod = isset($this->config['AuthMethod']) ? $this->config['AuthMethod'] : 'OAuth';
+        $authMethod   = isset($this->config['AuthMethod']) ? $this->config['AuthMethod'] : 'OAuth';
 
         if (file_exists(__DIR__.'/../local.tokens.php')) {
             $this->config = array_merge($this->config, include __DIR__.'/../local.tokens.php');
         }
 
         $apiAuth = new ApiAuth();
-        $auth = $apiAuth->newAuth($this->config, $authMethod);
-        if ($authMethod != 'BasicAuth') {
+        $auth    = $apiAuth->newAuth($this->config, $authMethod);
+        if ('BasicAuth' != $authMethod) {
             if (empty($this->config['refreshToken']) && !$auth->isAuthorized()) {
                 $this->assertTrue($authorized, 'Authorization failed. Check credentials in local.config.php.');
             } else {
@@ -51,17 +52,17 @@ abstract class MauticApiTestCase extends TestCase
                 }
 
                 if ($auth->accessTokenUpdated()) {
-                    $tokens = $auth->getAccessTokenData();
-                    $tokens['accessToken'] = (isset($tokens['access_token'])) ? $tokens['access_token'] : null;
+                    $tokens                       = $auth->getAccessTokenData();
+                    $tokens['accessToken']        = (isset($tokens['access_token'])) ? $tokens['access_token'] : null;
                     $tokens['accessTokenExpires'] = (isset($tokens['expires'])) ? $tokens['expires'] : null;
-                    $tokens['refreshToken'] = (isset($tokens['refresh_token'])) ? $tokens['refresh_token'] : null;
+                    $tokens['refreshToken']       = (isset($tokens['refresh_token'])) ? $tokens['refresh_token'] : null;
 
                     file_put_contents(__DIR__.'/../local.tokens.php', '<?php return '.var_export($tokens, true).';');
                 }
             }
         }
 
-        return array($auth, $this->config['apiUrl']);
+        return [$auth, $this->config['apiUrl']];
     }
 
     protected function getContext($context)
@@ -77,12 +78,12 @@ abstract class MauticApiTestCase extends TestCase
     {
         $message = '';
         if (isset($response['errors'])) {
-            $messages = array();
+            $messages = [];
             foreach ($response['errors'] as $error) {
                 $messages[] = "{$error['message']}";
             }
 
-            $message = implode("; ", $messages);
+            $message = implode('; ', $messages);
         } elseif (isset($response['error'])) {
             $message = (is_array($response['error']) ? $response['error']['message'] : $response['error']);
         }
@@ -97,7 +98,7 @@ abstract class MauticApiTestCase extends TestCase
 
     protected function assertPayload(
         $response,
-        array $payload = array(),
+        array $payload = [],
         $isBatch = false,
         $idColumn = 'id',
         $callback = null
@@ -173,8 +174,8 @@ abstract class MauticApiTestCase extends TestCase
     protected function standardTestGetListOfSpecificIds($callback = null)
     {
         // Create some items first
-        $itemIds = array();
-        for ($i = 0; $i <= 2; $i++) {
+        $itemIds = [];
+        for ($i = 0; $i <= 2; ++$i) {
             $response = $this->api->create($this->testPayload);
             $this->assertErrors($response);
             $itemIds[] = $response[$this->api->itemName()]['id'];
@@ -186,7 +187,7 @@ abstract class MauticApiTestCase extends TestCase
             $callback($response);
         }
 
-        $search = 'ids:'.implode(',', $itemIds);
+        $search   = 'ids:'.implode(',', $itemIds);
         $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
@@ -206,7 +207,7 @@ abstract class MauticApiTestCase extends TestCase
         if (!empty($this->testPayload)) {
             reset($this->testPayload);
             $fieldKey = key($this->testPayload);
-            $qb = new QueryBuilder();
+            $qb       = new QueryBuilder();
             $qb->getWhereBuilder()->isNotEmpty($fieldKey);
 
             $response = $this->api->getCustomList($qb);
@@ -255,11 +256,11 @@ abstract class MauticApiTestCase extends TestCase
         }
 
         if (null == $batch) {
-            $batch = array(
+            $batch = [
                 $this->testPayload,
                 $this->testPayload,
                 $this->testPayload,
-            );
+            ];
         }
 
         // Create batch
@@ -267,13 +268,13 @@ abstract class MauticApiTestCase extends TestCase
         $this->assertPayload($createResponse, $batch, 3);
 
         // Add new IDs
-        $ids = array();
+        $ids     = [];
         $counter = 0;
         foreach ($createResponse[$this->api->listName()] as $item) {
             $batch[$counter]['id'] = $item['id'];
-            $ids[] = $item['id'];
+            $ids[]                 = $item['id'];
 
-            $counter++;
+            ++$counter;
         }
 
         if (is_callable($callback)) {

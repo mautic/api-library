@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Forms Context
+ * Forms Context.
  */
 class Forms extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,7 +33,7 @@ class Forms extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:published',
         'is:unpublished',
@@ -42,36 +42,34 @@ class Forms extends Api
         'category',
         'name',
         'has:results',
-    );
+    ];
 
     /**
-     * Remove fields from a form
+     * Remove fields from a form.
      *
-     * @param integer $formId
-     * @param array   $fieldIds
+     * @param int $formId
      *
      * @return array|mixed
      */
     public function deleteFields($formId, array $fieldIds)
     {
-        return $this->makeRequest($this->endpoint.'/'.$formId.'/fields/delete', array('fields' => $fieldIds), 'DELETE');
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/fields/delete', ['fields' => $fieldIds], 'DELETE');
     }
 
     /**
-     * Remove actions from a form
+     * Remove actions from a form.
      *
-     * @param integer $formId
-     * @param array   $actionIds
+     * @param int $formId
      *
      * @return array|mixed
      */
     public function deleteActions($formId, array $actionIds)
     {
-        return $this->makeRequest($this->endpoint.'/'.$formId.'/actions/delete', array('actions' => $actionIds), 'DELETE');
+        return $this->makeRequest($this->endpoint.'/'.$formId.'/actions/delete', ['actions' => $actionIds], 'DELETE');
     }
 
     /**
-     * Get a single submission
+     * Get a single submission.
      *
      * @param int $formId
      * @param int $submissionId
@@ -84,7 +82,7 @@ class Forms extends Api
     }
 
     /**
-     * Get a list of form submissions
+     * Get a list of form submissions.
      *
      * @param int    $formId
      * @param string $search
@@ -99,15 +97,15 @@ class Forms extends Api
      */
     public function getSubmissions($formId, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
     {
-        $parameters = array(
+        $parameters = [
             'search'        => $search,
             'start'         => $start,
             'limit'         => $limit,
             'orderBy'       => $orderBy,
             'orderByDir'    => $orderByDir,
             'publishedOnly' => $publishedOnly,
-            'minimal'       => $minimal
-        );
+            'minimal'       => $minimal,
+        ];
 
         $parameters = array_filter($parameters);
 
@@ -115,7 +113,7 @@ class Forms extends Api
     }
 
     /**
-     * Get a list of form submissions for specific form and contact
+     * Get a list of form submissions for specific form and contact.
      *
      * @param int    $formId
      * @param int    $contactId
@@ -131,15 +129,15 @@ class Forms extends Api
      */
     public function getSubmissionsForContact($formId, $contactId, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC', $publishedOnly = false, $minimal = false)
     {
-        $parameters = array(
+        $parameters = [
             'search'        => $search,
             'start'         => $start,
             'limit'         => $limit,
             'orderBy'       => $orderBy,
             'orderByDir'    => $orderByDir,
             'publishedOnly' => $publishedOnly,
-            'minimal'       => $minimal
-        );
+            'minimal'       => $minimal,
+        ];
 
         $parameters = array_filter($parameters);
 

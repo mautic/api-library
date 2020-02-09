@@ -14,7 +14,6 @@ namespace Mautic\Api;
  */
 class Focus extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,12 +32,12 @@ class Focus extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:published',
         'is:unpublished',
         'is:mine',
         'is:uncategorized',
         'category',
-    );
+    ];
 }

@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Points Context
+ * Points Context.
  */
 class Points extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,12 +33,12 @@ class Points extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
-    );
+    ];
 
     /**
-     * Get list of available action types
+     * Get list of available action types.
      *
      * @return array|mixed
      */

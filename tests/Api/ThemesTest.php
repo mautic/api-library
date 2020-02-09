@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -38,7 +39,7 @@ class ThemesTest extends MauticApiTestCase
         $this->assertTrue(file_exists($response['file']));
 
         // Test setTemporaryFilePath
-        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'mytempdir';
+        $dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'mytempdir';
         $this->api->setTemporaryFilePath($dir);
         $response = $this->api->get('blank');
         $this->assertErrors($response);
@@ -49,7 +50,7 @@ class ThemesTest extends MauticApiTestCase
         // Create a new theme from the theme we just got
         $tmpFile = dirname(__DIR__).'/'.$themeName.'.zip';
         $this->assertTrue(rename($response['file'], $tmpFile), 'could not create '.$tmpFile);
-        $response = $this->api->create(array('file' => $tmpFile));
+        $response = $this->api->create(['file' => $tmpFile]);
         $this->assertErrors($response);
         $this->assertTrue($response['success']);
 

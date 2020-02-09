@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -26,10 +27,10 @@ class StatsTest extends MauticApiTestCase
             $tableColumns = $response['tableColumns'];
         }
 
-        return ($withColumns) ? array($tables, $tableColumns) : $tables;
+        return ($withColumns) ? [$tables, $tableColumns] : $tables;
     }
 
-    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
+    protected function assertPayload($response, array $payload = [], $isBatch = false, $idColumn = 'id', $callback = null)
     {
         $this->assertErrors($response);
         $this->assertTrue(isset($response[$this->api->listName()]), 'The '.$this->api->listName().' array does not exist.');
@@ -59,7 +60,7 @@ class StatsTest extends MauticApiTestCase
 
     public function testGetTables()
     {
-        $expectedTables = array(
+        $expectedTables = [
             'asset_downloads',
             'audit_log',
             'campaign_lead_event_log',
@@ -94,7 +95,7 @@ class StatsTest extends MauticApiTestCase
             'tweet_stats',
             'video_hits',
             'webhook_logs',
-        );
+        ];
         $tables = $this->getTableList();
         $this->assertTrue(!empty($tables));
         $this->assertSame(
@@ -131,11 +132,11 @@ class StatsTest extends MauticApiTestCase
                 $table,
                 0,
                 10,
-                array(
-                    array(
-                        'col' => ($hasId) ? 'id' : $columns[$table][0]
-                    )
-                )
+                [
+                    [
+                        'col' => ($hasId) ? 'id' : $columns[$table][0],
+                    ],
+                ]
             );
             $this->assertPayload($response);
 
@@ -155,12 +156,12 @@ class StatsTest extends MauticApiTestCase
                 $table,
                 0,
                 10,
-                array(
-                    array(
+                [
+                    [
                         'col' => ($hasId) ? 'id' : $columns[$table][0],
-                        'dir' => 'asc'
-                    )
-                )
+                        'dir' => 'asc',
+                    ],
+                ]
             );
             $this->assertPayload($response);
 
@@ -181,12 +182,12 @@ class StatsTest extends MauticApiTestCase
                 $table,
                 0,
                 10,
-                array(
-                    array(
+                [
+                    [
                         'col' => ($hasId) ? 'id' : $columns[$table][0],
-                        'dir' => 'DESC'
-                    )
-                )
+                        'dir' => 'DESC',
+                    ],
+                ]
             );
             $this->assertPayload($response);
 
@@ -200,25 +201,25 @@ class StatsTest extends MauticApiTestCase
     {
         list($tables, $columns) = $this->getTableList(true);
 
-        $where = array(
-            array(
+        $where = [
+            [
                 'col'  => 'id',
                 'expr' => 'eq',
                 'val'  => 3,
-            )
-        );
+            ],
+        ];
 
         foreach ($tables as $table) {
             if (!in_array('id', $columns[$table])) {
                 return;
             }
 
-            $response = $this->api->get($table, 0, 2, array(), $where);
+            $response = $this->api->get($table, 0, 2, [], $where);
             $this->assertPayload($response);
             $this->assertTrue((count($response[$this->api->listName()])) <= 1);
 
             // The record might not exist in the database, but in case it does...
-            if ((count($response[$this->api->listName()])) === 1) {
+            if (1 === (count($response[$this->api->listName()]))) {
                 $this->assertSame((int) $response[$this->api->listName()][0]['id'], $where[0]['val']);
             }
         }
@@ -228,19 +229,19 @@ class StatsTest extends MauticApiTestCase
     {
         list($tables, $columns) = $this->getTableList(true);
 
-        $where = array(
-            array(
+        $where = [
+            [
                 'col'  => 'id',
                 'expr' => 'gt',
                 'val'  => 3,
-            )
-        );
+            ],
+        ];
 
         foreach ($tables as $table) {
             if (!in_array('id', $columns[$table])) {
                 return;
             }
-            $response = $this->api->get($table, 0, 2, array(), $where);
+            $response = $this->api->get($table, 0, 2, [], $where);
             $this->assertPayload($response);
 
             // The record might not exist in the database, but in case it does...

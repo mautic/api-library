@@ -1,16 +1,17 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Tests;
 
-use Mautic\Response;
 use Mautic\Exception\UnexpectedResponseFormatException;
+use Mautic\Response;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase
@@ -63,34 +64,34 @@ Content-Type: text/html; charset=UTF-8';
 
     private $urlParamBody = 'first=value&arr[]=foo+bar&arr[]=baz';
 
-    private $curlInfo = array(
-        'url' => 'http://mautic.dev/index_dev.php',
-        'content_type' => null,
-        'http_code' => 200,
-        'header_size' => 0,
-        'request_size' => 0,
-        'filetime' => -1,
-        'ssl_verify_result' => 0,
-        'redirect_count' => 0,
-        'total_time' => 0,
-        'namelookup_time' => 0,
-        'connect_time' => 0,
-        'pretransfer_time' => 0,
-        'size_upload' => 0,
-        'size_download' => 0,
-        'speed_download' => 0,
-        'speed_upload' => 0,
+    private $curlInfo = [
+        'url'                     => 'http://mautic.dev/index_dev.php',
+        'content_type'            => null,
+        'http_code'               => 200,
+        'header_size'             => 0,
+        'request_size'            => 0,
+        'filetime'                => -1,
+        'ssl_verify_result'       => 0,
+        'redirect_count'          => 0,
+        'total_time'              => 0,
+        'namelookup_time'         => 0,
+        'connect_time'            => 0,
+        'pretransfer_time'        => 0,
+        'size_upload'             => 0,
+        'size_download'           => 0,
+        'speed_download'          => 0,
+        'speed_upload'            => 0,
         'download_content_length' => -1,
-        'upload_content_length' => -1,
-        'starttransfer_time' => 0,
-        'redirect_time' => 0,
-        'redirect_url' => null,
-        'primary_ip' => null,
-        'certinfo' => array(),
-        'primary_port' => 0,
-        'local_ip' => null,
-        'local_port' => 0,
-    );
+        'upload_content_length'   => -1,
+        'starttransfer_time'      => 0,
+        'redirect_time'           => 0,
+        'redirect_url'            => null,
+        'primary_ip'              => null,
+        'certinfo'                => [],
+        'primary_port'            => 0,
+        'local_ip'                => null,
+        'local_port'              => 0,
+    ];
 
     private function getHtmlResponse()
     {
@@ -109,8 +110,9 @@ Content-Type: text/html; charset=UTF-8';
 
     private function getInfo($code = 200)
     {
-        $info = $this->curlInfo;
+        $info              = $this->curlInfo;
         $info['http_code'] = $code;
+
         return $info;
     }
 
@@ -132,14 +134,14 @@ Content-Type: text/html; charset=UTF-8';
     {
         try {
             $response = new Response($this->getHtmlResponse(), $this->getInfo(404));
-        } catch(UnexpectedResponseFormatException $e) {
+        } catch (UnexpectedResponseFormatException $e) {
             $this->assertSame(404, $e->getCode());
         }
     }
 
     public function testDecodeFromUrlParamsWithParams()
     {
-        $response = new Response($this->getUrlParamResponse(), $this->getInfo());
+        $response       = new Response($this->getUrlParamResponse(), $this->getInfo());
         $responseParams = $response->decodeFromUrlParams();
         $this->assertSame('value', $responseParams['first']);
     }
@@ -154,7 +156,7 @@ Content-Type: text/html; charset=UTF-8';
     public function testDecodeFromJsonWithJson()
     {
         $response = new Response($this->getJsonResponse(), $this->getInfo());
-        $json = $response->decodeFromJson();
+        $json     = $response->decodeFromJson();
         $this->assertSame('world', $json['hello']);
     }
 
@@ -168,7 +170,7 @@ Content-Type: text/html; charset=UTF-8';
     public function testGetDecodedBodyWithJson()
     {
         $response = new Response($this->getJsonResponse(), $this->getInfo());
-        $body = $response->getDecodedBody();
+        $body     = $response->getDecodedBody();
         $this->assertSame('world', $body['hello']);
     }
 
@@ -189,7 +191,7 @@ Content-Type: text/html; charset=UTF-8';
     public function testSaveToFile()
     {
         $response = new Response($this->getJsonResponse(), $this->getInfo());
-        $result = $response->saveToFile(sys_get_temp_dir());
+        $result   = $response->saveToFile(sys_get_temp_dir());
         $this->assertFalse(empty($result['file']));
         $this->assertTrue(file_exists($result['file']));
         $this->assertSame($this->jsonBody, file_get_contents($result['file']));

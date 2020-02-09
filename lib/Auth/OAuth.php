@@ -15,61 +15,61 @@ use Mautic\Exception\AuthorizationRequiredException;
 use Mautic\Exception\IncorrectParametersReturnedException;
 
 /**
- * OAuth Client modified from https://code.google.com/p/simple-php-oauth/
+ * OAuth Client modified from https://code.google.com/p/simple-php-oauth/.
  */
 class OAuth extends AbstractAuth
 {
     /**
-     * Access token returned by OAuth server
+     * Access token returned by OAuth server.
      *
      * @var string
      */
     protected $_access_token;
 
     /**
-     * Access token secret returned by OAuth server
+     * Access token secret returned by OAuth server.
      *
      * @var string
      */
     protected $_access_token_secret;
 
     /**
-     * Set to true if a refresh token was used to update an access token
+     * Set to true if a refresh token was used to update an access token.
      *
      * @var bool
      */
     protected $_access_token_updated = false;
 
     /**
-     * Access token URL
+     * Access token URL.
      *
      * @var string
      */
     protected $_access_token_url;
 
     /**
-     * Authorize URL
+     * Authorize URL.
      *
      * @var string
      */
     protected $_authorize_url;
 
     /**
-     * Callback or Redirect URL
+     * Callback or Redirect URL.
      *
      * @var string
      */
     protected $_callback;
 
     /**
-     * Consumer or client key
+     * Consumer or client key.
      *
      * @var string
      */
     protected $_client_id;
 
     /**
-     * Consumer or client secret
+     * Consumer or client secret.
      *
      * @var string
      */
@@ -81,49 +81,49 @@ class OAuth extends AbstractAuth
     protected $_do_not_redirect = false;
 
     /**
-     * Unix timestamp for when token expires
+     * Unix timestamp for when token expires.
      *
      * @var string
      */
     protected $_expires;
 
     /**
-     * OAuth2 redirect type
+     * OAuth2 redirect type.
      *
      * @var string
      */
     protected $_redirect_type = 'code';
 
     /**
-     * OAuth2 refresh token
+     * OAuth2 refresh token.
      *
      * @var string
      */
     protected $_refresh_token;
 
     /**
-     * Request token URL for OAuth1
+     * Request token URL for OAuth1.
      *
      * @var string
      */
     protected $_request_token_url;
 
     /**
-     * OAuth2 scope
+     * OAuth2 scope.
      *
      * @var array
      */
-    protected $_scope = array();
+    protected $_scope = [];
 
     /**
-     * OAuth2 token type
+     * OAuth2 token type.
      *
      * @var string
      */
     protected $_token_type;
 
     /**
-     * Check to see if the access token was updated from a refresh token
+     * Check to see if the access token was updated from a refresh token.
      *
      * @return bool
      */
@@ -133,30 +133,30 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Returns access token data
+     * Returns access token data.
      *
      * @return array
      */
     public function getAccessTokenData()
     {
         if ($this->isOauth1()) {
-            return array(
+            return [
                 'access_token'        => $this->_access_token,
                 'access_token_secret' => $this->_access_token_secret,
                 'expires'             => $this->_expires,
-            );
+            ];
         }
 
-        return array(
+        return [
             'access_token'  => $this->_access_token,
             'expires'       => $this->_expires,
             'token_type'    => $this->_token_type,
-            'refresh_token' => $this->_refresh_token
-        );
+            'refresh_token' => $this->_refresh_token,
+        ];
     }
 
     /**
-     * Returns array of HTTP response headers
+     * Returns array of HTTP response headers.
      *
      * @return array
      */
@@ -166,7 +166,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Returns array of HTTP response headers
+     * Returns array of HTTP response headers.
      *
      * @return array
      */
@@ -200,9 +200,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Set an existing/already retrieved access token
-     *
-     * @param array $accessTokenDetails
+     * Set an existing/already retrieved access token.
      *
      * @return $this
      */
@@ -217,7 +215,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Set access token URL
+     * Set access token URL.
      *
      * @param $url
      *
@@ -231,7 +229,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Set authorization URL
+     * Set authorization URL.
      *
      * @param $url
      *
@@ -245,7 +243,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Set redirect type for OAuth2
+     * Set redirect type for OAuth2.
      *
      * @param $type
      *
@@ -259,7 +257,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Set request token URL
+     * Set request token URL.
      *
      * @param $url
      *
@@ -273,7 +271,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Set OAuth2 scope
+     * Set OAuth2 scope.
      *
      * @param array|string $scope
      *
@@ -291,8 +289,8 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * @param string $baseUrl URL of the Mautic instance
-     * @param string $version ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
+     * @param string $baseUrl            URL of the Mautic instance
+     * @param string $version            ['OAuth1a', ''OAuth2'']. 'OAuth2' is default value
      * @param string $clientKey
      * @param string $clientSecret
      * @param string $accessToken
@@ -321,7 +319,7 @@ class OAuth extends AbstractAuth
         $this->_callback            = $callback;
 
         if ($baseUrl) {
-            if ($version == 'OAuth1a') {
+            if ('OAuth1a' == $version) {
                 if (!$this->_access_token_url) {
                     $this->_access_token_url = $baseUrl.'/oauth/v1/access_token';
                 }
@@ -347,21 +345,23 @@ class OAuth extends AbstractAuth
 
         if (!empty($accessToken)) {
             $this->setAccessTokenDetails(
-                array(
+                [
                     'access_token'        => $accessToken,
                     'access_token_secret' => $accessTokenSecret,
                     'expires'             => $accessTokenExpires,
-                    'refresh_token'       => $refreshToken
-                )
+                    'refresh_token'       => $refreshToken,
+                ]
             );
         }
     }
 
     /**
-     * Validate existing access token
+     * Validate existing access token.
      *
      * @param bool $redirect
+     *
      * @return bool
+     *
      * @throws IncorrectParametersReturnedException
      */
     public function validateAccessToken($redirect = true)
@@ -392,7 +392,7 @@ class OAuth extends AbstractAuth
         }
 
         //Reauthorize if no token was found
-        if (strlen($this->_access_token) == 0) {
+        if (0 == strlen($this->_access_token)) {
             $this->log('access token empty so authorize');
 
             //OAuth flows
@@ -447,7 +447,7 @@ class OAuth extends AbstractAuth
             }
 
             unset($_SESSION['oauth']['state']);
-            $this->requestAccessToken('POST', array(), 'json');
+            $this->requestAccessToken('POST', [], 'json');
 
             return true;
         }
@@ -456,15 +456,14 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Authorize app
+     * Authorize app.
      *
-     * @param array  $scope
      * @param string $scope_separator
      * @param null   $attach
      *
      * @throws AuthorizationRequiredException
      */
-    protected function authorize(array $scope = array(), $scope_separator = ',', $attach = null)
+    protected function authorize(array $scope = [], $scope_separator = ',', $attach = null)
     {
         $authUrl = $this->_authorize_url;
 
@@ -476,7 +475,6 @@ class OAuth extends AbstractAuth
             if (!empty($this->_callback)) {
                 $authUrl .= '&oauth_callback='.urlencode($this->_callback);
             }
-
         } else {
             //OAuth 2.0
             $authUrl .= '?client_id='.$this->_client_id.'&redirect_uri='.urlencode($this->_callback);
@@ -528,20 +526,20 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Build the HTTP response array out of the headers string
+     * Build the HTTP response array out of the headers string.
      *
-     * @param  string $headersStr
+     * @param string $headersStr
      *
      * @return array
      */
     protected function parseHeaders($headersStr)
     {
-        $headersArr = array();
+        $headersArr  = [];
         $headersHlpr = explode("\r\n", $headersStr);
 
         foreach ($headersHlpr as $header) {
             $pos = strpos($header, ':');
-            if ($pos === false) {
+            if (false === $pos) {
                 $headersArr[] = trim($header);
             } else {
                 $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, ($pos + 1)));
@@ -553,10 +551,7 @@ class OAuth extends AbstractAuth
 
     /**
      * @param       $url
-     * @param array $headers
-     * @param array $parameters
      * @param array $method
-     * @param array $settings
      *
      * @return array
      */
@@ -600,20 +595,20 @@ class OAuth extends AbstractAuth
             $parameters['access_token'] = $this->_access_token;
         }
 
-        return array($headers, $parameters);
+        return [$headers, $parameters];
     }
 
     /**
-     * Request access token
+     * Request access token.
      *
      * @param string $method
-     * @param array  $params
      * @param string $responseType
      *
      * @return bool
+     *
      * @throws IncorrectParametersReturnedException
      */
-    protected function requestAccessToken($method = 'POST', array $params = array(), $responseType = 'flat')
+    protected function requestAccessToken($method = 'POST', array $params = [], $responseType = 'flat')
     {
         $this->log('requestAccessToken()');
 
@@ -622,18 +617,18 @@ class OAuth extends AbstractAuth
             //OAuth 1.0
             $this->log('using OAuth1.0a spec');
 
-            $parameters = array('oauth_verifier' => $_GET['oauth_verifier']);
+            $parameters = ['oauth_verifier' => $_GET['oauth_verifier']];
             $parameters = array_merge($parameters, $params);
         } else {
             //OAuth 2.0
             $this->log('using OAuth2 spec');
 
-            $parameters = array(
+            $parameters = [
                 'client_id'     => $this->_client_id,
                 'redirect_uri'  => $this->_callback,
                 'client_secret' => $this->_client_secret,
-                'grant_type'    => 'authorization_code'
-            );
+                'grant_type'    => 'authorization_code',
+            ];
 
             if (isset($_GET['code'])) {
                 $parameters['code'] = $_GET['code'];
@@ -649,11 +644,11 @@ class OAuth extends AbstractAuth
         }
 
         //Make the request
-        $settings = array(
+        $settings = [
             'responseType'    => $responseType,
             'includeCallback' => true,
-            'includeVerifier' => true
-        );
+            'includeVerifier' => true,
+        ];
 
         $params = $this->makeRequest($this->_access_token_url, $parameters, $method, $settings);
 
@@ -706,11 +701,11 @@ class OAuth extends AbstractAuth
 
         if (is_array($params)) {
             if (isset($params['errors'])) {
-                $errors = array();
+                $errors = [];
                 foreach ($params['errors'] as $error) {
                     $errors[] = $error['message'];
                 }
-                $response = implode("; ", $errors);
+                $response = implode('; ', $errors);
             } elseif (isset($params['error'])) {
                 // @deprecated support for pre Mautic 2.6.0
                 if (is_array($params['error'])) {
@@ -735,7 +730,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Request token for OAuth1
+     * Request token for OAuth1.
      *
      * @param string $responseType
      *
@@ -746,12 +741,12 @@ class OAuth extends AbstractAuth
         $this->log('requestToken()');
 
         //Make the request
-        $settings = array(
+        $settings = [
             'responseType'    => $responseType,
             'includeCallback' => true,
-            'includeVerifier' => false
-        );
-        $params   = $this->makeRequest($this->_request_token_url, array(), 'POST', $settings);
+            'includeVerifier' => false,
+        ];
+        $params   = $this->makeRequest($this->_request_token_url, [], 'POST', $settings);
 
         //Add token and secret to the session
         if (is_array($params) && isset($params['oauth_token']) && isset($params['oauth_token_secret'])) {
@@ -787,7 +782,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Separates parameters from base URL
+     * Separates parameters from base URL.
      *
      * @param $url
      * @param $params
@@ -800,7 +795,7 @@ class OAuth extends AbstractAuth
 
         if (!empty($a['query'])) {
             parse_str($a['query'], $qparts);
-            $cleanParams = array();
+            $cleanParams = [];
             foreach ($qparts as $k => $v) {
                 $cleanParams[$k] = $v ? $v : '';
             }
@@ -809,11 +804,11 @@ class OAuth extends AbstractAuth
             $url      = $urlParts[0];
         }
 
-        return array($url, $params);
+        return [$url, $params];
     }
 
     /**
-     * Build header for OAuth 1 authorization
+     * Build header for OAuth 1 authorization.
      *
      * @param $oauth
      *
@@ -829,7 +824,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Build base string for OAuth 1 signature signing
+     * Build base string for OAuth 1 signature signing.
      *
      * @param string $baseURI
      * @param string $method
@@ -857,7 +852,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * OAuth1.0 nonce generator
+     * OAuth1.0 nonce generator.
      *
      * @param int $bits
      *
@@ -869,7 +864,7 @@ class OAuth extends AbstractAuth
         $accumulatedBits = 0;
         $random          = mt_getrandmax();
 
-        for ($totalBits = 0; $random != 0; $random >>= 1) {
+        for ($totalBits = 0; 0 != $random; $random >>= 1) {
             ++$totalBits;
         }
 
@@ -877,7 +872,7 @@ class OAuth extends AbstractAuth
 
         while ($accumulatedBits < $bits) {
             $bitsToAdd = min($totalBits - $usableBits, $bits - $accumulatedBits);
-            if ($bitsToAdd % 4 != 0) {
+            if (0 != $bitsToAdd % 4) {
                 // add bits in whole increments of 4
                 $bitsToAdd += 4 - $bitsToAdd % 4;
             }
@@ -895,7 +890,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Get composite key for OAuth 1 signature signing
+     * Get composite key for OAuth 1 signature signing.
      *
      * @return string
      */
@@ -913,7 +908,7 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Get OAuth 1.0 Headers
+     * Get OAuth 1.0 Headers.
      *
      * @param bool $includeCallback
      *
@@ -921,13 +916,13 @@ class OAuth extends AbstractAuth
      */
     private function getOauthHeaders($includeCallback = false)
     {
-        $oauth = array(
+        $oauth = [
             'oauth_consumer_key'     => $this->_client_id,
             'oauth_nonce'            => $this->generateNonce(),
             'oauth_signature_method' => 'HMAC-SHA1',
             'oauth_timestamp'        => time(),
-            'oauth_version'          => '1.0'
-        );
+            'oauth_version'          => '1.0',
+        ];
 
         if (isset($this->_access_token)) {
             $oauth['oauth_token'] = $this->_access_token;
@@ -943,9 +938,9 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Normalize parameters
+     * Normalize parameters.
      *
-     * @param array $parameters
+     * @param array  $parameters
      * @param string $parentKey
      *
      * @return string
@@ -956,13 +951,13 @@ class OAuth extends AbstractAuth
             return '';
         }
 
-        $normalized = array();
+        $normalized = [];
         foreach ($parameters as $key => $value) {
             if (empty($value)) {
                 continue;
             }
 
-            if ($parentKey !== '') {
+            if ('' !== $parentKey) {
                 // Multidimensional array; using foo=bar&foo=baz rather than foo[bar]=baz&foo[baz]=bar
                 $key = $parentKey;
             }
@@ -970,7 +965,7 @@ class OAuth extends AbstractAuth
             if (is_array($value)) {
                 $normalized[] = $this->normalizeParameters($value, $key);
             } else {
-                $normalized[] = $this->encode($key) . '=' . $this->encode($value);
+                $normalized[] = $this->encode($key).'='.$this->encode($value);
             }
         }
 

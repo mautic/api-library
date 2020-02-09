@@ -56,19 +56,19 @@ namespace Mautic\Auth;
 use Mautic\Exception\RequiredParameterMissingException;
 
 /**
- * Basic Authentication Client mashed together by MarkLL
+ * Basic Authentication Client mashed together by MarkLL.
  */
 class BasicAuth extends AbstractAuth
 {
     /**
-     * Password associated with Username
+     * Password associated with Username.
      *
      * @var string
      */
     private $password;
 
     /**
-     * Username or email, basically the Login Identifier
+     * Username or email, basically the Login Identifier.
      *
      * @var string
      */
@@ -79,16 +79,17 @@ class BasicAuth extends AbstractAuth
      */
     public function isAuthorized()
     {
-        return (!empty($this->userName) && !empty($this->password));
+        return !empty($this->userName) && !empty($this->password);
     }
 
     /**
-     * @param string $userName              The username to use for Authentication *Required*
-     * @param string $password              The Password to use                    *Required*
+     * @param string $userName The username to use for Authentication *Required*
+     * @param string $password The Password to use                    *Required*
      *
      * @throws RequiredParameterMissingException
      */
-    public function setup($userName, $password) {
+    public function setup($userName, $password)
+    {
         // we MUST have the username and password. No Blanks allowed!
         //
         // remove blanks else Empty doesn't work
@@ -106,24 +107,21 @@ class BasicAuth extends AbstractAuth
     }
 
     /**
-     * @param       $url
-     * @param array $headers
-     * @param array $parameters
-     * @param       $method
-     * @param array $settings
+     * @param $url
+     * @param $method
      *
      * @return array
      */
     protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings)
     {
         //Set Basic Auth parameters/headers
-        $headers = array_merge($headers, array($this->buildAuthorizationHeader(), 'Expect:'));
+        $headers = array_merge($headers, [$this->buildAuthorizationHeader(), 'Expect:']);
 
-        return array($headers, $parameters);
+        return [$headers, $parameters];
     }
 
     /**
-     * Build header for Basic Authentication
+     * Build header for Basic Authentication.
      *
      * @return string
      */
@@ -146,6 +144,6 @@ class BasicAuth extends AbstractAuth
         |   'Authorization: Basic dXNlcjpwYXNzd29yZA=='
         |
         */
-        return 'Authorization: Basic ' . base64_encode($this->userName.':'.$this->password);
+        return 'Authorization: Basic '.base64_encode($this->userName.':'.$this->password);
     }
 }

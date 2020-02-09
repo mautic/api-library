@@ -11,12 +11,11 @@
 
 namespace Mautic\Tests\Api;
 
-
 abstract class AbstractCustomFieldsTest extends MauticApiTestCase
 {
-    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
+    protected function assertPayload($response, array $payload = [], $isBatch = false, $idColumn = 'id', $callback = null)
     {
-        parent::assertPayload($response, $payload, $isBatch, $idColumn, array($this, 'validateFieldPayload'));
+        parent::assertPayload($response, $payload, $isBatch, $idColumn, [$this, 'validateFieldPayload']);
     }
 
     protected function validateFieldPayload($itemProp, $itemVal, $item)

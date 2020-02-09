@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,36 +12,37 @@ namespace Mautic\Tests\Api;
 
 class FormsTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('forms');
-        $this->testPayload = array(
-            'name' => 'test',
-            'formType' => 'standalone',
+    public function setUp()
+    {
+        $this->api         = $this->getContext('forms');
+        $this->testPayload = [
+            'name'        => 'test',
+            'formType'    => 'standalone',
             'description' => 'API test',
-            'fields' => array(
-                array(
+            'fields'      => [
+                [
                     'label' => 'field name',
-                    'type' => 'text',
-                    'alias' => 'my_field'
-                )
-            ),
-            'actions' => array(
-                array(
-                    'name' => 'action name',
+                    'type'  => 'text',
+                    'alias' => 'my_field',
+                ],
+            ],
+            'actions' => [
+                [
+                    'name'        => 'action name',
                     'description' => 'action desc',
-                    'type' => 'lead.pointschange',
-                    'properties' => array(
+                    'type'        => 'lead.pointschange',
+                    'properties'  => [
                         'operator' => 'plus',
-                        'points' => 2
-                    )
-                )
-            )
-        );
+                        'points'   => 2,
+                    ],
+                ],
+            ],
+        ];
     }
 
-    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
+    protected function assertPayload($response, array $payload = [], $isBatch = false, $idColumn = 'id', $callback = null)
     {
-        parent::assertPayload($response, $payload, $isBatch, $idColumn, array($this, 'validateComponentsPayload'));
+        parent::assertPayload($response, $payload, $isBatch, $idColumn, [$this, 'validateComponentsPayload']);
     }
 
     protected function validateComponentsPayload($itemProp, $itemVal, $item)
@@ -82,7 +84,7 @@ class FormsTest extends MauticApiTestCase
 
     public function testDeleteFields()
     {
-        $fieldIds   = array();
+        $fieldIds   = [];
         $response   = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
@@ -101,7 +103,7 @@ class FormsTest extends MauticApiTestCase
 
     public function testDeleteActions()
     {
-        $actionIds  = array();
+        $actionIds  = [];
         $response   = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
@@ -128,29 +130,29 @@ class FormsTest extends MauticApiTestCase
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
-        $lastField = array_pop($response[$this->api->itemName()]['fields']);
-        $lastAction = array_pop($response[$this->api->itemName()]['actions']);
+        $lastField          = array_pop($response[$this->api->itemName()]['fields']);
+        $lastAction         = array_pop($response[$this->api->itemName()]['actions']);
         $lastField['label'] = 'edited field';
         $lastAction['name'] = 'edited action';
 
         $response = $this->api->edit(
             $response[$this->api->itemName()]['id'],
-            array(
-                'name' => 'test2',
+            [
+                'name'     => 'test2',
                 'formType' => 'standalone',
-                'fields' => array(
-                    $lastField
-                ),
-                'actions' => array(
-                    $lastAction
-                )
-            )
+                'fields'   => [
+                    $lastField,
+                ],
+                'actions' => [
+                    $lastAction,
+                ],
+            ]
         );
 
         $this->assertErrors($response);
         $this->assertTrue(!empty($response[$this->api->itemName()]['fields']), 'The form field array is empty.');
         $this->assertTrue(!empty($response[$this->api->itemName()]['actions']), 'The form action array is empty.');
-        $lastField = array_pop($response[$this->api->itemName()]['fields']);
+        $lastField  = array_pop($response[$this->api->itemName()]['fields']);
         $lastAction = array_pop($response[$this->api->itemName()]['actions']);
         $this->assertSame($lastField['label'], 'edited field');
         $this->assertSame($lastAction['name'], 'edited action');
@@ -234,7 +236,6 @@ class FormsTest extends MauticApiTestCase
             $this->assertEquals($submission['lead']['id'], $contactSubmission['lead']['id']);
             $this->assertSubmission($contactSubmission, $formId);
         }
-
     }
 
     protected function assertSubmission($submission, $formId)

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -15,11 +16,11 @@ class ContactFieldsTest extends MauticApiTestCase
 
     public function setUp()
     {
-        $this->api = $this->getContext('contactFields');
-        $this->testPayload = array(
+        $this->api         = $this->getContext('contactFields');
+        $this->testPayload = [
             'label' => $this->prefix.'API test field',
-            'type' => 'text',
-        );
+            'type'  => 'text',
+        ];
     }
 
     protected function assertPayloadList($response)
@@ -49,17 +50,17 @@ class ContactFieldsTest extends MauticApiTestCase
 
     public function testCreateGetAndDeleteOfLookupField()
     {
-        $lookupField = array(
-            'label' => $this->prefix.'API test lookup field',
-            'type' => 'lookup',
-            'properties' => array(
-                'list' => array(
+        $lookupField = [
+            'label'      => $this->prefix.'API test lookup field',
+            'type'       => 'lookup',
+            'properties' => [
+                'list' => [
                     'Mr',
                     'Mrs',
                     'Miss',
-                )
-            )
-        );
+                ],
+            ],
+        ];
 
         $this->standardTestCreateGetAndDelete($lookupField);
     }
@@ -68,19 +69,19 @@ class ContactFieldsTest extends MauticApiTestCase
     {
         // Create a testing contact
         $contactContext = $this->getContext('contacts');
-        $response = $contactContext->create(array('firstname' => 'Boolean Field', 'lastname' => 'API test'));
+        $response       = $contactContext->create(['firstname' => 'Boolean Field', 'lastname' => 'API test']);
         $this->assertErrors($response);
         $contact = $response['contact'];
 
-        $possibleValues = array(1 => 1, 0 => 0, 'yes' => 1, 'no' => 0, 'true' => 1, 'false' => 0);
-        $boolField = array(
-            'label' => $this->prefix.'API test Boolean field',
-            'type' => 'boolean',
-            'properties' => array(
-                'no' => 'No',
-                'yes' => 'Yes'
-            )
-        );
+        $possibleValues = [1 => 1, 0 => 0, 'yes' => 1, 'no' => 0, 'true' => 1, 'false' => 0];
+        $boolField      = [
+            'label'      => $this->prefix.'API test Boolean field',
+            'type'       => 'boolean',
+            'properties' => [
+                'no'  => 'No',
+                'yes' => 'Yes',
+            ],
+        ];
 
         // Create the Boolean field
         $response = $this->api->create($boolField);
@@ -89,7 +90,7 @@ class ContactFieldsTest extends MauticApiTestCase
 
         // Test if the Boolean value gets updated with test values
         foreach ($possibleValues as $value => $boolValue) {
-            $response = $contactContext->edit($contact['id'], array($field['alias'] => $value));
+            $response = $contactContext->edit($contact['id'], [$field['alias'] => $value]);
             $this->assertErrors($response);
             $this->assertTrue(isset($response['contact']['fields']['all'][$field['alias']]), $field['alias'].' does not exist in the field list');
             $this->assertEquals($response['contact']['fields']['all'][$field['alias']], $boolValue);
@@ -106,7 +107,7 @@ class ContactFieldsTest extends MauticApiTestCase
     {
         $defaultValue = 'little kitten';
 
-        $fieldPayload = $this->testPayload;
+        $fieldPayload                 = $this->testPayload;
         $fieldPayload['defaultValue'] = $defaultValue;
 
         // Create the field
@@ -116,7 +117,7 @@ class ContactFieldsTest extends MauticApiTestCase
 
         // Create a testing contact
         $contactContext = $this->getContext('contacts');
-        $response = $contactContext->create(array('firstname' => 'Default Value', 'lastname' => 'API test'));
+        $response       = $contactContext->create(['firstname' => 'Default Value', 'lastname' => 'API test']);
         $this->assertErrors($response);
         $this->assertTrue(isset($response['contact']['fields']['all'][$field['alias']]), $field['alias'].' does not exist in the field list');
         $this->assertEquals($response['contact']['fields']['all'][$field['alias']], $defaultValue);

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,12 +12,13 @@ namespace Mautic\Tests\Api;
 
 class CategoriesTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('categories');
-        $this->testPayload = array(
-            'title' => 'test',
-            'bundle' => 'asset'
-        );
+    public function setUp()
+    {
+        $this->api         = $this->getContext('categories');
+        $this->testPayload = [
+            'title'  => 'test',
+            'bundle' => 'asset',
+        ];
     }
 
     public function testGetList()
@@ -43,13 +45,13 @@ class CategoriesTest extends MauticApiTestCase
         $this->assertPayload($response, $this->testPayload);
 
         // Add an asset to this category
-        $assetApi = $this->getContext('assets');
-        $assetPayload = array(
-            'title' => 'Mautic Logo sent as a API request',
+        $assetApi     = $this->getContext('assets');
+        $assetPayload = [
+            'title'           => 'Mautic Logo sent as a API request',
             'storageLocation' => 'remote',
-            'file' => 'https://www.mautic.org/media/logos/logo/Mautic_Logo_DB.pdf',
-            'category' => $categoryId,
-        );
+            'file'            => 'https://www.mautic.org/media/logos/logo/Mautic_Logo_DB.pdf',
+            'category'        => $categoryId,
+        ];
 
         // Create Asset
         $assetResponse = $assetApi->create($assetPayload);
@@ -72,10 +74,10 @@ class CategoriesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
-            'title' => 'test2',
-            'bundle' => 'asset'
-        );
+        $editTo = [
+            'title'  => 'test2',
+            'bundle' => 'asset',
+        ];
         $this->standardTestEditPatch($editTo);
     }
 

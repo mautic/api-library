@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2016 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * CampaignEvents Context
+ * CampaignEvents Context.
  */
 class CampaignEvents extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,13 +33,13 @@ class CampaignEvents extends Api
     /**
      * @var array
      */
-    protected $endpointsSupported = array(
+    protected $endpointsSupported = [
         'get',
-        'getList'
-    );
+        'getList',
+    ];
 
     /**
-     * Get contact events across all campaigns
+     * Get contact events across all campaigns.
      *
      * @param        $contactId
      * @param string $search
@@ -52,13 +52,13 @@ class CampaignEvents extends Api
      */
     public function getContactEvents($contactId, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        $parameters = array(
+        $parameters = [
             'search'        => $search,
             'start'         => $start,
             'limit'         => $limit,
             'orderBy'       => $orderBy,
             'orderByDir'    => $orderByDir,
-        );
+        ];
 
         $parameters = array_filter($parameters);
 
@@ -66,7 +66,7 @@ class CampaignEvents extends Api
     }
 
     /**
-     * Get contact events for a single campaign
+     * Get contact events for a single campaign.
      *
      * @param        $campaignId
      * @param        $contactId
@@ -80,13 +80,13 @@ class CampaignEvents extends Api
      */
     public function getContactCampaignEvents($campaignId, $contactId, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        $parameters = array(
+        $parameters = [
             'search'        => $search,
             'start'         => $start,
             'limit'         => $limit,
             'orderBy'       => $orderBy,
             'orderByDir'    => $orderByDir,
-        );
+        ];
 
         $parameters = array_filter($parameters);
 
@@ -108,9 +108,7 @@ class CampaignEvents extends Api
     }
 
     /**
-     * Edit or schedule multiple events
-     *
-     * @param array $parameters
+     * Edit or schedule multiple events.
      *
      * @return array|mixed
      */

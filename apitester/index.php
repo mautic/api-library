@@ -1,5 +1,5 @@
 <?php
-session_name("oauthtester");
+session_name('oauthtester');
 session_start();
 
 require dirname(__DIR__).'/vendor/autoload.php';
@@ -12,7 +12,7 @@ if (empty($auth)) {
 }
 $apiurl             = (isset($_POST['apiurl'])) ? $_POST['apiurl'] : @$_SESSION['apiurl'];
 $_SESSION['apiurl'] = $apiurl;
-if (!empty($apiurl) && substr($apiurl, -1) == '/') {
+if (!empty($apiurl) && '/' == substr($apiurl, -1)) {
     $apiurl = substr($apiurl, 0, -1);
 }
 
@@ -23,14 +23,14 @@ if (!empty($_POST['auth']) && $_POST['auth'] != @$_SESSION['auth']) {
 
 $getCurrentUrl = function () {
     $pageURL = 'http';
-    if ((isset($_SERVER["HTTPS"]) && $_SERVER['HTTPS'] == "on")) {
-        $pageURL .= "s";
+    if ((isset($_SERVER['HTTPS']) && 'on' == $_SERVER['HTTPS'])) {
+        $pageURL .= 's';
     }
-    $pageURL .= "://";
-    if ($_SERVER["SERVER_PORT"] != "80") {
-        $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+    $pageURL .= '://';
+    if ('80' != $_SERVER['SERVER_PORT']) {
+        $pageURL .= $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
     } else {
-        $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+        $pageURL .= $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
     }
 
     return $pageURL;
@@ -38,8 +38,7 @@ $getCurrentUrl = function () {
 
 //OAuth1a
 $oauthBaseUrl   = $apiurl;
-$getOauth1Value = function($key) use ($getCurrentUrl, $oauthBaseUrl) {
-
+$getOauth1Value = function ($key) use ($getCurrentUrl, $oauthBaseUrl) {
     switch ($key) {
         case 'callback':
             if (empty($_SESSION['settings']['OAuth1a']['callback'])) {
@@ -78,7 +77,7 @@ $state        = $getOauth2Value('state');
 $apiendpoint = (isset($_POST['apiendpoint'])) ? $_POST['apiendpoint'] : @$_SESSION['apiendpoint'];
 $method      = (isset($_POST['method'])) ? $_POST['method'] : @$_SESSION['method'];
 if (empty($method)) {
-    $method = "GET";
+    $method = 'GET';
 }
 
 $responsetype = (isset($_POST['responsetype'])) ? $_POST['responsetype'] : @$_SESSION['responsetype'];
@@ -88,11 +87,11 @@ if (empty($responsetype)) {
 
 $parameters = (isset($_POST['parameters'])) ? $_POST['parameters'] : @$_SESSION['parameters'];
 if (!is_array($parameters)) {
-    $parameters = array();
+    $parameters = [];
 }
 
 //clean up the parameters
-$cleanParams = array();
+$cleanParams = [];
 foreach ($parameters as $k => $p) {
     if (!empty($p['key'])) {
         $cleanParams[] = $p;
@@ -105,7 +104,7 @@ if (isset($_SESSION['redirect'])) {
     $output = $_SESSION['lastOutput'];
     unset($_SESSION['redirect']);
 } else {
-    $output = "";
+    $output = '';
 
     //should the tokens be reset
     if (!empty($_POST[$auth]['reset'])) {
@@ -115,9 +114,9 @@ if (isset($_SESSION['redirect'])) {
         unset($_SESSION['oauth']);
     }
 
-    if ($auth == 'OAuth1a') {
+    if ('OAuth1a' == $auth) {
         $valid = (isset($_GET['oauth_verifier']) || !empty($_POST)) && !empty($consumerKey) && !empty($consumerSecret) && !empty($callback) && !empty($apiurl);
-    } elseif ($auth == 'OAuth2') {
+    } elseif ('OAuth2' == $auth) {
         $valid = (isset($_GET['code']) || !empty($_POST)) && !empty($clientKey) && !empty($clientSecret) && !empty($redirectUri) && !empty($apiurl);
     }
 
@@ -138,16 +137,15 @@ if (isset($_SESSION['redirect'])) {
         $_SESSION['method']       = $method;
         $_SESSION['parameters']   = $parameters;
 
-
         $oauthObject = \Mautic\Auth\ApiAuth::initiate(
-            array(
+            [
                 'baseUrl'       => $oauthBaseUrl,
                 'version'       => $auth,
-                'clientKey'     => ($auth == 'OAuth1a') ? $consumerKey : $clientKey,
-                'clientSecret'  => ($auth == 'OAuth1a') ? $consumerSecret : $clientSecret,
+                'clientKey'     => ('OAuth1a' == $auth) ? $consumerKey : $clientKey,
+                'clientSecret'  => ('OAuth1a' == $auth) ? $consumerSecret : $clientSecret,
                 'callback'      => $callback,
-                'scope'         => $scope
-            )
+                'scope'         => $scope,
+            ]
         );
 
         if (!empty($_SESSION[$auth])) {
@@ -164,26 +162,26 @@ if (isset($_SESSION['redirect'])) {
                 }
 
                 if (!empty($_POST['apiurl'])) {
-                    $url = $apiurl . '/api/' . $apiendpoint;
-                    if ($responsetype != '/') {
+                    $url = $apiurl.'/api/'.$apiendpoint;
+                    if ('/' != $responsetype) {
                         $url .= $responsetype;
                     }
 
-                    $postParams = array();
+                    $postParams = [];
                     foreach ($parameters as $k => $v) {
                         $postParams[$v['key']] = $v['value'];
                     }
                     parse_str(http_build_query($postParams), $postParams);
 
-                    if ($responsetype == '/') {
+                    if ('/' == $responsetype) {
                         $returnType = 'json';
                     } else {
                         $returnType = substr($responsetype, 1);
                     }
 
-                    $settings = array(
-                        'responseType' => $responsetype
-                    );
+                    $settings = [
+                        'responseType' => $responsetype,
+                    ];
 
                     $response = $oauthObject->makeRequest($url, $postParams, $method, $settings);
                 }
@@ -254,13 +252,13 @@ if (isset($_SESSION['redirect'])) {
             });
 
             <?php
-            $files = scandir(__DIR__ . '/endpoints', 1);
-            $endpoints = array();
+            $files     = scandir(__DIR__.'/endpoints', 1);
+            $endpoints = [];
             foreach ($files as $file) {
                 $check = substr($file, -5);
-                if ($check == '.json') {
-                $endpoint = str_replace($check, '', $file);
-echo <<<ENDPOINT
+                if ('.json' == $check) {
+                    $endpoint = str_replace($check, '', $file);
+                    echo <<<ENDPOINT
 
             var {$endpoint}Endpoint = new Bloodhound({
               datumTokenizer: Bloodhound.tokenizers.obj.whitespace('endpoint'),
@@ -285,8 +283,8 @@ echo <<<ENDPOINT
 ENDPOINT;
             $count = (count($endpoints) - 1);
             foreach ($endpoints as $k => $endpoint) {
-            $comma = ($k < $count) ? ',' : '';
-echo <<<ENDPOINT
+                $comma = ($k < $count) ? ',' : '';
+                echo <<<ENDPOINT
 
             {
               name: 'endpoints',
@@ -453,22 +451,22 @@ ENDPOINT;
         <form method="post" action="index.php">
             <?php $hasError = false; ?>
             <input type="hidden" name="auth" value="OAuth1a" />
-            <?php $label = (empty($consumerKey)) ? 'has-error' : 'has-success'; ?>
-            <?php $hasError = ($label == 'has-error') ? true : $hasError; ?>
+            <?php $label    = (empty($consumerKey)) ? 'has-error' : 'has-success'; ?>
+            <?php $hasError = ('has-error' == $label) ? true : $hasError; ?>
             <div class="form-group <?php echo $label; ?>">
                 <label class="control-label" for="consumerKey">Consumer Key</label>
                 <input type="text" class="form-control" id="consumerKey" name="OAuth1a[consumerKey]" value="<?php echo $consumerKey; ?>" />
             </div>
 
-            <?php $label = (empty($consumerSecret)) ? 'has-error' : 'has-success'; ?>
-            <?php $hasError = ($label == 'has-error') ? true : $hasError; ?>
+            <?php $label    = (empty($consumerSecret)) ? 'has-error' : 'has-success'; ?>
+            <?php $hasError = ('has-error' == $label) ? true : $hasError; ?>
             <div class="form-group <?php echo $label; ?>">
                 <label class="control-label" for="consumerSecret">Consumer Secret</label>
                 <input type="text" class="form-control" id="consumerSecret" name="OAuth1a[consumerSecret]" value="<?php echo $consumerSecret; ?>" />
             </div>
 
-            <?php $label = (empty($callback)) ? 'has-error' : 'has-success'; ?>
-            <?php $hasError = ($label == 'has-error') ? true : $hasError; ?>
+            <?php $label    = (empty($callback)) ? 'has-error' : 'has-success'; ?>
+            <?php $hasError = ('has-error' == $label) ? true : $hasError; ?>
             <div class="form-group <?php echo $label; ?>">
                 <label class="control-label" for="callback">Callback URL</label>
                 <input type="text" class="form-control" id="callback" name="OAuth1a[callback]" value="<?php echo $callback; ?>" />
@@ -493,22 +491,22 @@ ENDPOINT;
             <?php $hasError = false; ?>
             <input type="hidden" name="auth" value="OAuth2" />
 
-            <?php $label = (empty($clientKey)) ? 'has-error' : 'has-success'; ?>
-            <?php $hasError = ($label == 'has-error') ? true : $hasError; ?>
+            <?php $label    = (empty($clientKey)) ? 'has-error' : 'has-success'; ?>
+            <?php $hasError = ('has-error' == $label) ? true : $hasError; ?>
             <div class="form-group <?php echo $label; ?>">
                 <label class="control-label" for="clientKey">Client Key</label>
                 <input type="text" class="form-control" id="clientKey" name="OAuth2[clientKey]" value="<?php echo $clientKey; ?>" />
             </div>
 
-            <?php $label = (empty($clientSecret)) ? 'has-error' : 'has-success'; ?>
-            <?php $hasError = ($label == 'has-error') ? true : $hasError; ?>
+            <?php $label    = (empty($clientSecret)) ? 'has-error' : 'has-success'; ?>
+            <?php $hasError = ('has-error' == $label) ? true : $hasError; ?>
             <div class="form-group <?php echo $label; ?>">
                 <label class="control-label" for="clientSecret">Client Secret</label>
                 <input type="text" class="form-control" id="clientSecret" name="OAuth2[clientSecret]" value="<?php echo $clientSecret; ?>" />
             </div>
 
-            <?php $label = (empty($redirectUri)) ? 'has-error' : 'has-success'; ?>
-            <?php $hasError = ($label == 'has-error') ? true : $hasError; ?>
+            <?php $label    = (empty($redirectUri)) ? 'has-error' : 'has-success'; ?>
+            <?php $hasError = ('has-error' == $label) ? true : $hasError; ?>
             <div class="form-group <?php echo $label; ?>">
                 <label class="control-label" for="redirectUri">Redirect URI</label>
                 <input type="text" class="form-control" id="redirectUri" name="OAuth2[redirectUri]" value="<?php echo $redirectUri; ?>" />

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -13,10 +14,10 @@ class TagsTest extends MauticApiTestCase
 {
     public function setUp()
     {
-        $this->api = $this->getContext('tags');
-        $this->testPayload = array(
+        $this->api         = $this->getContext('tags');
+        $this->testPayload = [
             'tag' => 'API-tag',
-        );
+        ];
     }
 
     public function testGetList()
@@ -27,14 +28,14 @@ class TagsTest extends MauticApiTestCase
     public function testGetListOfSpecificIds()
     {
         // Create some tags first
-        $itemIds = array();
-        for ($i = 0; $i <= 2; $i++) {
-            $response = $this->api->create(array('tag' => 'api-test-tag'.$i));
+        $itemIds = [];
+        for ($i = 0; $i <= 2; ++$i) {
+            $response = $this->api->create(['tag' => 'api-test-tag'.$i]);
             $this->assertErrors($response);
             $itemIds[] = $response[$this->api->itemName()]['id'];
         }
 
-        $search = 'ids:'.implode(',', $itemIds);
+        $search   = 'ids:'.implode(',', $itemIds);
         $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
@@ -53,9 +54,9 @@ class TagsTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'tag' => 'API-tag-edit',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 
@@ -67,11 +68,11 @@ class TagsTest extends MauticApiTestCase
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints(
-            array(
-                array('tag' => 'api-test-tag1'),
-                array('tag' => 'api-test-tag2'),
-                array('tag' => 'api-test-tag3'),
-            )
+            [
+                ['tag' => 'api-test-tag1'],
+                ['tag' => 'api-test-tag2'],
+                ['tag' => 'api-test-tag3'],
+            ]
         );
     }
 }

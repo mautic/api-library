@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,86 +12,87 @@ namespace Mautic\Tests\Api;
 
 class EmailsTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('lists');
+    protected $skipPayloadAssertion = ['lists'];
 
-    public function setUp() {
-        $this->api = $this->getContext('emails');
-        $this->testPayload = array(
-            'name' => 'test',
-            'subject' => 'API test email',
-            'customHtml' => '<h1>Hi there!</h1>',
-            'emailType' => 'list',
-            'dynamicContent' => array(
-                array(
+    public function setUp()
+    {
+        $this->api         = $this->getContext('emails');
+        $this->testPayload = [
+            'name'           => 'test',
+            'subject'        => 'API test email',
+            'customHtml'     => '<h1>Hi there!</h1>',
+            'emailType'      => 'list',
+            'dynamicContent' => [
+                [
                     'tokenName' => 'test content name',
-                    'content' => 'Some default <strong>content</strong>',
-                    'filters' => array(
-                        array(
+                    'content'   => 'Some default <strong>content</strong>',
+                    'filters'   => [
+                        [
                             'content' => 'Variation 1',
-                            'filters' => array()
-                        ),
-                        array(
+                            'filters' => [],
+                        ],
+                        [
                             'content' => 'Variation 2',
-                            'filters' => array(
-                                array(
-                                    'glue' => 'and',
-                                    'field' => 'city',
-                                    'object' => 'lead',
-                                    'type' => 'text',
-                                    'filter' => 'Prague',
-                                    'display' => null,
+                            'filters' => [
+                                [
+                                    'glue'     => 'and',
+                                    'field'    => 'city',
+                                    'object'   => 'lead',
+                                    'type'     => 'text',
+                                    'filter'   => 'Prague',
+                                    'display'  => null,
                                     'operator' => '=',
-                                ),
-                                array(
-                                    'glue' => 'and',
-                                    'field' => 'email',
-                                    'object' => 'lead',
-                                    'type' => 'email',
-                                    'filter' => 'Prague',
-                                    'display' => null,
+                                ],
+                                [
+                                    'glue'     => 'and',
+                                    'field'    => 'email',
+                                    'object'   => 'lead',
+                                    'type'     => 'email',
+                                    'filter'   => 'Prague',
+                                    'display'  => null,
                                     'operator' => '!empty',
-                                )
-                            )
-                        )
-                    )
-                ),
-                array(
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
                     'tokenName' => 'test content name2',
-                    'content' => 'Some default <strong>content2</strong>',
-                    'filters' => array(
-                        array(
+                    'content'   => 'Some default <strong>content2</strong>',
+                    'filters'   => [
+                        [
                             'content' => 'Variation 3',
-                            'filters' => array()
-                        ),
-                        array(
+                            'filters' => [],
+                        ],
+                        [
                             'content' => 'Variation 4',
-                            'filters' => array(
-                                array(
-                                    'glue' => 'and',
-                                    'field' => 'city',
-                                    'object' => 'lead',
-                                    'type' => 'text',
-                                    'filter' => 'Raleigh',
-                                    'display' => null,
+                            'filters' => [
+                                [
+                                    'glue'     => 'and',
+                                    'field'    => 'city',
+                                    'object'   => 'lead',
+                                    'type'     => 'text',
+                                    'filter'   => 'Raleigh',
+                                    'display'  => null,
                                     'operator' => '=',
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        );
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     protected function setUpPayloadClass()
     {
         $segmentApi = $this->getContext('segments');
-        $response   = $segmentApi->create(array('name' => 'test'));
+        $response   = $segmentApi->create(['name' => 'test']);
         $this->assertErrors($response);
         $segment    = $response['list'];
 
         // Add testing segment to the email
-        $this->testPayload['lists'] = array($segment['id']);
+        $this->testPayload['lists'] = [$segment['id']];
     }
 
     protected function clearPayloadItems()
@@ -148,10 +150,10 @@ class EmailsTest extends MauticApiTestCase
 
         $response = $this->api->edit(
             $response[$this->api->itemName()]['id'],
-            array(
+            [
                 'name' => 'test2',
-                'body' => 'test2'
-            )
+                'body' => 'test2',
+            ]
         );
 
         $this->assertErrors($response);
@@ -164,21 +166,21 @@ class EmailsTest extends MauticApiTestCase
     public function testEditPut()
     {
         $segmentApi = $this->getContext('segments');
-        $response   = $segmentApi->create(array('name' => 'test'));
+        $response   = $segmentApi->create(['name' => 'test']);
         $this->assertErrors($response);
         $segment1   = $response['list'];
 
         // Add testing segment to the email
-        $this->testPayload['lists'] = array($segment1['id']);
+        $this->testPayload['lists'] = [$segment1['id']];
 
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $email = $response['email'];
 
-        $response   = $segmentApi->create(array('name' => 'test2'));
+        $response   = $segmentApi->create(['name' => 'test2']);
         $this->assertErrors($response);
-        $segment2   = $response['list'];
-        $email['lists'] = array($segment2['id']);
+        $segment2       = $response['list'];
+        $email['lists'] = [$segment2['id']];
 
         $response = $this->api->edit($email['id'], $email, true);
         $this->assertPayload($response);
@@ -200,12 +202,12 @@ class EmailsTest extends MauticApiTestCase
         $contactApi = $this->getContext('contacts');
 
         // Create a test segment
-        $response   = $segmentApi->create(array('name' => 'test'));
+        $response   = $segmentApi->create(['name' => 'test']);
         $this->assertErrors($response);
         $segment    = $response['list'];
 
         // Add testing segment to the email
-        $this->testPayload['lists'] = array($segment['id']);
+        $this->testPayload['lists'] = [$segment['id']];
         $this->testPayload['subject'] .= ' - SendToSegment test';
 
         // Create a test email with the test segment
@@ -214,7 +216,7 @@ class EmailsTest extends MauticApiTestCase
         $email      = $response['email'];
 
         // Create a test contact
-        $response   = $contactApi->create(array('email' => $this->config['testEmail']));
+        $response   = $contactApi->create(['email' => $this->config['testEmail']]);
         $this->assertErrors($response);
         $contact    = $response['contact'];
 
@@ -251,7 +253,7 @@ class EmailsTest extends MauticApiTestCase
         $email      = $response['email'];
 
         // Create a test contact
-        $response   = $contactApi->create(array('email' => $this->config['testEmail']));
+        $response   = $contactApi->create(['email' => $this->config['testEmail']]);
         $this->assertErrors($response);
         $contact    = $response['contact'];
 

@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Campaigns Context
+ * Campaigns Context.
  */
 class Campaigns extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,25 +33,25 @@ class Campaigns extends Api
     /**
      * @var array
      */
-    protected $bcRegexEndpoints = array(
+    protected $bcRegexEndpoints = [
         'campaigns/(.*?)/contact/(.*?)/add'    => 'campaigns/$1/contact/add/$2', // 2.6.0
-        'campaigns/(.*?)/contact/(.*?)/remove' => 'campaigns/$1/contact/remove/$2' // 2.6.0
-    );
+        'campaigns/(.*?)/contact/(.*?)/remove' => 'campaigns/$1/contact/remove/$2', // 2.6.0
+    ];
 
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:published',
         'is:unpublished',
         'is:mine',
         'is:uncategorized',
         'category',
-    );
+    ];
 
     /**
-     * Add a lead to the campaign
+     * Add a lead to the campaign.
      *
      * @deprecated 2.0.1, use addContact instead
      *
@@ -66,7 +66,7 @@ class Campaigns extends Api
     }
 
     /**
-     * Add a contact to the campaign
+     * Add a contact to the campaign.
      *
      * @param int $id        Campaign ID
      * @param int $contactId Contact ID
@@ -75,11 +75,11 @@ class Campaigns extends Api
      */
     public function addContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/add', [], 'POST');
     }
 
     /**
-     * Remove a lead from the campaign
+     * Remove a lead from the campaign.
      *
      * @deprecated 2.0.1, use removeContact instead
      *
@@ -94,7 +94,7 @@ class Campaigns extends Api
     }
 
     /**
-     * Remove a contact from the campaign
+     * Remove a contact from the campaign.
      *
      * @param int $id        Campaign ID
      * @param int $contactId Contact ID
@@ -103,24 +103,22 @@ class Campaigns extends Api
      */
     public function removeContact($id, $contactId)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/contact/'.$contactId.'/remove', [], 'POST');
     }
 
     /**
-     * Get a list of stat items
+     * Get a list of stat items.
      *
-     * @param int    $id Campaign ID
-     * @param int    $start
-     * @param int    $limit
-     * @param array  $order
-     * @param array  $where
+     * @param int $id    Campaign ID
+     * @param int $start
+     * @param int $limit
      *
      * @return array|mixed
      */
-    public function getContacts($id, $start = 0, $limit = 0, array $order = array(), array $where = array())
+    public function getContacts($id, $start = 0, $limit = 0, array $order = [], array $where = [])
     {
-        $parameters = array();
-        $args = array('start', 'limit', 'order', 'where');
+        $parameters = [];
+        $args       = ['start', 'limit', 'order', 'where'];
 
         foreach ($args as $arg) {
             if (!empty($$arg)) {
@@ -130,16 +128,16 @@ class Campaigns extends Api
 
         return $this->makeRequest($this->endpoint.'/'.$id.'/contacts', $parameters);
     }
-    
+
     /**
-     * Clone an Existing campaign
+     * Clone an Existing campaign.
      *
-     * @param int $id        Campaign ID
+     * @param int $id Campaign ID
      *
      * @return array|mixed
      */
     public function cloneCampaign($id)
     {
-        return $this->makeRequest($this->endpoint.'/clone/'.$id, array(), 'POST');
+        return $this->makeRequest($this->endpoint.'/clone/'.$id, [], 'POST');
     }
 }
