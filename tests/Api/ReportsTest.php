@@ -22,7 +22,6 @@ class ReportsTest extends MauticApiTestCase
 
         $this->assertErrors($response);
         $this->assertGreaterThanOrEqual(0, $response['totalResults']);
-        $this->assertGreaterThanOrEqual(0, count($response['totalResults']));
         $this->assertGreaterThanOrEqual(0, count($response['dataColumns']));
         $this->assertSame(0, $response['limit']);
         $this->assertSame(1, $response['page']);
@@ -38,7 +37,6 @@ class ReportsTest extends MauticApiTestCase
 
         $this->assertErrors($response);
         $this->assertGreaterThanOrEqual(0, $response['totalResults']);
-        $this->assertGreaterThanOrEqual(0, count($response['totalResults']));
         $this->assertGreaterThanOrEqual(0, count($response['dataColumns']));
         $this->assertSame($limit, $response['limit']);
         $this->assertSame($page, $response['page']);
