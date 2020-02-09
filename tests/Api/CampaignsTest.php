@@ -480,13 +480,6 @@ class CampaignsTest extends MauticApiTestCase
         $this->clearPayloadItems();
     }
 
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('addContact', 'removeContact');
-        $this->testAddAndRemove();
-        $this->api->bcTesting = false;
-    }
-
     protected function getListOfSpecificEventIds($response)
     {
         // Get a list of event IDs

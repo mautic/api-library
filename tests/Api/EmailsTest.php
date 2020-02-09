@@ -271,11 +271,4 @@ class EmailsTest extends MauticApiTestCase
     {
         $this->standardTestBatchEndpoints();
     }
-
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('sendToContact');
-        $this->testSendToContact();
-        $this->api->bcTesting = false;
-    }
 }

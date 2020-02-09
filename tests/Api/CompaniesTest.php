@@ -84,11 +84,4 @@ class CompaniesTest extends AbstractCustomFieldsTest
     {
         $this->standardTestBatchEndpoints();
     }
-
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('addContact', 'removeContact');
-        $this->testAddAndRemove();
-        $this->api->bcTesting = false;
-    }
 }

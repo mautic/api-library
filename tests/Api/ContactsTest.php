@@ -150,32 +150,6 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
     }
 
-    public function testGetEvents()
-    {
-        $response = $this->api->create($this->testPayload);
-        $this->assertErrors($response);
-        $contact = $response[$this->api->itemName()];
-
-        $response = $this->api->getEvents($contact['id']);
-        $this->assertEventResponse($response, array('lead.create', 'lead.identified'));
-
-        $response = $this->api->delete($contact['id']);
-        $this->assertErrors($response);
-    }
-
-    public function testGetEventsAdvanced()
-    {
-        $response = $this->api->create($this->testPayload);
-        $this->assertErrors($response);
-        $contact = $response[$this->api->itemName()];
-
-        $response = $this->api->getEvents($contact['id'], '', array('lead.identified'));
-        $this->assertEventResponse($response, array('lead.identified'));
-
-        $response = $this->api->delete($contact['id']);
-        $this->assertErrors($response);
-    }
-
     public function testGetActivityForContact()
     {
         $response = $this->api->create($this->testPayload);
@@ -450,12 +424,5 @@ class ContactsTest extends AbstractCustomFieldsTest
         );
 
         $this->standardTestBatchEndpoints($batch);
-    }
-
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('addDnc', 'removeDnc');
-        $this->testDncAddRemoveEndpoints();
-        $this->api->bcTesting = false;
     }
 }
