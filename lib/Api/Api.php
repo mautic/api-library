@@ -530,17 +530,13 @@ class Api implements LoggerAwareInterface
      */
     protected function actionNotSupported($action)
     {
-        $error = [
-            'code'    => 500,
-            'message' => "$action is not supported at this time.",
-        ];
-
         return [
             'errors' => [
-                $error,
+                [
+                    'code'    => 500,
+                    'message' => "$action is not supported at this time.",
+                ],
             ],
-            // @deprecated 2.6.0 to be removed in 3.0
-            'error'  => $error,
         ];
     }
 

@@ -65,7 +65,7 @@ class FilesTest extends MauticApiTestCase
         $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
 
         $response = $this->api->create($this->testPayload);
-        $this->assertFalse(empty($response['error']), 'The PHP script was uploaded! Danger! DANGER!');
+        $this->assertFalse(empty($response['errors']), 'The PHP script was uploaded! Danger! DANGER!');
     }
 
     public function testCreateAndDeleteImageInSubdir()

@@ -139,7 +139,7 @@ class EmailsTest extends MauticApiTestCase
         $response = $this->api->edit(10000, $this->testPayload);
 
         //there should be an error as the email shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
+        $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
         // Unset the emailType, 'template' must be the default value
         unset($this->testPayload['emailType']);

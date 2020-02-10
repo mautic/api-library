@@ -706,19 +706,6 @@ class OAuth extends AbstractAuth
                     $errors[] = $error['message'];
                 }
                 $response = implode('; ', $errors);
-            } elseif (isset($params['error'])) {
-                // @deprecated support for pre Mautic 2.6.0
-                if (is_array($params['error'])) {
-                    if (isset($params['error']['message'])) {
-                        $response = $params['error']['message'];
-                    } else {
-                        $response = print_r($params['error'], true);
-                    }
-                } elseif (isset($params['error_description'])) {
-                    $response = $params['error_description'];
-                } else {
-                    $response = $params['error'];
-                }
             } else {
                 $response = print_r($params, true);
             }
@@ -746,7 +733,7 @@ class OAuth extends AbstractAuth
             'includeCallback' => true,
             'includeVerifier' => false,
         ];
-        $params   = $this->makeRequest($this->_request_token_url, [], 'POST', $settings);
+        $params = $this->makeRequest($this->_request_token_url, [], 'POST', $settings);
 
         //Add token and secret to the session
         if (is_array($params) && isset($params['oauth_token']) && isset($params['oauth_token_secret'])) {
@@ -768,8 +755,8 @@ class OAuth extends AbstractAuth
             }
 
             if (is_array($params)) {
-                if (isset($params['error'])) {
-                    $response = $params['error'];
+                if (isset($params['errors'])) {
+                    $response = $params['errors'];
                 } else {
                     $response = '???';
                 }

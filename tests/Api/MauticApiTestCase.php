@@ -84,8 +84,6 @@ abstract class MauticApiTestCase extends TestCase
             }
 
             $message = implode('; ', $messages);
-        } elseif (isset($response['error'])) {
-            $message = (is_array($response['error']) ? $response['error']['message'] : $response['error']);
         }
 
         $this->assertTrue(empty($message), $message.$failureMessage);
@@ -305,7 +303,7 @@ abstract class MauticApiTestCase extends TestCase
         $response = $this->api->edit(10000, $this->testPayload);
 
         //there should be an error as the item shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
+        $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);

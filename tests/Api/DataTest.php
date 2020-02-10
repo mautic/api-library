@@ -125,9 +125,9 @@ class DataTest extends MauticApiTestCase
             ];
         foreach ($notSupported as $key => $closure) {
             $response = $closure();
-            $this->assertTrue(!empty($response['error']), 'Should contain Error element');
-            $this->assertEquals($response['error']['code'], 500, 'Should contain code 500');
-            $this->assertEquals($response['error']['message'], $key.' is not supported at this time.', 'Should be equal');
+            $this->assertTrue(!empty($response['errors']), 'Should contain Error element');
+            $this->assertEquals($response['errors'][0]['code'], 500, 'Should contain code 500');
+            $this->assertEquals($response['errors'][0]['message'], $key.' is not supported at this time.', 'Should be equal');
         }
     }
 

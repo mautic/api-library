@@ -225,7 +225,7 @@ class CampaignsTest extends MauticApiTestCase
         $response  = $this->api->edit(10000, $this->testPayload);
 
         //there should be an error as the campaign shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
+        $this->assertTrue(isset($response['errors']), $response['errors'][0]['message']);
 
         $this->setUpPayloadClass();
         $response = $this->api->create($this->testPayload);

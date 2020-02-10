@@ -44,10 +44,10 @@
 | $results = $contactApi->getList();
 |
 | Note: If the credentials are incorrect an error response will be returned:
-| array('error' => array(
+| array('errors' => [[
 |       'code'    => 403,
 |       'message' => 'access_denied: OAuth2 authentication required' )
-| )
+| ]]
 |
 */
 
