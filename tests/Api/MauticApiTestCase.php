@@ -86,7 +86,7 @@ abstract class MauticApiTestCase extends TestCase
             $message = implode('; ', $messages);
         }
 
-        $this->assertTrue(empty($message), $message.$failureMessage);
+        $this->assertTrue(empty($message), $message.PHP_EOL.$failureMessage);
     }
 
     protected function assertSuccess($response)
@@ -175,7 +175,7 @@ abstract class MauticApiTestCase extends TestCase
         $itemIds = [];
         for ($i = 0; $i <= 2; ++$i) {
             $response = $this->api->create($this->testPayload);
-            $this->assertErrors($response);
+            $this->assertErrors($response, 'Payload: '.json_encode($this->testPayload, JSON_PRETTY_PRINT));
             $itemIds[] = $response[$this->api->itemName()]['id'];
         }
 
