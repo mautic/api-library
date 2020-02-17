@@ -22,5 +22,8 @@
     "raveren/kint": "~0.9",
     "friendsofphp/php-cs-fixer": "~2.16.1",
     "phpunit/phpunit": "~7.5.0"
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
   }
 }
