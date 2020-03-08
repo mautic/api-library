@@ -57,10 +57,11 @@ script:
   # Install Mautic
   - cd mautic
   - composer install
-  - php var/console doctrine:database:create --no-interaction
-  - php var/console mautic:plugins:reload
-  - php var/console mautic:install:data --force
-  - php var/console doctrine:migrations:version --add --all --no-interaction
+  - php app/console doctrine:database:create --no-interaction
+  - php app/console mautic:plugins:reload
+  - php app/console mautic:install:data --force
+  - php app/console doctrine:migrations:version --add --all --no-interaction
 
   # Run PHPUnit
+  - cd ../
   - vendor/bin/phpunit --fail-on-warning
