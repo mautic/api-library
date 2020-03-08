@@ -1,0 +1,65 @@
+language: php
+
+services:
+  - mysql
+
+php:
+  - 7.2
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  # Create mautictest database
+  - mysql -e 'CREATE DATABASE mautictest;'
+
+  # increase memory limit for all PHP processes
+  - echo "memory_limit=4G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
+  # turn off XDebug
+  - phpenv config-rm xdebug.ini || return
+
+  # install dependencies in parallel
+  - travis_retry composer global require hirak/prestissimo
+
+  # set to test environment for Symfony's commands in post install commands
+  - export SYMFONY_ENV="test"
+
+install:
+  - composer install
+  
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install apache2 libapache2-mod-fastcgi
+  # enable php-fpm
+  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  - sudo a2enmod rewrite actions fastcgi alias
+  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
+  - sudo chown -R travis:travis /var/lib/apache2/fastcgi
+  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  # configure apache virtual hosts
+  - sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/000-default.conf
+  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
+  - sudo service apache2 restart
+
+script:
+  # Copy our API library config into the tests/ folder
+  - cp -a travis/local.config.php.dist tests/local.config.php
+
+  # Clone Mautic staging branch from GitHub
+  - git clone -b staging --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+
+  # Copy our configuration file into the Mautic folder.
+  - cp -a travis/overrides/app/config/local.php.dist mautic/app/config/local.php
+
+  # Install Mautic
+  - cd mautic
+  - php var/console doctrine:database:create --no-interaction
+  - php var/console mautic:plugins:reload
+  - php var/console mautic:install:data --force
+  - php var/console doctrine:migrations:version --add --all --no-interaction
+
+  # Run PHPUnit
+  - vendor/bin/phpunit --fail-on-warning
