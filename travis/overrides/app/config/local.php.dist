@@ -1,0 +1,30 @@
+<?php
+/**
+ * Travis parameter overrides.
+ */
+$parameters = [
+    'api_enabled'           => true,
+    'api_enable_basic_auth' => true,
+    'debug'                 => true,
+    'rss_notification_url'  => null,
+    'db_driver'             => 'pdo_mysql',
+    'db_table_prefix'       => '',
+    'db_host'               => 'localhost',
+    'db_port'               => '3306',
+    'db_name'               => 'mautic',
+    'db_user'               => 'root',
+    'db_password'           => '',
+    'site_url'              => 'http://localhost/mautic',
+    'mailer_from_name'      => 'Travis',
+    'mailer_from_email'     => 'travis@mautic.org',
+    'mailer_transport'      => 'smtp',
+    'mailer_host'           => '127.0.0.1',
+    'mailer_port'           => '25',
+    'mailer_user'           => null,
+    'mailer_password'       => null,
+    'mailer_encryption'     => null,
+    'mailer_auth_mode'      => null,
+    'mailer_spool_type'     => 'file',
+    'mailer_spool_path'     => '%kernel.root_dir%/spool',
+    'secret_key'            => '176c253f9f3f3c340d1169ba8f89c99a18ff04778eb064ac5197e772af472fe0'
+];
