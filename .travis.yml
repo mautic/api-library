@@ -55,8 +55,8 @@ script:
   - cd mautic
   - composer install
   - php app/console doctrine:database:create --no-interaction
-  - php app/console mautic:plugins:reload
   - php app/console mautic:install:data --force
+  - php app/console mautic:plugins:reload
   - php app/console doctrine:migrations:version --add --all --no-interaction
 
   # Run PHPUnit
