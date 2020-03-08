@@ -11,9 +11,6 @@ cache:
     - $HOME/.composer/cache
 
 before_install:
-  # Create mautictest database
-  - mysql -e 'CREATE DATABASE mautictest;'
-
   # increase memory limit for all PHP processes
   - echo "memory_limit=4G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
