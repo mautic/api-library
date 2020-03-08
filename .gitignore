@@ -11,3 +11,4 @@
 /tests/phpunit.phar
 /vendor
 .DS_Store
+/.ddev
