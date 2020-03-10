@@ -1,5 +1,6 @@
 <?php
-return array(
+
+return [
     /*
     |--------------------------------------------------------------------------
     | Authentication/Authorization Method
@@ -69,6 +70,5 @@ return array(
     'callback'          => '',
 
     // Required only for OAuth 2 testing.
-    'refreshToken'      => ''
-
-);
+    'refreshToken'      => '',
+];
