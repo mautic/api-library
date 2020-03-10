@@ -243,7 +243,7 @@ abstract class AbstractAuth implements AuthInterface
      */
     protected function getQueryParameters($isPost, $parameters)
     {
-        return ($isPost) ? array() : $parameters;
+        return ($isPost) ? array() : (array) $parameters;
     }
 
     /**
