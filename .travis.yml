@@ -1,0 +1,80 @@
+language: php
+
+services:
+  - mysql
+
+php:
+  - 7.3
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  # increase memory limit for all PHP processes
+  - echo "memory_limit=4G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
+  # turn off XDebug
+  - phpenv config-rm xdebug.ini || return
+
+  # install dependencies in parallel
+  - travis_retry composer global require hirak/prestissimo
+
+  # set to test environment for Symfony's commands in post install commands
+  - export SYMFONY_ENV="test"
+
+install:
+  - composer install
+  
+# Everything under before_script is to set up Apache so we have an HTTP server for API tests
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install apache2 libapache2-mod-fastcgi
+  # enable php-fpm
+  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  - sudo a2enmod rewrite actions fastcgi alias
+  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
+  - sudo chown -R travis:travis /var/lib/apache2/fastcgi
+  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  # configure apache virtual hosts
+  - sudo cp -f travis/travis-ci-apache /etc/apache2/sites-available/000-default.conf
+  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
+  - sudo service apache2 restart
+
+jobs:
+  include:
+    - stage: test
+      name: PHPUnit
+      script: 
+        # Copy our API library config into the tests/ folder
+        - cp -a travis/local.config.php.dist tests/local.config.php
+
+        # Clone Mautic 3.x branch from GitHub
+        - git clone -b 3.x --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+
+        # Copy our configuration file into the Mautic folder.
+        - cp -a travis/overrides/app/config/local.php.dist mautic/app/config/local.php
+
+        # Install Mautic
+        - cd mautic
+        - composer install
+        - php bin/console doctrine:database:create --no-interaction
+        - php bin/console mautic:install:data --force
+
+        # Enable Twilio plugin with random credentials (needed for MessagesTest to function, doesn't actually contact Twilio API), terminate Travis when an error occurs here.
+        - mysql -e "USE mautictest; INSERT INTO plugin_integration_settings (id, plugin_id, name, is_published, supported_features, api_keys, feature_settings) VALUES (2, NULL, 'Twilio', 1, 'a:0:{}', 'a:2:{s:8:\"username\";s:169:\"bzFmNlIydWRSZXlIN2lQVkdpanJ4aTQ2NUh6RVdDbHlLRVhsWGZ4b0kyZVNxLzYrQ1J6V1RvMnlhVEp0c245TEp6eStQekx5ZVhLWjB1YVdoR3RnR2dHQ3k1emVVdGt5NzZKUmtjUnJ3c1E9|L8tbZRIYhwatT7Mq+HAdYA==\";s:8:\"password\";s:169:\"T2d2cFpXQWE5YVZnNFFianJSYURRYUtGRHBNZGZjM1VETXg2Wm5Va3NheW43MjVWUlJhTVlCL2pYMDBpbElONStiVVBNbEM3M3BaeGJMNkFKNUFEN1pTNldSRjc4bUM4SDh1SE9OY1k5MTg9|TeuSvfx4XSUOvp0O7T49Cg==\";}', 'a:4:{s:20:\"sending_phone_number\";N;s:22:\"disable_trackable_urls\";i:0;s:16:\"frequency_number\";N;s:14:\"frequency_time\";N;}');" || travis_terminate 1;
+
+        # Warm up cache.
+        - php bin/console cache:warmup --no-interaction --env=dev        
+
+        # Continue Mautic installation
+        - php bin/console mautic:plugins:reload
+        - php bin/console doctrine:migrations:version --add --all --no-interaction
+        
+        # Back to api-library directory
+        - cd ../
+        - vendor/bin/phpunit --fail-on-warning
+    -
+      name: CS Fixer
+      script: vendor/bin/php-cs-fixer fix --config=.php_cs -v --dry-run --using-cache=no --show-progress=dots --diff $(git diff -- '*.php' --name-only --diff-filter=ACMRTUXB "${TRAVIS_COMMIT_RANGE}")

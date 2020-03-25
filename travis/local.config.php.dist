@@ -17,7 +17,7 @@ return [
     | If commented out, will default OAuth. see MauticApiTestCase::getAuth()
     |
     */
-    // 'AuthMethod'       => 'BasicAuth',
+    'AuthMethod'       => 'BasicAuth',
 
     /*
     |--------------------------------------------------------------------------
@@ -33,8 +33,8 @@ return [
     | you add a specific user and ensure a long passPhrase!
     |
     */
-    // 'userName'         => '',
-    // 'password'         => '',
+    'userName'         => 'admin',
+    'password'         => 'mautic',
 
     /*
     |--------------------------------------------------------------------------
@@ -52,10 +52,10 @@ return [
     'version'           => 'OAuth1a',
 
     // Required for OAuth1a and OAuth2
-    'baseUrl'           => 'http://example.com/index_dev.php',
+    'baseUrl'           => 'http://localhost/mautic/index_dev.php',
 
     // Required for All tests
-    'apiUrl'            => 'http://example.com/index_dev.php/api/',
+    'apiUrl'            => 'http://localhost/mautic/index_dev.php/api/',
     // Required for EmailsTest
     'testEmail'         => 'notexisting@email.com',
 
