@@ -16,6 +16,7 @@
   "require": {
     "php": ">=5.3.7",
     "ext-curl": "*",
+    "ext-json": "*",
     "psr/log": "~1.0",
     "phpunit/phpunit": "^5"
   },
