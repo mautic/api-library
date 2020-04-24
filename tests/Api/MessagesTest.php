@@ -28,12 +28,12 @@ class MessagesTest extends MauticApiTestCase
                 'email' => array(
                     'channel' => 'email',
                     'channelId' => null,
-                    'isEnabled' => true,
+                    'isEnabled' => 1,
                 ),
                 'sms' => array(
                     'channel' => 'sms',
                     'channelId' => null,
-                    'isEnabled' => false,
+                    'isEnabled' => 0,
                 ),
             ),
         );
