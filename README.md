@@ -236,7 +236,7 @@ Configure the unit tests config before running the unit tests. The tests fire re
 
 1. Copy `/tests/local.config.php.dist` to `/tests/local.config.php`.
 2. Open the API tester in the browser like http://localhost/api-library/apitester/index.php
-3. Fill in the URL of your Mautic instance.
+3. Fill in the URL of your Mautic instance. NOTE: if you're using Docker/DDEV and your Mautic instance is running in another container, use the container name instead of the FQDN of your Mautic instance, e.g. http://mautic-instance/...
 4. Click Submit to store the URL to the session.
 5. Fill in one of the OAuth credentials and authorize.
 6. Open the $_SESSION array and copy the 'access_token' to the local.config.php file.

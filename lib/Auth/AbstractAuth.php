@@ -145,7 +145,8 @@ abstract class AbstractAuth implements AuthInterface
                 $parameters['file']          = $this->createCurlFile($parameters['file']);
                 $headers[]                   = 'Content-Type: multipart/form-data';
             } else {
-                $parameters = http_build_query($parameters, '', '&');
+                $parameters = json_encode($parameters);
+                $headers[]  = "Content-Type: application/json";
             }
 
             $options[CURLOPT_POST]       = true;

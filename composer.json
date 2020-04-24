@@ -16,6 +16,7 @@
   "require": {
     "php": ">=7.2.0",
     "ext-curl": "*",
+    "ext-json": "*",
     "psr/log": "~1.0"
   },
   "require-dev": {
