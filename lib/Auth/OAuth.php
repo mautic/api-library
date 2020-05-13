@@ -592,7 +592,7 @@ class OAuth extends AbstractAuth
             //OAuth 2.0
             $this->log('making request using OAuth2 spec');
 
-            $parameters['access_token'] = $this->_access_token;
+            $headers[] = 'Authorization: Bearer ' . $this->_access_token;
         }
 
         return [$headers, $parameters];
