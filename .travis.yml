@@ -50,8 +50,8 @@ jobs:
         # Copy our API library config into the tests/ folder
         - cp -a travis/local.config.php.dist tests/local.config.php
 
-        # Clone Mautic 3.x branch from GitHub
-        - git clone -b 3.x --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+        # Clone Mautic 3.1 branch from GitHub
+        - git clone -b 3.1 --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
 
         # Copy our configuration file into the Mautic folder.
         - cp -a travis/overrides/app/config/local.php.dist mautic/app/config/local.php
