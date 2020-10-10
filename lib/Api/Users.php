@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Users Context
+ * Users Context.
  */
 class Users extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,7 +33,7 @@ class Users extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:admin',
         'is:active',
@@ -43,10 +43,10 @@ class Users extends Api
         'username',
         'name',
         'position',
-    );
+    ];
 
     /**
-     * Get your (API) user
+     * Get your (API) user.
      *
      * @return array|mixed
      */
@@ -56,15 +56,15 @@ class Users extends Api
     }
 
     /**
-     * Get list of permissions for a user
+     * Get list of permissions for a user.
      *
-     * @param  int $id
-     * @param  string|array $permissions
+     * @param int          $id
+     * @param string|array $permissions
      *
      * @return array|mixed
      */
     public function checkPermission($id, $permissions)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/permissioncheck', array('permissions' => $permissions), 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/permissioncheck', ['permissions' => $permissions], 'POST');
     }
 }

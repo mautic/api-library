@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -13,12 +14,12 @@ class FilesTest extends MauticApiTestCase
 {
     public function setUp()
     {
-        $this->api = $this->getContext('files');
+        $this->api                 = $this->getContext('files');
         $this->testPayload['file'] = dirname(__DIR__).'/'.'mauticlogo.png';
         $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
     }
 
-    protected function assertPayload($response, array $payload = array(), $isBatch = false, $idColumn = 'id', $callback = null)
+    protected function assertPayload($response, array $payload = [], $isBatch = false, $idColumn = 'id', $callback = null)
     {
         $this->assertErrors($response);
         $this->assertFalse(empty($response[$this->api->itemName()]['name']), 'The '.$this->api->itemName().' file name is empty.');
@@ -64,7 +65,7 @@ class FilesTest extends MauticApiTestCase
         $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
 
         $response = $this->api->create($this->testPayload);
-        $this->assertFalse(empty($response['error']), 'The PHP script was uploaded! Danger! DANGER!');
+        $this->assertFalse(empty($response['errors']), 'The PHP script was uploaded! Danger! DANGER!');
     }
 
     public function testCreateAndDeleteImageInSubdir()

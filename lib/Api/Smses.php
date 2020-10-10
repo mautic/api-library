@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Smses Context
+ * Smses Context.
  */
 class Smses extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,7 +33,7 @@ class Smses extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:published',
         'is:unpublished',
@@ -41,10 +41,10 @@ class Smses extends Api
         'is:uncategorized',
         'category',
         'lang',
-    );
+    ];
 
     /**
-     * Send sms to a specific contact
+     * Send sms to a specific contact.
      *
      * @param int $id
      * @param int $contactId

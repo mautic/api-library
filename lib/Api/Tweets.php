@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Tweets Context
+ * Tweets Context.
  */
 class Tweets extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,5 +33,5 @@ class Tweets extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array();
+    protected $searchCommands = [];
 }

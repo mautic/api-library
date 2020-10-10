@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,20 +12,21 @@ namespace Mautic\Tests\Api;
 
 class WebhooksTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('dateModified', 'modifiedBy', 'modifiedByUser');
+    protected $skipPayloadAssertion = ['dateModified', 'modifiedBy', 'modifiedByUser'];
 
-    public function setUp() {
-        $this->api = $this->getContext('webhooks');
-        $this->testPayload = array(
-            'name' => 'test',
-            'description' => 'Created via API',
-            'webhookUrl' => 'http://some.url',
+    public function setUp()
+    {
+        $this->api         = $this->getContext('webhooks');
+        $this->testPayload = [
+            'name'             => 'test',
+            'description'      => 'Created via API',
+            'webhookUrl'       => 'http://some.url',
             'eventsOrderbyDir' => 'DESC',
-            'triggers' => array(
+            'triggers'         => [
                 'mautic.lead_post_save_update',
                 'mautic.lead_post_save_new',
-            )
-        );
+            ],
+        ];
     }
 
     public function testGetList()
@@ -45,7 +47,7 @@ class WebhooksTest extends MauticApiTestCase
     public function testCreateWithWrongOrderDir()
     {
         $this->testPayload['eventsOrderbyDir'] = 'abrakadabra';
-        $response = $this->api->create($this->testPayload);
+        $response                              = $this->api->create($this->testPayload);
 
         $this->assertFalse(empty($response['errors']));
     }
@@ -59,10 +61,10 @@ class WebhooksTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
-            'name' => 'test2',
+        $editTo = [
+            'name'        => 'test2',
             'description' => 'Updated via API',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 
@@ -124,6 +126,5 @@ class WebhooksTest extends MauticApiTestCase
 
         $this->assertTrue(isset($response['triggers']['mautic.page_on_hit']['label']));
         $this->assertTrue(isset($response['triggers']['mautic.page_on_hit']['description']));
-
     }
 }

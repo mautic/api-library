@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,11 +12,12 @@ namespace Mautic\Tests\Api;
 
 class StagesTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('stages');
-        $this->testPayload = array(
+    public function setUp()
+    {
+        $this->api         = $this->getContext('stages');
+        $this->testPayload = [
             'name' => 'test',
-        );
+        ];
     }
 
     public function testGetList()
@@ -35,9 +37,9 @@ class StagesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'name' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 
@@ -50,7 +52,7 @@ class StagesTest extends MauticApiTestCase
     {
         // Create contact
         $contactsContext = $this->getContext('contacts');
-        $response = $contactsContext->create(array('firstname' => 'API stages test'));
+        $response        = $contactsContext->create(['firstname' => 'API stages test']);
         $this->assertErrors($response);
         $contact = $response['contact'];
 
@@ -79,12 +81,5 @@ class StagesTest extends MauticApiTestCase
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints();
-    }
-
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('addContact', 'removeContact');
-        $this->testAddAndRemove();
-        $this->api->bcTesting = false;
     }
 }

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,13 +12,14 @@ namespace Mautic\Tests\Api;
 
 class CompaniesTest extends AbstractCustomFieldsTest
 {
-    public function setUp() {
-        $this->api = $this->getContext('companies');
-        $this->testPayload = array(
-            'companyname' => 'test',
+    public function setUp()
+    {
+        $this->api         = $this->getContext('companies');
+        $this->testPayload = [
+            'companyname'  => 'test',
             'companyemail' => 'test@company.com',
-            'companycity' => 'Raleigh',
-        );
+            'companycity'  => 'Raleigh',
+        ];
     }
 
     public function testGetList()
@@ -32,9 +34,9 @@ class CompaniesTest extends AbstractCustomFieldsTest
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'companyname' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 
@@ -47,7 +49,7 @@ class CompaniesTest extends AbstractCustomFieldsTest
     {
         // Create contact
         $contactsContext = $this->getContext('contacts');
-        $response = $contactsContext->create(array('firstname' => 'API segments test'));
+        $response        = $contactsContext->create(['firstname' => 'API segments test']);
         $this->assertErrors($response);
         $contact = $response['contact'];
 
@@ -63,7 +65,7 @@ class CompaniesTest extends AbstractCustomFieldsTest
 
         // Test get contact companies API endpoint
         $contactContext = $this->getContext('contacts');
-        $response = $contactContext->getContactCompanies($contact['id']);
+        $response       = $contactContext->getContactCompanies($contact['id']);
         $this->assertErrors($response);
         $this->assertEquals($response['total'], 1);
         $this->assertFalse(empty($response['companies']));
@@ -83,12 +85,5 @@ class CompaniesTest extends AbstractCustomFieldsTest
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints();
-    }
-
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('addContact', 'removeContact');
-        $this->testAddAndRemove();
-        $this->api->bcTesting = false;
     }
 }

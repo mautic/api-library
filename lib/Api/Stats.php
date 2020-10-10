@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Stats Context
+ * Stats Context.
  */
 class Stats extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -26,24 +26,22 @@ class Stats extends Api
     protected $listName = 'stats';
 
     /**
-     * Get a list of stat items
+     * Get a list of stat items.
      *
      * @param string $table
      * @param int    $start
      * @param int    $limit
-     * @param array  $order
-     * @param array  $where
      *
      * @return array
      */
-    public function get($table = '', $start = 0, $limit = 0, array $order = array(), array $where = array())
+    public function get($table = '', $start = 0, $limit = 0, array $order = [], array $where = [])
     {
-        $parameters = array(
+        $parameters = [
             'start' => $start,
             'limit' => $limit,
             'order' => $order,
             'where' => $where,
-        );
+        ];
 
         $parameters = array_filter($parameters);
 

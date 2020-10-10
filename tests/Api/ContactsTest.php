@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -13,7 +14,7 @@ use Mautic\Api\Contacts;
 
 class ContactsTest extends AbstractCustomFieldsTest
 {
-    protected $skipPayloadAssertion = array('firstname', 'lastname', 'tags', 'owner', 'stage', 'points');
+    protected $skipPayloadAssertion = ['firstname', 'lastname', 'tags', 'owner', 'stage', 'points'];
 
     /**
      * @var Contacts
@@ -22,19 +23,19 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function setUp()
     {
-        $this->api = $this->getContext('contacts');
-        $this->testPayload = array(
+        $this->api         = $this->getContext('contacts');
+        $this->testPayload = [
             'firstname' => 'John',
             'lastname'  => 'APIDoe',
             'address2'  => 'Sam & Sons',
             'email'     => 'test@mautic.api',
             'owner'     => 1,
             'points'    => 3,
-            'tags'      => array(
+            'tags'      => [
                 'APItag1',
                 'APItag2',
-            )
-        );
+            ],
+        ];
     }
 
     protected function assertEventResponse($response, $expectedEvents = null)
@@ -66,16 +67,16 @@ class ContactsTest extends AbstractCustomFieldsTest
     }
 
     /**
-     * We cannot use standard method since contacts with the same email are merged into one
+     * We cannot use standard method since contacts with the same email are merged into one.
      */
     public function testGetListOfSpecificIds()
     {
         // Create some items first
-        $itemIds = array();
-        for ($i = 0; $i <= 2; $i++) {
-            $testPayload = $this->testPayload;
+        $itemIds = [];
+        for ($i = 0; $i <= 2; ++$i) {
+            $testPayload          = $this->testPayload;
             $testPayload['email'] = $i.$this->testPayload['email'];
-            $response = $this->api->create($testPayload);
+            $response             = $this->api->create($testPayload);
             $this->assertErrors($response);
             $itemIds[] = $response[$this->api->itemName()]['id'];
         }
@@ -94,22 +95,20 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testGetListOfSpecificSegment()
     {
-
         $segmentApi = $this->getContext('segments');
 
         // Create Segment
-        $segmentPayload = array(
-            'name' => 'Contact Segment Search API test'
-        );
+        $segmentPayload = [
+            'name' => 'Contact Segment Search API test',
+        ];
         $response = $segmentApi->create($segmentPayload);
         $this->assertErrors($response);
-        $segmentId = $response['list']['id'];
+        $segmentId    = $response['list']['id'];
         $segmentAlias = $response['list']['alias'];
 
-        $itemIds = array();
-        for ($i = 0; $i <= 2; $i++) {
-
-            $testPayload = $this->testPayload;
+        $itemIds = [];
+        for ($i = 0; $i <= 2; ++$i) {
+            $testPayload          = $this->testPayload;
             $testPayload['email'] = $i.$this->testPayload['email'];
 
             // Create some items
@@ -122,7 +121,7 @@ class ContactsTest extends AbstractCustomFieldsTest
             $this->assertErrors($response);
         }
 
-        $search = 'segment:'.$segmentAlias;
+        $search   = 'segment:'.$segmentAlias;
         $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
@@ -150,32 +149,6 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
     }
 
-    public function testGetEvents()
-    {
-        $response = $this->api->create($this->testPayload);
-        $this->assertErrors($response);
-        $contact = $response[$this->api->itemName()];
-
-        $response = $this->api->getEvents($contact['id']);
-        $this->assertEventResponse($response, array('lead.create', 'lead.identified'));
-
-        $response = $this->api->delete($contact['id']);
-        $this->assertErrors($response);
-    }
-
-    public function testGetEventsAdvanced()
-    {
-        $response = $this->api->create($this->testPayload);
-        $this->assertErrors($response);
-        $contact = $response[$this->api->itemName()];
-
-        $response = $this->api->getEvents($contact['id'], '', array('lead.identified'));
-        $this->assertEventResponse($response, array('lead.identified'));
-
-        $response = $this->api->delete($contact['id']);
-        $this->assertErrors($response);
-    }
-
     public function testGetActivityForContact()
     {
         $response = $this->api->create($this->testPayload);
@@ -187,7 +160,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->api->addPoints($contact['id'], 3);
 
         $response = $this->api->getActivityForContact($contact['id']);
-        $this->assertEventResponse($response, array('lead.donotcontact', 'point.gained'));
+        $this->assertEventResponse($response, ['lead.donotcontact', 'point.gained']);
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
@@ -203,8 +176,8 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->api->addDnc($contact['id'], 'email', Contacts::BOUNCED);
         $this->api->addPoints($contact['id'], 3);
 
-        $response = $this->api->getActivityForContact($contact['id'], '', array('lead.donotcontact'));
-        $this->assertEventResponse($response, array('lead.donotcontact'));
+        $response = $this->api->getActivityForContact($contact['id'], '', ['lead.donotcontact']);
+        $this->assertEventResponse($response, ['lead.donotcontact']);
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
@@ -226,15 +199,15 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         curl_exec($curl);
 
-        $response = $this->api->getActivity('', array('page.hit'));
-        $this->assertEventResponse($response, array('page.hit'));
+        $response = $this->api->getActivity('', ['page.hit']);
+        $this->assertEventResponse($response, ['page.hit']);
     }
 
     public function testGetActivityWithDateRange()
     {
         $dateFrom = new \DateTime('-1 week');
         $dateTo   = new \DateTime('-1 day');
-        $response = $this->api->getActivity('', array(), array(), '', 'ASC', 1, $dateFrom, $dateTo);
+        $response = $this->api->getActivity('', [], [], '', 'ASC', 1, $dateFrom, $dateTo);
 
         $this->assertEventResponse($response);
 
@@ -248,9 +221,9 @@ class ContactsTest extends AbstractCustomFieldsTest
     public function testCreateGetAndDelete()
     {
         // Create a stage to test with it too
-        $stageApi = $this->getContext('stages');
-        $response = $stageApi->create(['name' => 'contact API test']);
-        $stage = $response[$stageApi->itemName()];
+        $stageApi                   = $this->getContext('stages');
+        $response                   = $stageApi->create(['name' => 'contact API test']);
+        $stage                      = $response[$stageApi->itemName()];
         $this->testPayload['stage'] = $stage['id'];
 
         // Test Create
@@ -313,12 +286,12 @@ class ContactsTest extends AbstractCustomFieldsTest
     public function testDncAddInCreate()
     {
         // Add DNC to the payload
-        $this->testPayload['doNotContact'] = array(
-            array(
+        $this->testPayload['doNotContact'] = [
+            [
                 'channel' => 'email',
-                'reason' => Contacts::BOUNCED,
-            )
-        );
+                'reason'  => Contacts::BOUNCED,
+            ],
+        ];
 
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
@@ -352,18 +325,18 @@ class ContactsTest extends AbstractCustomFieldsTest
         $response    = $this->api->edit(10000, $this->testPayload);
 
         //there should be an error as the contact shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
+        $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
 
         $response = $this->api->edit(
             $response[$this->api->itemName()]['id'],
-            array(
+            [
                 'firstname' => 'test2',
                 'lastname'  => 'test2',
                 'points'    => $pointsSet,
-            )
+            ]
         );
 
         $this->assertErrors($response);
@@ -381,13 +354,13 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         $response = $this->api->edit(
             $response[$this->api->itemName()]['id'],
-            array(
-                'country' => 'not existing country'
-            )
+            [
+                'country' => 'not existing country',
+            ]
         );
 
         //there should be an error as the country does not exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
+        $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
     }
 
     public function testEditPut()
@@ -437,25 +410,18 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testBatchEndpoints()
     {
-        $contact1 = $this->testPayload;
-        $contact2 = $this->testPayload;
-        $contact3 = $this->testPayload;
+        $contact1          = $this->testPayload;
+        $contact2          = $this->testPayload;
+        $contact3          = $this->testPayload;
         $contact1['email'] = 'batch1@test.email';
         $contact2['email'] = 'batch2@test.email';
         $contact3['email'] = 'batch3@test.email';
-        $batch = array(
+        $batch             = [
             $contact1,
             $contact2,
             $contact3,
-        );
+        ];
 
         $this->standardTestBatchEndpoints($batch);
-    }
-
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('addDnc', 'removeDnc');
-        $this->testDncAddRemoveEndpoints();
-        $this->api->bcTesting = false;
     }
 }

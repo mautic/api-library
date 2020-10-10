@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,12 +12,13 @@ namespace Mautic\Tests\Api;
 
 class DynamicContentsTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('dynamicContents');
-        $this->testPayload = array(
-            'name' => 'test',
-            'content' => 'test'
-        );
+    public function setUp()
+    {
+        $this->api         = $this->getContext('dynamicContents');
+        $this->testPayload = [
+            'name'    => 'test',
+            'content' => 'test',
+        ];
     }
 
     public function testGetList()
@@ -36,9 +38,9 @@ class DynamicContentsTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
-            'name' => 'test2'
-        );
+        $editTo = [
+            'name' => 'test2',
+        ];
         $this->standardTestEditPatch($editTo);
     }
 

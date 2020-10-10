@@ -1,16 +1,17 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2016 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Dynamiccontents Context
+ * Dynamiccontents Context.
  */
 class DynamicContents extends Api
 {
@@ -32,7 +33,7 @@ class DynamicContents extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:published',
         'is:unpublished',
@@ -40,5 +41,5 @@ class DynamicContents extends Api
         'is:uncategorized',
         'category',
         'lang',
-    );
+    ];
 }

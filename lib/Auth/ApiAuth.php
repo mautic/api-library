@@ -12,12 +12,12 @@
 namespace Mautic\Auth;
 
 /**
- * OAuth Client modified from https://code.google.com/p/simple-php-oauth/
+ * OAuth Client modified from https://code.google.com/p/simple-php-oauth/.
  */
 class ApiAuth
 {
     /**
-     * Get an API Auth object
+     * Get an API Auth object.
      *
      * @param array  $parameters
      * @param string $authMethod
@@ -26,28 +26,28 @@ class ApiAuth
      *
      * @deprecated
      */
-    public static function initiate($parameters = array(), $authMethod = 'OAuth')
+    public static function initiate($parameters = [], $authMethod = 'OAuth')
     {
-        $object = new self;
+        $object = new self();
 
         return $object->newAuth($parameters, $authMethod);
     }
 
     /**
-     * Get an API Auth object
+     * Get an API Auth object.
      *
      * @param array  $parameters
      * @param string $authMethod
      *
      * @return AuthInterface
      */
-    public function newAuth($parameters = array(), $authMethod = 'OAuth')
+    public function newAuth($parameters = [], $authMethod = 'OAuth')
     {
         $class      = 'Mautic\\Auth\\'.$authMethod;
         $authObject = new $class();
 
         $reflection = new \ReflectionMethod($class, 'setup');
-        $pass       = array();
+        $pass       = [];
 
         foreach ($reflection->getParameters() as $param) {
             if (isset($parameters[$param->getName()])) {

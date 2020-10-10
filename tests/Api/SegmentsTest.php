@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -18,24 +19,25 @@ class SegmentsTest extends MauticApiTestCase
      */
     protected $api;
 
-    public function setUp() {
-        $this->api = $this->getContext('segments');
-        $this->testPayload = array(
-            'name' => 'List all GMail contacts',
+    public function setUp()
+    {
+        $this->api         = $this->getContext('segments');
+        $this->testPayload = [
+            'name'        => 'List all GMail contacts',
             'description' => 'Created via API Library unit tests',
-            'isGlobal' => true,
-            'filters' => array(
-                array(
-                    'glue' => 'and',
-                    'field' => 'email',
-                    'object' => 'lead',
-                    'type' => 'email',
-                    'filter' => '*@gmail.com',
-                    'display' => null,
+            'isGlobal'    => true,
+            'filters'     => [
+                [
+                    'glue'     => 'and',
+                    'field'    => 'email',
+                    'object'   => 'lead',
+                    'type'     => 'email',
+                    'filter'   => '*@gmail.com',
+                    'display'  => null,
                     'operator' => 'like',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function testGetList()
@@ -47,11 +49,11 @@ class SegmentsTest extends MauticApiTestCase
     public function testGetListOfSpecificIds()
     {
         // Create some items first
-        $itemIds = array();
+        $itemIds  = [];
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $itemIds[] = $response[$this->api->itemName()]['id'];
-        $response = $this->api->create($this->testPayload);
+        $response  = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $itemIds[] = $response[$this->api->itemName()]['id'];
 
@@ -70,7 +72,7 @@ class SegmentsTest extends MauticApiTestCase
 
     public function testGetListMinimal()
     {
-        $response = $this->api->getList('', 0,  0, '', 'ASC', false, true);
+        $response = $this->api->getList('', 0, 0, '', 'ASC', false, true);
         $this->assertErrors($response);
     }
 
@@ -94,14 +96,14 @@ class SegmentsTest extends MauticApiTestCase
         $response = $this->api->edit(10000, $this->testPayload);
 
         //there should be an error as the segment shouldn't exist
-        $this->assertTrue(isset($response['error']), $response['error']['message']);
+        $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
 
-        $update = array(
-            'name' => 'test2'
-        );
+        $update = [
+            'name' => 'test2',
+        ];
 
         $response = $this->api->edit($response[$this->api->itemName()]['id'], $update);
         $this->assertPayload($response, $update);
@@ -125,7 +127,7 @@ class SegmentsTest extends MauticApiTestCase
     {
         // Create contact
         $contactApi = $this->getContext('contacts');
-        $response = $contactApi->create(array('firstname' => 'API segments test'));
+        $response   = $contactApi->create(['firstname' => 'API segments test']);
         $this->assertErrors($response);
         $contact = $response['contact'];
 
@@ -158,12 +160,5 @@ class SegmentsTest extends MauticApiTestCase
     public function testBatchEndpoints()
     {
         $this->standardTestBatchEndpoints();
-    }
-
-    public function testBCEndpoints()
-    {
-        $this->api->bcTesting = array('addContact', 'removeContact');
-        $this->testAddAndRemove();
-        $this->api->bcTesting = false;
     }
 }

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,31 +12,36 @@ namespace Mautic\Tests\Api;
 
 class UsersTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('plainPassword', 'role');
+    protected $skipPayloadAssertion = ['plainPassword', 'role'];
 
-    public function setUp() {
-        $this->api = $this->getContext('users');
+    public function setUp()
+    {
+        $this->api         = $this->getContext('users');
         $this->testPayload = $this->getUniqueUser();
     }
 
-    protected function generateRandomUsername($length = 8) {
+    protected function generateRandomUsername($length = 8)
+    {
         $x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
         return 'API_'.substr(str_shuffle(str_repeat($x, ceil($length / strlen($x)))), 1, $length);
     }
 
-    protected function getUniqueUser() {
+    protected function getUniqueUser()
+    {
         $username = $this->generateRandomUsername();
-        return array(
-            'username' => $username,
-            'firstName' => 'API',
-            'lastName' => 'Test',
-            'email' => $username.'@email.com',
-            'plainPassword' => array(
+
+        return [
+            'username'      => $username,
+            'firstName'     => 'API',
+            'lastName'      => 'Test',
+            'email'         => $username.'@email.com',
+            'plainPassword' => [
                 'password' => 'topSecret007',
-                'confirm' => 'topSecret007',
-            ),
+                'confirm'  => 'topSecret007',
+            ],
             'role' => 1, // Should exist in every Mautic instance
-        );
+        ];
     }
 
     public function testGetList()
@@ -46,16 +52,16 @@ class UsersTest extends MauticApiTestCase
     public function testGetListOfSpecificIds()
     {
         // Create some items first
-        $itemIds = array();
+        $itemIds  = [];
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
         $itemIds[] = $response[$this->api->itemName()]['id'];
-        $user2 = $this->getUniqueUser();
-        $response = $this->api->create($user2);
+        $user2     = $this->getUniqueUser();
+        $response  = $this->api->create($user2);
         $this->assertErrors($response);
         $itemIds[] = $response[$this->api->itemName()]['id'];
 
-        $search = 'ids:'.implode(',', $itemIds);
+        $search   = 'ids:'.implode(',', $itemIds);
         $response = $this->api->getList($search);
         $this->assertErrors($response);
         $this->assertEquals(count($itemIds), $response['total']);
@@ -74,9 +80,9 @@ class UsersTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'lastName' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 
@@ -97,7 +103,7 @@ class UsersTest extends MauticApiTestCase
         $this->assertErrors($response);
 
         $permission = 'user:users:create';
-        $response = $this->api->checkPermission($response['id'], $permission);
+        $response   = $this->api->checkPermission($response['id'], $permission);
         $this->assertErrors($response);
         $this->assertTrue(isset($response[$permission]));
     }
@@ -107,8 +113,8 @@ class UsersTest extends MauticApiTestCase
         $response = $this->api->getSelf();
         $this->assertErrors($response);
 
-        $permission = array('user:users:create', 'user:users:edit');
-        $response = $this->api->checkPermission($response['id'], $permission);
+        $permission = ['user:users:create', 'user:users:edit'];
+        $response   = $this->api->checkPermission($response['id'], $permission);
         $this->assertErrors($response);
         foreach ($permission as $p) {
             $this->assertTrue(isset($response[$p]));
@@ -117,11 +123,11 @@ class UsersTest extends MauticApiTestCase
 
     public function testBatchEndpoints()
     {
-        $batch = array(
+        $batch = [
             $this->getUniqueUser(),
             $this->getUniqueUser(),
             $this->getUniqueUser(),
-        );
+        ];
 
         $this->standardTestBatchEndpoints($batch);
     }

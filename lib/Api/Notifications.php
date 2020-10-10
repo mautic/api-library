@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Notifications Context
+ * Notifications Context.
  */
 class Notifications extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,7 +33,7 @@ class Notifications extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:published',
         'is:unpublished',
@@ -41,5 +41,5 @@ class Notifications extends Api
         'is:uncategorized',
         'category',
         'lang',
-    );
+    ];
 }

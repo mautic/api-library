@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * PointTriggers Context
+ * PointTriggers Context.
  */
 class PointTriggers extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -33,25 +33,24 @@ class PointTriggers extends Api
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
-    );
+    ];
 
     /**
-     * Remove events from a point trigger
+     * Remove events from a point trigger.
      *
-     * @param integer $triggerId
-     * @param array   $eventIds
+     * @param int $triggerId
      *
      * @return array|mixed
      */
     public function deleteTriggerEvents($triggerId, array $eventIds)
     {
-        return $this->makeRequest($this->endpoint.'/'.$triggerId.'/events/delete', array('events' => $eventIds), 'DELETE');
+        return $this->makeRequest($this->endpoint.'/'.$triggerId.'/events/delete', ['events' => $eventIds], 'DELETE');
     }
 
     /**
-     * Get list of available event types
+     * Get list of available event types.
      *
      * @return array|mixed
      */

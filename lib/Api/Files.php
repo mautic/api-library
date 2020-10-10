@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Files Context
+ * Files Context.
  */
 class Files extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -31,13 +31,13 @@ class Files extends Api
     protected $itemName = 'file';
 
     /**
-     * Changes the file folder to look at
+     * Changes the file folder to look at.
      *
      * @param string $folder [images, assets]
      */
     public function setFolder($folder = 'assets')
     {
-        $folder = str_replace('/', '.', $folder);
+        $folder         = str_replace('/', '.', $folder);
         $this->endpoint = 'files/'.$folder;
     }
 
@@ -50,8 +50,6 @@ class Files extends Api
     }
 
     /**
-     * @param array $parameters
-     *
      * @return array|mixed
      */
     public function create(array $parameters)

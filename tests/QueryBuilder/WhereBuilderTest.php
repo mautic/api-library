@@ -12,12 +12,13 @@
 namespace Mautic\Tests\QueryBuilder;
 
 use Mautic\QueryBuilder\WhereBuilder;
+use PHPUnit\Framework\TestCase;
 
-class WhereBuilderTest extends \PHPUnit_Framework_TestCase
+class WhereBuilderTest extends TestCase
 {
     public function testClauses()
     {
-        $methods = array(
+        $methods = [
             'eq',
             'neq',
             'lt',
@@ -34,20 +35,20 @@ class WhereBuilderTest extends \PHPUnit_Framework_TestCase
             'isNotNull',
             'isEmpty',
             'isNotEmpty',
-        );
+        ];
 
-        $clauses = array();
+        $clauses      = [];
         $whereBuilder = new WhereBuilder();
         foreach ($methods as $method) {
             $ignoreWhere = false;
             switch ($method) {
                 case 'in':
                 case 'notIn':
-                    $val = array(1, 2);
+                    $val = [1, 2];
                     break;
                 case 'between':
                 case 'notBetween':
-                    $val = array(1, 2);
+                    $val = [1, 2];
                     $whereBuilder->$method($method, $val[0], $val[1]);
                     $ignoreWhere = true;
                     break;
@@ -60,11 +61,11 @@ class WhereBuilderTest extends \PHPUnit_Framework_TestCase
                 default:
                     $val = 1;
             }
-            $clauses[] = array(
-                'col' => $method,
+            $clauses[] = [
+                'col'  => $method,
                 'expr' => $method,
-                'val'  => $val
-            );
+                'val'  => $val,
+            ];
 
             if (empty($ignoreWhere)) {
                 $whereBuilder->$method($method, $val);
@@ -78,27 +79,27 @@ class WhereBuilderTest extends \PHPUnit_Framework_TestCase
             ->neq('neq', 2)
             ->between('between', 1, 2);
 
-        $clauses[] = array(
-            'col' => null,
+        $clauses[] = [
+            'col'  => null,
             'expr' => 'andX',
-            'val'  => array(
-                array(
-                    'col' => 'eq',
+            'val'  => [
+                [
+                    'col'  => 'eq',
                     'expr' => 'eq',
-                    'val'  => 2
-                ),
-                array(
-                    'col' => 'neq',
+                    'val'  => 2,
+                ],
+                [
+                    'col'  => 'neq',
                     'expr' => 'neq',
-                    'val'  => 2
-                ),
-                array(
-                    'col' => 'between',
+                    'val'  => 2,
+                ],
+                [
+                    'col'  => 'between',
                     'expr' => 'between',
-                    'val'  => array(1,2)
-                ),
-            ),
-        );
+                    'val'  => [1, 2],
+                ],
+            ],
+        ];
 
         $whereBuilder->add($andX);
 

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,48 +12,45 @@ namespace Mautic\Tests\Api;
 
 class FocusTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('htmlMode', 'properties');
+    protected $skipPayloadAssertion = ['htmlMode', 'properties'];
 
     public function setUp()
     {
-        $this->api = $this->getContext('focus');
-        $this->testPayload = array(
-            'name' => 'test',
-            'type' => 'notice',
-            'website' => 'http://',
-            'style' => 'bar',
-            'htmlMode' => 1,
-            'html' => '<div><strong style="color:red">html mode enabled</strong></div>',
-            'properties' => array(
-                'bar' =>
-                    array(
+        $this->api         = $this->getContext('focus');
+        $this->testPayload = [
+            'name'       => 'test',
+            'type'       => 'notice',
+            'website'    => 'http://',
+            'style'      => 'bar',
+            'htmlMode'   => 1,
+            'html'       => '<div><strong style="color:red">html mode enabled</strong></div>',
+            'properties' => [
+                'bar' => [
                         'allow_hide' => 1,
-                        'sticky' => 1,
-                        'size' => 'large',
+                        'sticky'     => 1,
+                        'size'       => 'large',
+                        'placement'  => 'top',
+                    ],
+                'modal' => [
                         'placement' => 'top',
-                    ),
-                'modal' =>
-                    array(
-                        'placement' => 'top',
-                    ),
-                'notification' =>
-                    array(
+                    ],
+                'notification' => [
                         'placement' => 'top_left',
-                    ),
-                'animate' => 1,
+                    ],
+                'animate'         => 1,
                 'link_activation' => 1,
-                'colors' => array(
+                'colors'          => [
                     'primary' => '27184e',
-                ),
-                'content' => array(
+                ],
+                'content' => [
                     'headline' => '',
-                    'font' => 'Arial, Helvetica, sans-serif',
-                ),
-                'when' => 'immediately',
-                'frequency' => 'everypage',
+                    'font'     => 'Arial, Helvetica, sans-serif',
+                ],
+                'when'                  => 'immediately',
+                'frequency'             => 'everypage',
                 'stop_after_conversion' => 1,
-            ),
-        );
+            ],
+        ];
     }
 
     public function testGetList()
@@ -72,9 +70,9 @@ class FocusTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'name' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 

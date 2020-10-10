@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,12 +12,13 @@ namespace Mautic\Tests\Api;
 
 class SmsesTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('smses');
-        $this->testPayload = array(
-            'name' => 'test',
-            'message' => 'API test message'
-        );
+    public function setUp()
+    {
+        $this->api         = $this->getContext('smses');
+        $this->testPayload = [
+            'name'    => 'test',
+            'message' => 'API test message',
+        ];
     }
 
     public function testGetList()
@@ -36,9 +38,9 @@ class SmsesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'name' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 

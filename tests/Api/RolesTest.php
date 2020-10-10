@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,19 +12,19 @@ namespace Mautic\Tests\Api;
 
 class RolesTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('roles');
-        $this->testPayload = array(
-            'name' => 'API test role',
-            'description' => 'created via AIP',
-            'rawPermissions' => array (
-                'email:emails' =>
-                array (
+    public function setUp()
+    {
+        $this->api         = $this->getContext('roles');
+        $this->testPayload = [
+            'name'           => 'API test role',
+            'description'    => 'created via AIP',
+            'rawPermissions' => [
+                'email:emails' => [
                     'viewown',
                     'viewother',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
     }
 
     public function testGetList()
@@ -43,9 +44,9 @@ class RolesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'name' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,26 +12,28 @@ namespace Mautic\Tests\Api;
 
 class NotesTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('lead');
+    protected $skipPayloadAssertion = ['lead'];
 
-    public function setUp() {
-        $this->api = $this->getContext('notes');
-        $this->testPayload = array(
+    public function setUp()
+    {
+        $this->api         = $this->getContext('notes');
+        $this->testPayload = [
             'text' => 'Contact note created via API request',
             'type' => 'general',
-        );
+        ];
 
         // Create a contact for test
         $contactApi = $this->getContext('contacts');
-        $response = $contactApi->create(array('firstname' => 'Note API test'));
+        $response   = $contactApi->create(['firstname' => 'Note API test']);
         $this->assertErrors($response);
         $this->testPayload['lead'] = $response['contact']['id'];
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         // Delete a contact from test
         $this->api = $this->getContext('contacts');
-        $response = $this->api->delete($this->testPayload['lead']);
+        $response  = $this->api->delete($this->testPayload['lead']);
         $this->assertErrors($response);
     }
 
@@ -65,9 +68,9 @@ class NotesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'text' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 

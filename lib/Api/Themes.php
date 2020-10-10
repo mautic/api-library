@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Themes Context
+ * Themes Context.
  */
 class Themes extends Api
 {
-
     /**
      * {@inheritdoc}
      */
@@ -32,7 +32,6 @@ class Themes extends Api
 
     protected $temporaryFilePath = null;
 
-
     /**
      * {@inheritdoc}
      */
@@ -42,8 +41,6 @@ class Themes extends Api
     }
 
     /**
-     * @param array $parameters
-     *
      * @return array|mixed
      */
     public function create(array $parameters)

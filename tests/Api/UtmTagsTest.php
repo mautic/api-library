@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,8 +12,8 @@ namespace Mautic\Tests\Api;
 
 class UtmTagsTest extends MauticApiTestCase
 {
-    protected $skipPayloadAssertion = array('lead');
-    protected $fieldMapping = array(
+    protected $skipPayloadAssertion = ['lead'];
+    protected $fieldMapping         = [
         'query'        => 'query',
         'referer'      => 'referer',
         'remotehost'   => 'remoteHost',
@@ -22,14 +23,15 @@ class UtmTagsTest extends MauticApiTestCase
         'utm_source'   => 'utmSource',
         'utm_medium'   => 'utmMedium',
         'utm_content'  => 'utmContent',
-        'utm_term'     => 'utmTerm'
-    );
+        'utm_term'     => 'utmTerm',
+    ];
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->api = $this->getContext('contacts');
 
-        $this->testPayload = array(
-            'query'        => array('foo'=>'bar','coy'=>'acme'),
+        $this->testPayload = [
+            'query'        => ['foo'=>'bar', 'coy'=>'acme'],
             'referer'      => 'https://www.google.com/?q=mautic',
             'remotehost'   => 'mautic-api.test',
             'url'          => '/mautic/rulz/',
@@ -39,19 +41,20 @@ class UtmTagsTest extends MauticApiTestCase
             'utm_medium'   => 'cli',
             'utm_content'  => 'test',
             'utm_term'     => 'phpunit',
-        );
+        ];
 
         // Create a contact for testing
         $contactApi = $this->getContext('contacts');
-        $response = $contactApi->create(array('firstname' => 'UTMTags API test'));
+        $response   = $contactApi->create(['firstname' => 'UTMTags API test']);
         $this->assertErrors($response);
         $this->testPayload['lead'] = $response[$contactApi->itemName()]['id'];
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         // Delete a contact from test
         $this->api = $this->getContext('contacts');
-        $response = $this->api->delete($this->testPayload['lead']);
+        $response  = $this->api->delete($this->testPayload['lead']);
         $this->assertErrors($response);
     }
 
@@ -102,7 +105,7 @@ class UtmTagsTest extends MauticApiTestCase
         $this->testPayload['lastActive'] = '2017-01-17T00:30:08+00:00';
 
         // Add 3rd UTM tags (position [2])
-        $response = $this->api->addUtm($this->testPayload['lead'],$this->testPayload);
+        $response = $this->api->addUtm($this->testPayload['lead'], $this->testPayload);
         // verify payload
         $this->assertUtmtags($response, 2);
         // Remeber it
@@ -127,7 +130,9 @@ class UtmTagsTest extends MauticApiTestCase
 
         // field names need mapping
         foreach ($this->fieldMapping as $payloadProp => $itemProp) {
-            if (in_array($payloadProp, $this->skipPayloadAssertion)) continue;
+            if (in_array($payloadProp, $this->skipPayloadAssertion)) {
+                continue;
+            }
             $this->assertTrue(array_key_exists($itemProp, $response[$this->api->itemName()]['utmtags'][0]), 'The [utmtags]["'.$itemProp.'"] item doesn\'t exist in the response.');
             $this->assertSame($this->testPayload[$payloadProp], $response[$this->api->itemName()]['utmtags'][0][$itemProp], 'Values do not match');
         }
@@ -137,28 +142,28 @@ class UtmTagsTest extends MauticApiTestCase
     {
         // Remove the UTM tags
         foreach ($utmIds as $utmId) {
-            $response = $this->api->removeUtm($this->testPayload['lead'],$utmId);
+            $response = $this->api->removeUtm($this->testPayload['lead'], $utmId);
             $this->assertErrors($response);
 
             if (!empty($response[$this->api->itemName()]['utmtags'])) {
-                $this->assertTrue($response[$this->api->itemName()]['utmtags'][0]['id'] != $utmId, 'The id should not exist! (ID == '.$utmId .')' );
+                $this->assertTrue($response[$this->api->itemName()]['utmtags'][0]['id'] != $utmId, 'The id should not exist! (ID == '.$utmId.')');
             }
         }
 
-        $this->assertSame(0,count($response[$this->api->itemName()]['utmtags']), 'Should be no more items');
+        $this->assertSame(0, count($response[$this->api->itemName()]['utmtags']), 'Should be no more items');
     }
 
     protected function addUtmTags()
     {
         // Add the UTM tags (position [0])
-        $response = $this->api->addUtm($this->testPayload['lead'],$this->testPayload);
+        $response = $this->api->addUtm($this->testPayload['lead'], $this->testPayload);
         // verify payload
         $this->assertUtmtags($response, 0);
         // Remeber it
         $utmIds[] = $response[$this->api->itemName()]['utmtags'][0]['id'];
 
         // Add 2nd UTM tags (position [1])
-        $response = $this->api->addUtm($this->testPayload['lead'],$this->testPayload);
+        $response = $this->api->addUtm($this->testPayload['lead'], $this->testPayload);
         // verify payload
         $this->assertUtmtags($response, 1);
         // Remeber it

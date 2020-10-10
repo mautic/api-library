@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,8 +12,9 @@ namespace Mautic\Tests\Api\Auth;
 
 use Mautic\Auth\AbstractAuth;
 use Mautic\Exception\UnexpectedResponseFormatException;
+use PHPUnit\Framework\TestCase;
 
-class AbstractAuthTest extends \PHPUnit_Framework_TestCase
+class AbstractAuthTest extends TestCase
 {
     protected $config;
 

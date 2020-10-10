@@ -16,22 +16,22 @@ class QueryBuilder
     /**
      * @var array
      */
-    protected $select = array();
+    protected $select = [];
 
     /**
      * @var array
      */
-    protected $order = array();
+    protected $order = [];
 
     /**
      * @var array
      */
-    protected $where = array();
+    protected $where = [];
 
     /**
      * @var WhereBuilder
      */
-    static protected $whereBuilder;
+    protected static $whereBuilder;
 
     /**
      * @param $column
@@ -47,10 +47,10 @@ class QueryBuilder
      */
     public function addOrder($column, $dir = 'asc')
     {
-        $this->order[] = array(
+        $this->order[] = [
             'col' => $column,
-            'dir' => $dir
-        );
+            'dir' => $dir,
+        ];
     }
 
     /**
@@ -159,7 +159,6 @@ class QueryBuilder
 
         return $this;
     }
-
 
     protected function resetWhereBuilder()
     {

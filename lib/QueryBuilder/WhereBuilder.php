@@ -12,14 +12,14 @@
 namespace Mautic\QueryBuilder;
 
 /**
- * Class WhereBuilder
+ * Class WhereBuilder.
  */
 class WhereBuilder
 {
     /**
      * @var array
      */
-    protected $clauses = array();
+    protected $clauses = [];
 
     /**
      * @var null
@@ -149,8 +149,7 @@ class WhereBuilder
     }
 
     /**
-     * @param       $col
-     * @param array $val
+     * @param $col
      *
      * @return $this
      */
@@ -162,8 +161,7 @@ class WhereBuilder
     }
 
     /**
-     * @param       $col
-     * @param array $val
+     * @param $col
      *
      * @return $this
      */
@@ -183,7 +181,7 @@ class WhereBuilder
      */
     public function between($col, $val1, $val2)
     {
-        $this->addClause($col, __FUNCTION__, array($val1, $val2));
+        $this->addClause($col, __FUNCTION__, [$val1, $val2]);
 
         return $this;
     }
@@ -197,7 +195,7 @@ class WhereBuilder
      */
     public function notBetween($col, $val1, $val2)
     {
-        $this->addClause($col, __FUNCTION__, array($val1, $val2));
+        $this->addClause($col, __FUNCTION__, [$val1, $val2]);
 
         return $this;
     }
@@ -278,11 +276,11 @@ class WhereBuilder
                 case 'andX':
                 case 'orX':
                     $this->add(
-                        array(
+                        [
                             'col'  => null,
                             'expr' => $composite,
-                            'val'  => $clause->getClauses()
-                        )
+                            'val'  => $clause->getClauses(),
+                        ]
                     );
                     break;
                 default:
@@ -306,11 +304,11 @@ class WhereBuilder
      */
     private function addClause($col, $expr, $val = null)
     {
-        $this->clauses[] = array(
+        $this->clauses[] = [
             'col'  => $col,
             'expr' => $expr,
             'val'  => $val,
-        );
+        ];
     }
 
     /**

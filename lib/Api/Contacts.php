@@ -1,20 +1,20 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
 namespace Mautic\Api;
 
 /**
- * Contacts Context
+ * Contacts Context.
  */
 class Contacts extends Api
 {
-
     /**
      * Contact unsubscribed themselves.
      */
@@ -48,15 +48,15 @@ class Contacts extends Api
     /**
      * @var array
      */
-    protected $bcRegexEndpoints = array(
+    protected $bcRegexEndpoints = [
         'contacts/(.*?)/dnc/(.*?)/add'    => 'contacts/$1/dnc/add/$2', // 2.6.0
-        'contacts/(.*?)/dnc/(.*?)/remove' => 'contacts/$1/dnc/remove/$2' // 2.6.0
-    );
+        'contacts/(.*?)/dnc/(.*?)/remove' => 'contacts/$1/dnc/remove/$2', // 2.6.0
+    ];
 
     /**
      * {@inheritdoc}
      */
-    protected $searchCommands = array(
+    protected $searchCommands = [
         'ids',
         'is:anonymous',
         'is:unowned',
@@ -68,7 +68,7 @@ class Contacts extends Api
         'owner',
         'ip',
         'common',
-    );
+    ];
 
     /**
      * @param string $search
@@ -89,7 +89,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of users available as contact owners
+     * Get a list of users available as contact owners.
      *
      * @return array|mixed
      */
@@ -99,7 +99,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of custom fields
+     * Get a list of custom fields.
      *
      * @return array|mixed
      */
@@ -109,7 +109,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of contact segments
+     * Get a list of contact segments.
      *
      * @return array|mixed
      */
@@ -119,39 +119,10 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of a contact's engagement events
+     * Get a list of contact activity events for all contacts.
      *
-     * @param int    $id Contact ID
-     * @param string $search
-     * @param array  $includeEvents
-     * @param array  $excludeEvents
-     * @param string $orderBy
-     * @param string $orderByDir
-     * @param int    $page
-     *
-     * @return array|mixed
-     *
-     * @deprecated 2.10.0 Use getActivityForContact instead. The response is slightly different.
-     */
-    public function getEvents(
-        $id,
-        $search = '',
-        array $includeEvents = array(),
-        array $excludeEvents = array(),
-        $orderBy = '',
-        $orderByDir = 'ASC',
-        $page = 1
-    ) {
-        return $this->fetchActivity('/'.$id.'/events', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page);
-    }
-
-    /**
-     * Get a list of contact activity events for all contacts
-     *
-     * @param int       $id Contact ID
+     * @param int       $id         Contact ID
      * @param string    $search
-     * @param array     $includeEvents
-     * @param array     $excludeEvents
      * @param string    $orderBy
      * @param string    $orderByDir
      * @param int       $page
@@ -163,8 +134,8 @@ class Contacts extends Api
     public function getActivityForContact(
         $id,
         $search = '',
-        array $includeEvents = array(),
-        array $excludeEvents = array(),
+        array $includeEvents = [],
+        array $excludeEvents = [],
         $orderBy = '',
         $orderByDir = 'ASC',
         $page = 1,
@@ -176,11 +147,9 @@ class Contacts extends Api
 
     /**
      * Get a list of contact engagement events.
-     * Not related to a specific contact ID
+     * Not related to a specific contact ID.
      *
      * @param string    $search
-     * @param array     $includeEvents
-     * @param array     $excludeEvents
      * @param string    $orderBy
      * @param string    $orderByDir
      * @param int       $page
@@ -191,8 +160,8 @@ class Contacts extends Api
      */
     public function getActivity(
         $search = '',
-        array $includeEvents = array(),
-        array $excludeEvents = array(),
+        array $includeEvents = [],
+        array $excludeEvents = [],
         $orderBy = '',
         $orderByDir = 'ASC',
         $page = 1,
@@ -203,12 +172,10 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of contact activity events for all contacts
+     * Get a list of contact activity events for all contacts.
      *
-     * @param string    $path of the URL after the endpoint
+     * @param string    $path       of the URL after the endpoint
      * @param string    $search
-     * @param array     $includeEvents
-     * @param array     $excludeEvents
      * @param string    $orderBy
      * @param string    $orderByDir
      * @param int       $page
@@ -220,26 +187,26 @@ class Contacts extends Api
     protected function fetchActivity(
         $path,
         $search = '',
-        array $includeEvents = array(),
-        array $excludeEvents = array(),
+        array $includeEvents = [],
+        array $excludeEvents = [],
         $orderBy = '',
         $orderByDir = 'ASC',
         $page = 1,
         \DateTime $dateFrom = null,
         \DateTime $dateTo = null
     ) {
-        $parameters = array(
-            'filters' => array(
+        $parameters = [
+            'filters' => [
                 'search'        => $search,
                 'includeEvents' => $includeEvents,
                 'excludeEvents' => $excludeEvents,
-            ),
-            'order'   => array(
+            ],
+            'order'   => [
                 $orderBy,
                 $orderByDir,
-            ),
-            'page'    => $page
-        );
+            ],
+            'page'    => $page,
+        ];
 
         if ($dateFrom) {
             $parameters['filters']['dateFrom'] = $dateFrom->format('Y-m-d H:i:s');
@@ -253,9 +220,9 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of a contact's notes
+     * Get a list of a contact's notes.
      *
-     * @param int    $id Contact ID
+     * @param int    $id         Contact ID
      * @param string $search
      * @param int    $start
      * @param int    $limit
@@ -266,13 +233,13 @@ class Contacts extends Api
      */
     public function getContactNotes($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        $parameters = array(
+        $parameters = [
             'search'     => $search,
             'start'      => $start,
             'limit'      => $limit,
             'orderBy'    => $orderBy,
             'orderByDir' => $orderByDir,
-        );
+        ];
 
         $parameters = array_filter($parameters);
 
@@ -280,9 +247,9 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of a contact's devices
+     * Get a list of a contact's devices.
      *
-     * @param int    $id Contact ID
+     * @param int    $id         Contact ID
      * @param string $search
      * @param int    $start
      * @param int    $limit
@@ -293,13 +260,13 @@ class Contacts extends Api
      */
     public function getContactDevices($id, $search = '', $start = 0, $limit = 0, $orderBy = '', $orderByDir = 'ASC')
     {
-        $parameters = array(
+        $parameters = [
             'search'     => $search,
             'start'      => $start,
             'limit'      => $limit,
             'orderBy'    => $orderBy,
             'orderByDir' => $orderByDir,
-        );
+        ];
 
         $parameters = array_filter($parameters);
 
@@ -307,7 +274,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of smart segments the contact is in
+     * Get a list of smart segments the contact is in.
      *
      * @param $id
      *
@@ -319,7 +286,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of companies the contact is in
+     * Get a list of companies the contact is in.
      *
      * @param $id
      *
@@ -331,7 +298,7 @@ class Contacts extends Api
     }
 
     /**
-     * Get a list of campaigns the contact is in
+     * Get a list of campaigns the contact is in.
      *
      * @param $id
      *
@@ -343,7 +310,7 @@ class Contacts extends Api
     }
 
     /**
-     * Add the points to a contact
+     * Add the points to a contact.
      *
      * @param int   $id
      * @param int   $points
@@ -351,13 +318,13 @@ class Contacts extends Api
      *
      * @return mixed
      */
-    public function addPoints($id, $points, array $parameters = array())
+    public function addPoints($id, $points, array $parameters = [])
     {
         return $this->makeRequest('contacts/'.$id.'/points/plus/'.$points, $parameters, 'POST');
     }
 
     /**
-     * Subtract points from a contact
+     * Subtract points from a contact.
      *
      * @param int   $id
      * @param int   $points
@@ -365,13 +332,13 @@ class Contacts extends Api
      *
      * @return mixed
      */
-    public function subtractPoints($id, $points, array $parameters = array())
+    public function subtractPoints($id, $points, array $parameters = [])
     {
         return $this->makeRequest('contacts/'.$id.'/points/minus/'.$points, $parameters, 'POST');
     }
 
     /**
-     * Adds Do Not Contact
+     * Adds Do Not Contact.
      *
      * @param int    $id
      * @param string $channel
@@ -381,21 +348,21 @@ class Contacts extends Api
      *
      * @return array|mixed
      */
-    public function addDnc($id, $channel = 'email', $reason = Contacts::MANUAL, $channelId = null, $comments = 'via API') {
-
+    public function addDnc($id, $channel = 'email', $reason = Contacts::MANUAL, $channelId = null, $comments = 'via API')
+    {
         return $this->makeRequest(
             'contacts/'.$id.'/dnc/'.$channel.'/add',
-            array(
+            [
                 'reason'    => $reason,
                 'channelId' => $channelId,
                 'comments'  => $comments,
-            ),
+            ],
             'POST'
         );
     }
 
     /**
-     * Removes Do Not Contact
+     * Removes Do Not Contact.
      *
      * @param int    $id
      * @param string $channel
@@ -406,20 +373,21 @@ class Contacts extends Api
     {
         return $this->makeRequest(
             'contacts/'.$id.'/dnc/'.$channel.'/remove',
-            array(),
+            [],
             'POST'
         );
     }
 
     /**
-     * Add UTM Tags to Contact
+     * Add UTM Tags to Contact.
      *
-     * @param int    $id
-     * @param array  $utmTags
+     * @param int   $id
+     * @param array $utmTags
      *
      * @return mixed
      */
-    public function addUtm($id, $utmTags) {
+    public function addUtm($id, $utmTags)
+    {
         return $this->makeRequest(
             'contacts/'.$id.'/utm/add',
             $utmTags,
@@ -428,17 +396,18 @@ class Contacts extends Api
     }
 
     /**
-     * Remove UTM Tags from a Contact
+     * Remove UTM Tags from a Contact.
      *
-     * @param int    $id
-     * @param int    $utmId
+     * @param int $id
+     * @param int $utmId
      *
      * @return mixed
      */
-    public function removeUtm($id, $utmId) {
+    public function removeUtm($id, $utmId)
+    {
         return $this->makeRequest(
             'contacts/'.$id.'/utm/'.$utmId.'/remove',
-            array(),
+            [],
             'POST'
         );
     }

@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
- * @link        http://mautic.org
+ *
+ * @see        http://mautic.org
+ *
  * @license     MIT http://opensource.org/licenses/MIT
  */
 
@@ -11,11 +12,12 @@ namespace Mautic\Tests\Api;
 
 class PagesTest extends MauticApiTestCase
 {
-    public function setUp() {
-        $this->api = $this->getContext('pages');
-        $this->testPayload = array(
-            'title' => 'test',
-            'template' => 'blank',
+    public function setUp()
+    {
+        $this->api         = $this->getContext('pages');
+        $this->testPayload = [
+            'title'      => 'test',
+            'template'   => 'blank',
             'customHtml' => '<!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
@@ -37,7 +39,7 @@ class PagesTest extends MauticApiTestCase
         </div>
     </body>
 </html>',
-        );
+        ];
     }
 
     public function testGetList()
@@ -57,9 +59,9 @@ class PagesTest extends MauticApiTestCase
 
     public function testEditPatch()
     {
-        $editTo = array(
+        $editTo = [
             'title' => 'test2',
-        );
+        ];
         $this->standardTestEditPatch($editTo);
     }
 
