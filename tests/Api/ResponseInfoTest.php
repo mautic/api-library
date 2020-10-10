@@ -22,7 +22,7 @@ class ResponseInfoTest extends MauticApiTestCase
     public function testGetVersion()
     {
         $version = $this->api->getMauticVersion();
-        $this->assertRegExp("/^(\d+\.)?(\d+\.)?(.+|\d+)$/", $version);
+        $this->assertMatchesRegularExpression("/^(\d+\.)?(\d+\.)?(.+|\d+)$/", $version);
     }
 
     public function testResponseInfo()
