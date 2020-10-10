@@ -3,7 +3,6 @@
 /.project
 /.settings
 /.phpintel
-/composer.lock
 /phpunit.xml
 /tests/local.config.php
 /tests/local.config.php_*
