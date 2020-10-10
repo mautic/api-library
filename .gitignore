@@ -11,3 +11,4 @@
 /vendor
 .DS_Store
 /.ddev
+.phpunit.result.cache

@@ -12,7 +12,7 @@ namespace Mautic\Tests\Api;
 
 class RolesTest extends MauticApiTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('roles');
         $this->testPayload = [

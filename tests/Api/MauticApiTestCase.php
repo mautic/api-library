@@ -25,7 +25,7 @@ abstract class MauticApiTestCase extends TestCase
     /** @var Api */
     protected $api;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testPayload = [];
     }

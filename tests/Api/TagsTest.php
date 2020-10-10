@@ -12,7 +12,7 @@ namespace Mautic\Tests\Api;
 
 class TagsTest extends MauticApiTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('tags');
         $this->testPayload = [

@@ -12,7 +12,7 @@ namespace Mautic\Tests\Api;
 
 class ResponseInfoTest extends MauticApiTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->api = $this->getContext('contacts');
         $response  = $this->api->getList('', 0, 1);

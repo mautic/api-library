@@ -18,7 +18,7 @@ class BasicAuthTest extends MauticApiTestCase
 {
     protected $configFile = '';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->configFile = __DIR__.'/../../local.config.php';
     }
