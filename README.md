@@ -1,8 +1,17 @@
+[![Latest Stable Version](https://poser.pugx.org/mautic/api-library/v)](//packagist.org/packages/mautic/api-library) [![Total Downloads](https://poser.pugx.org/mautic/api-library/downloads)](//packagist.org/packages/mautic/api-library) [![Latest Unstable Version](https://poser.pugx.org/mautic/api-library/v/unstable)](//packagist.org/packages/mautic/api-library) [![License](https://poser.pugx.org/mautic/api-library/license)](//packagist.org/packages/mautic/api-library)
+
 # Using the Mautic API Library
 
 ## Requirements
 * PHP 7.2 or newer
 * cURL support
+
+## Installing the API Library
+You can install the API Library with the following command:
+
+```bash
+composer require mautic/api-library
+```
 
 ## Mautic Setup
 The API must be enabled in Mautic. Within Mautic, go to the Configuration page (located in the Settings menu) and under API Settings enable
