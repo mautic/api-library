@@ -14,7 +14,7 @@ class NotesTest extends MauticApiTestCase
 {
     protected $skipPayloadAssertion = ['lead'];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('notes');
         $this->testPayload = [
@@ -29,7 +29,7 @@ class NotesTest extends MauticApiTestCase
         $this->testPayload['lead'] = $response['contact']['id'];
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         // Delete a contact from test
         $this->api = $this->getContext('contacts');

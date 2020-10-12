@@ -14,7 +14,7 @@ class ContactFieldsTest extends MauticApiTestCase
 {
     protected $prefix = '';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('contactFields');
         $this->testPayload = [

@@ -14,7 +14,7 @@ class FocusTest extends MauticApiTestCase
 {
     protected $skipPayloadAssertion = ['htmlMode', 'properties'];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('focus');
         $this->testPayload = [

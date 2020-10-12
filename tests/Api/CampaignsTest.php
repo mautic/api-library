@@ -49,7 +49,7 @@ class CampaignsTest extends MauticApiTestCase
 
     protected $skipPayloadAssertion = ['events', 'forms', 'lists', 'canvasSettings', 'dateModified', 'dateAdded'];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->api      = $this->getContext('campaigns');
         $this->eventApi = $this->getContext('campaignEvents');

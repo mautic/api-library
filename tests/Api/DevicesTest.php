@@ -14,7 +14,7 @@ class DevicesTest extends MauticApiTestCase
 {
     protected $skipPayloadAssertion = ['lead'];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('devices');
         $this->testPayload = [
@@ -31,7 +31,7 @@ class DevicesTest extends MauticApiTestCase
         $this->testPayload['lead'] = $response['contact']['id'];
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         // Delete a contact from test
         $this->api = $this->getContext('contacts');

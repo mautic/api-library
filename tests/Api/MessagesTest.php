@@ -20,7 +20,7 @@ class MessagesTest extends MauticApiTestCase
         'notification' => 'notifications',
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('messages');
         $this->testPayload = [

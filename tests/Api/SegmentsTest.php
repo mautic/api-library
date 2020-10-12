@@ -19,7 +19,7 @@ class SegmentsTest extends MauticApiTestCase
      */
     protected $api;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->api         = $this->getContext('segments');
         $this->testPayload = [
