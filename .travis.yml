@@ -59,6 +59,7 @@ jobs:
         # Install Mautic
         - cd mautic
         - composer install
+        - pecl install pcov
         - php bin/console doctrine:database:create --no-interaction
         - php bin/console mautic:install:data --force
 
@@ -74,7 +75,10 @@ jobs:
         
         # Back to api-library directory
         - cd ../
-        - vendor/bin/phpunit --fail-on-warning
+        - vendor/bin/phpunit --fail-on-warning --coverage-clover coverage.xml
     -
       name: CS Fixer
       script: vendor/bin/php-cs-fixer fix --config=.php_cs -v --dry-run --using-cache=no --show-progress=dots --diff $(git diff -- '*.php' --name-only --diff-filter=ACMRTUXB "${TRAVIS_COMMIT_RANGE}")
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
