@@ -55,6 +55,13 @@ jobs:
 
         # Install Mautic
         - cd mautic
+
+        # Downgrade Composer to v1 until Mautic 4 is launched (which adds support for Composer v2)
+        - composer self-update --1
+
+        # install dependencies in parallel (for Composer v1)
+        - travis_retry composer global require hirak/prestissimo
+
         - composer install
         - pecl install pcov
         - php bin/console doctrine:database:create --no-interaction
