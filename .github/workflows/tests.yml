@@ -58,8 +58,8 @@ jobs:
     - name: Move files to web root
       run: |
         shopt -s dotglob
-        sudo chmod -R 777 /var/www/html/mautic
-        sudo chown -R www-data:www-data /var/www/html/mautic
+        sudo chmod -R 777 /var/www/html
+        sudo chown -R www-data:www-data /var/www/html
         rm -rf /var/www/html/*
         mkdir -p /var/www/html/mautic
         mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
