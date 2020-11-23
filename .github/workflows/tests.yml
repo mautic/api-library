@@ -25,6 +25,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Copy our API library config into the tests/ folder
+      run: cp -a ./.github/ci-files/local.config.php tests/local.config.php
+
     - name: Setup PHP, with composer and extensions
       uses: shivammathur/setup-php@v2
       with:
@@ -49,13 +52,17 @@ jobs:
         composer validate --strict
         composer install --prefer-dist --no-progress
 
+    - name: Clone Mautic staging branch from GitHub
+      run: git clone -b staging --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+
     - name: Install Mautic
       env:
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
       run: |
-        cp ./.github/ci-files/local.php ./app/config/local.php
-        php bin/console mautic:install http://localhost
+        cp ../.github/ci-files/local.php ./app/config/local.php
+        php bin/console mautic:install http://localhost/mautic
         php bin/console cache:warmup
+      working-directory: ./mautic
 
     # We need to move files into /var/www/html because the test suite
     # expects Mautic to run in the root folder http://localhost
@@ -65,8 +72,8 @@ jobs:
         sudo chown -R www-data:www-data /var/www/html
         shopt -s dotglob
         rm -rf /var/www/html/*
-        mv $GITHUB_WORKSPACE/* /var/www/html
-        sudo chmod -R 777 /var/www/html
+        mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
+        sudo chmod -R 777 /var/www/html/mautic
     
     - name: Run tests
       working-directory: /var/www/html
