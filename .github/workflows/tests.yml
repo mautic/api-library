@@ -70,7 +70,7 @@ jobs:
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
       # Need to downgrade to Composer v1 until Mautic 4 is out
       run: |
-        cp ../.github/ci-files/local.php ./app/config/local.php
+        cp $GITHUB_WORKSPACE/.github/ci-files/local.php ./app/config/local.php
         composer self-update --1
         composer global require hirak/prestissimo
         composer install --prefer-dist --no-progress
