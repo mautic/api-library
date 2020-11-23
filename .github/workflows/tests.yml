@@ -57,13 +57,12 @@ jobs:
 
     - name: Move files to web root
       run: |
-        sudo chmod -R 777 /var/www/html
-        sudo chown -R www-data:www-data /var/www/html
         shopt -s dotglob
         rm -rf /var/www/html/*
         mkdir -p /var/www/html/mautic
         mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
         sudo chmod -R 777 /var/www/html/mautic
+        sudo chown -R www-data:www-data /var/www/html/mautic
 
     - name: Install Mautic
       env:
@@ -76,6 +75,8 @@ jobs:
         composer install --prefer-dist --no-progress
         php bin/console mautic:install http://localhost/mautic
         php bin/console cache:warmup --no-interaction --env=dev
+        sudo chmod -R 777 /var/www/html/mautic
+        sudo chown -R www-data:www-data /var/www/html/mautic
       working-directory: /var/www/html/mautic
 
     - name: Setup tmate session
