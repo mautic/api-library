@@ -77,6 +77,9 @@ jobs:
         php bin/console mautic:install http://localhost/mautic
         php bin/console cache:warmup --no-interaction --env=dev
       working-directory: /var/www/html/mautic
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
     
     - name: Run tests
       run: vendor/bin/phpunit --fail-on-warning --coverage-clover coverage.xml
