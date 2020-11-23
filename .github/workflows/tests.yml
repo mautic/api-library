@@ -55,6 +55,16 @@ jobs:
     - name: Clone Mautic staging branch from GitHub
       run: git clone -b staging --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
 
+    - name: Move files to web root
+      run: |
+        sudo chmod -R 777 /var/www/html
+        sudo chown -R www-data:www-data /var/www/html
+        shopt -s dotglob
+        rm -rf /var/www/html/*
+        mkdir -p /var/www/html/mautic
+        mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
+        sudo chmod -R 777 /var/www/html/mautic
+
     - name: Install Mautic
       env:
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
@@ -66,22 +76,7 @@ jobs:
         composer install --prefer-dist --no-progress
         php bin/console mautic:install http://localhost/mautic
         php bin/console cache:warmup --no-interaction --env=dev
-      working-directory: ./mautic
-
-    # We need to move files into /var/www/html because the test suite
-    # expects Mautic to run in the root folder http://localhost
-    - name: Move files to web root
-      run: |
-        sudo chmod -R 777 /var/www/html
-        sudo chown -R www-data:www-data /var/www/html
-        shopt -s dotglob
-        rm -rf /var/www/html/*
-        mkdir -p /var/www/html/mautic
-        mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
-        sudo chmod -R 777 /var/www/html/mautic
-
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+      working-directory: /var/www/html/mautic
     
     - name: Run tests
       run: vendor/bin/phpunit --fail-on-warning --coverage-clover coverage.xml
