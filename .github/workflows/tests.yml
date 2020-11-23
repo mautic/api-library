@@ -79,6 +79,9 @@ jobs:
         mkdir -p /var/www/html/mautic
         mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
         sudo chmod -R 777 /var/www/html/mautic
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
     
     - name: Run tests
       run: vendor/bin/phpunit --fail-on-warning --coverage-clover coverage.xml
