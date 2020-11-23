@@ -1,0 +1,97 @@
+name: API library tests
+
+on:
+  push:
+    branches:
+      - master
+      - '[0-9]+\.[0-9]+'
+  pull_request:
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    name: PHPUnit tests
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: mautictest
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup PHP, with composer and extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
+
+    - name: Set SYMFONY_ENV to test
+      run: echo "SYMFONY_ENV=test" >> $GITHUB_ENV
+
+    - name: Install Apache
+      run: |
+        sudo add-apt-repository ppa:ondrej/php -y
+        sudo add-apt-repository ppa:ondrej/apache2 -y
+        sudo apt-get install apache2 libapache2-mod-php
+        sudo a2enmod rewrite
+        sudo cp ./.github/workflows/mautic-apache.conf /etc/apache2/conf-available/mautic.conf
+        sudo a2enconf mautic
+        sudo service apache2 restart
+
+    - name: Install dependencies
+      run: |
+        composer validate --strict
+        composer install --prefer-dist --no-progress
+
+    - name: Install Mautic
+      env:
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+      run: |
+        cp ./.github/ci-files/local.php ./app/config/local.php
+        php bin/console mautic:install http://localhost
+        php bin/console cache:warmup
+
+    # We need to move files into /var/www/html because the test suite
+    # expects Mautic to run in the root folder http://localhost
+    - name: Move files to web root
+      run: |
+        sudo chmod -R 777 /var/www/html
+        sudo chown -R www-data:www-data /var/www/html
+        shopt -s dotglob
+        rm -rf /var/www/html/*
+        mv $GITHUB_WORKSPACE/* /var/www/html
+        sudo chmod -R 777 /var/www/html
+    
+    - name: Run tests
+      working-directory: /var/www/html
+      run: vendor/bin/phpunit --fail-on-warning --coverage-clover coverage.xml
+
+    - name: Upload code coverage
+      run: bash <(curl -s https://codecov.io/bash)
+
+  cs:
+    runs-on: ubuntu-latest
+    name: CS tests
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup PHP, with composer and extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
+
+    - name: Install dependencies
+      run: |
+        composer validate --strict
+        composer install --prefer-dist --no-progress
+
+    - name: Run CS tests
+      run: vendor/bin/php-cs-fixer fix --config=.php_cs -v --dry-run --using-cache=no --show-progress=dots --diff $(git diff -- '*.php' --name-only --diff-filter=ACMRTUXB "HEAD~..HEAD")
