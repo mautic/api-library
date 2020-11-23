@@ -17,9 +17,6 @@ before_install:
   # turn off XDebug
   - phpenv config-rm xdebug.ini || return
 
-  # install dependencies in parallel
-  - travis_retry composer global require hirak/prestissimo
-
   # set to test environment for Symfony's commands in post install commands
   - export SYMFONY_ENV="test"
 
