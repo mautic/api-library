@@ -76,6 +76,7 @@ jobs:
         sudo chown -R www-data:www-data /var/www/html
         shopt -s dotglob
         rm -rf /var/www/html/*
+        mkdir -p /var/www/html/mautic
         mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
         sudo chmod -R 777 /var/www/html/mautic
     
