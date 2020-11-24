@@ -70,8 +70,6 @@ jobs:
       # Need to downgrade to Composer v1 until Mautic 4 is out
       run: |
         cp $GITHUB_WORKSPACE/.github/ci-files/local.php ./app/config/local.php
-        cp $GITHUB_WORKSPACE/.github/ci-files/tmp-config.php ./app/bundles/CoreBundle/Config/config.php
-        cp $GITHUB_WORKSPACE/.github/ci-files/tmp-VersionProvider.php ./app/bundles/CoreBundle/Doctrine/Provider/VersionProvider.php
         composer self-update --1
         composer global require hirak/prestissimo
         composer install --prefer-dist --no-progress
