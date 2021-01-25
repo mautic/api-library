@@ -92,6 +92,13 @@ jobs:
 
     - name: Upload code coverage
       run: bash <(curl -s https://codecov.io/bash)
+    
+    - name: Upload logs as artifacts
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: mautic-logs
+        path: /var/www/html/mautic/var/logs/
 
   cs:
     runs-on: ubuntu-latest
