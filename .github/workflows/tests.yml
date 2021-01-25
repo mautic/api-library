@@ -52,8 +52,8 @@ jobs:
         composer validate --strict
         composer install --prefer-dist --no-progress
 
-    - name: Clone Mautic staging branch from GitHub
-      run: git clone -b staging --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+    - name: Clone Mautic features branch from GitHub
+      run: git clone -b features --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
 
     - name: Move files to web root
       run: |
