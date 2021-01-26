@@ -6,6 +6,9 @@ on:
       - master
       - '[0-9]+\.[0-9]+'
   pull_request:
+  schedule:
+    # Run every day at 10 AM UTC to discover potential issues with recent changes to Mautic itself
+    - cron: '0 10 * * *'
 
 jobs:
   phpunit:
@@ -58,7 +61,7 @@ jobs:
         composer install --prefer-dist --no-progress
 
     - name: Clone Mautic features branch from GitHub
-      run: git clone -b 3.2.4 --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+      run: git clone -b features --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
 
     - name: Move files to web root
       run: |
@@ -106,6 +109,13 @@ jobs:
       with:
         name: mautic-logs
         path: /var/www/html/mautic/var/logs/
+
+    - name: Slack Notification if tests fail
+      uses: rtCamp/action-slack-notify@v2
+      if: ${{ failure() && github.event_name == 'schedule' }}
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_MESSAGE: 'The daily API library tests against mautic/mautic have failed. Most likely a PR was merged recently which introduced a regression of some sort.'
 
   cs:
     runs-on: ubuntu-latest

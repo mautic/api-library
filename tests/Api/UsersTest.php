@@ -123,6 +123,8 @@ class UsersTest extends MauticApiTestCase
 
     public function testBatchEndpoints()
     {
+        $this->markTestSkipped('Skipped because we\'re waiting for https://github.com/mautic/mautic/issues/9621 to be fixed');
+
         $batch = [
             $this->getUniqueUser(),
             $this->getUniqueUser(),
