@@ -9,6 +9,8 @@
 ## Installing the API Library
 You can install the API Library with the following command:
 
+TEST
+
 ```bash
 composer require mautic/api-library
 ```
