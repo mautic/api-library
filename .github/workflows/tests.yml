@@ -58,7 +58,7 @@ jobs:
         composer install --prefer-dist --no-progress
 
     - name: Clone Mautic features branch from GitHub
-      run: git clone -b 3.2.5 --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+      run: git clone -b 3.2.4 --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
 
     - name: Move files to web root
       run: |
