@@ -1,0 +1,139 @@
+name: API library tests
+
+on:
+  push:
+    branches:
+      - master
+      - '[0-9]+\.[0-9]+'
+  pull_request:
+  schedule:
+    # Run every day at 10 AM UTC to discover potential issues with recent changes to Mautic itself
+    - cron: '0 10 * * *'
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    name: PHPUnit tests
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: mautictest
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      mailhog:
+        image: mailhog/mailhog:latest
+        ports:
+          - 1025:1025
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Copy our API library config into the tests/ folder
+      run: cp -a ./.github/ci-files/local.config.php tests/local.config.php
+
+    - name: Setup PHP, with composer and extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
+
+    - name: Set SYMFONY_ENV to test
+      run: echo "SYMFONY_ENV=test" >> $GITHUB_ENV
+
+    - name: Install Apache
+      run: |
+        sudo add-apt-repository ppa:ondrej/php -y
+        sudo add-apt-repository ppa:ondrej/apache2 -y
+        sudo apt-get install apache2 libapache2-mod-php7.4
+        sudo a2enmod rewrite
+        sudo cp ./.github/workflows/mautic-apache.conf /etc/apache2/conf-available/mautic.conf
+        sudo a2enconf mautic
+        sudo service apache2 restart
+
+    - name: Install dependencies
+      run: |
+        composer validate --strict
+        composer install --prefer-dist --no-progress
+
+    - name: Clone Mautic features branch from GitHub
+      run: git clone -b features --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+
+    - name: Move files to web root
+      run: |
+        shopt -s dotglob
+        sudo chmod -R 777 /var/www/html
+        sudo chown -R www-data:www-data /var/www/html
+        rm -rf /var/www/html/*
+        mkdir -p /var/www/html/mautic
+        mv $GITHUB_WORKSPACE/mautic/* /var/www/html/mautic
+
+    - name: Install Mautic
+      env:
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+      # Need to downgrade to Composer v1 until Mautic 4 is out
+      run: |
+        cp $GITHUB_WORKSPACE/.github/ci-files/local.php ./app/config/local.php
+        composer self-update --1
+        composer global require hirak/prestissimo
+        composer install --prefer-dist --no-progress
+        php bin/console mautic:install http://localhost/mautic \
+          --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org" \
+          --mailer_transport="smtp" --mailer_host="localhost" --mailer_port="1025"
+        php bin/console cache:warmup --no-interaction --env=dev
+        
+        sudo chmod -R 777 /var/www/html/mautic
+        sudo chown -R www-data:www-data /var/www/html/mautic
+      working-directory: /var/www/html/mautic
+
+      # Enable Twilio plugin with random credentials (needed for MessagesTest to function, doesn't actually contact Twilio API).
+    - name: Enable Twilio plugin
+      run: |
+        mysql -uroot -P${{ job.services.mysql.ports[3306] }} -h127.0.0.1 -e "USE mautictest; INSERT INTO plugin_integration_settings (id, plugin_id, name, is_published, supported_features, api_keys, feature_settings) VALUES (2, NULL, 'Twilio', 1, 'a:0:{}', 'a:2:{s:8:\"username\";s:169:\"bzFmNlIydWRSZXlIN2lQVkdpanJ4aTQ2NUh6RVdDbHlLRVhsWGZ4b0kyZVNxLzYrQ1J6V1RvMnlhVEp0c245TEp6eStQekx5ZVhLWjB1YVdoR3RnR2dHQ3k1emVVdGt5NzZKUmtjUnJ3c1E9|L8tbZRIYhwatT7Mq+HAdYA==\";s:8:\"password\";s:169:\"T2d2cFpXQWE5YVZnNFFianJSYURRYUtGRHBNZGZjM1VETXg2Wm5Va3NheW43MjVWUlJhTVlCL2pYMDBpbElONStiVVBNbEM3M3BaeGJMNkFKNUFEN1pTNldSRjc4bUM4SDh1SE9OY1k5MTg9|TeuSvfx4XSUOvp0O7T49Cg==\";}', 'a:4:{s:20:\"sending_phone_number\";N;s:22:\"disable_trackable_urls\";i:0;s:16:\"frequency_number\";N;s:14:\"frequency_time\";N;}');"
+        php bin/console mautic:plugins:reload
+      working-directory: /var/www/html/mautic
+    
+    - name: Run tests
+      run: vendor/bin/phpunit --fail-on-warning --coverage-clover coverage.xml
+
+    - name: Upload code coverage
+      run: bash <(curl -s https://codecov.io/bash)
+    
+    - name: Upload logs as artifacts
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: mautic-logs
+        path: /var/www/html/mautic/var/logs/
+
+    - name: Slack Notification if tests fail
+      uses: rtCamp/action-slack-notify@v2
+      if: ${{ failure() && github.event_name == 'schedule' }}
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_MESSAGE: 'The daily API library tests against mautic/mautic have failed. Most likely a PR was merged recently which introduced a regression of some sort.'
+
+  cs:
+    runs-on: ubuntu-latest
+    name: CS tests
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup PHP, with composer and extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
+
+    - name: Install dependencies
+      run: |
+        composer validate --strict
+        composer install --prefer-dist --no-progress
+
+    - name: Run CS tests
+      run: vendor/bin/php-cs-fixer fix --config=.php_cs -v --dry-run --using-cache=no --show-progress=dots --diff $(git diff -- '*.php' --name-only --diff-filter=ACMRTUXB "HEAD~..HEAD")
