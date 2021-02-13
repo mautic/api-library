@@ -25,7 +25,7 @@ setup_mautic() {
 
     tput setaf 2
     printf "All done! Run \"ddev exec composer test\" to run PHPUnit tests.\n"
-    printf "If you want to open the Mautic instance, go to https://api-library.ddev.site/mautic in your browser."
+    printf "If you want to open the Mautic instance, go to https://api-library.ddev.site/mautic in your browser.\n"
     tput sgr0
 }
 
@@ -55,6 +55,14 @@ then
     fi
 else
     # Ensure our mautic/mautic clone is up-to-date
+    echo "Updating the cloned Mautic instance..."
     cd mautic
     git pull
+    # Need to downgrade to Composer v1 until Mautic 4 is out
+    composer self-update --1
+    composer install --prefer-dist --no-progress
+    tput setaf 2
+    printf "Run \"ddev exec composer test\" to run PHPUnit tests.\n"
+    printf "If you want to open the Mautic instance, go to https://api-library.ddev.site/mautic in your browser.\n"
+    tput sgr0
 fi
