@@ -25,6 +25,7 @@ setup_mautic() {
 
     tput setaf 2
     printf "All done! Run \"ddev exec composer test\" to run PHPUnit tests.\n"
+    printf "If you want to open the Mautic instance, go to https://api-library.ddev.site/mautic in your browser."
     tput sgr0
 }
 
