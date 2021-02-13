@@ -22,9 +22,10 @@
   "require-dev": {
     "raveren/kint": "~0.9",
     "friendsofphp/php-cs-fixer": "~2.16.1",
-    "phpunit/phpunit": "~9.4.0"
+    "phpunit/phpunit": "~9.5.0",
+    "brianium/paratest": "^6.2"
   },
   "scripts": {
-    "test": "vendor/bin/phpunit"
+    "test": "vendor/bin/paratest"
   }
 }
