@@ -242,12 +242,12 @@ if (isset($response['errors'])) {
 ## Contributing
 
 ### Setting up your environment (automatically)
-In order to get started quickly, we recommend to use [DDEV](https://ddev.readthedocs.io/en/stable/) which sets up things automatically for you. It clones [https://github.com/mautic/mautic](mautic/mautic), sets up a local instance for you, and connects the API library tests to that instance.
+In order to get started quickly, we recommend that you use [DDEV](https://ddev.readthedocs.io/en/stable/) which sets things up automatically for you. It clones [https://github.com/mautic/mautic](mautic/mautic), sets up a local instance for you, and connects the API library tests to that instance.
 
-Just run `ddev start` to get started! Our first-run experience will guide you through.
+To get started, run `ddev start`! Our first-run experience will guide you through the setup.
 
 ### Setting up your environment (manually)
-If you know what you're doing and want to set up your local environment manually, just make sure to copy `/tests/local.config.php.dist` to `/tests/local.config.php`, and fill in the required settings. To make things easy, make sure to use Basic Authentication as the authentication method.
+If you want to set up your local environment manually, ensure that you copy `/tests/local.config.php.dist` to `/tests/local.config.php`, and fill in the required settings. We recommend using the Basic Authentication method to get up and running quickly.
 
 ### Unit tests
 
