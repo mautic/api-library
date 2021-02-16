@@ -98,7 +98,7 @@ jobs:
       working-directory: /var/www/html/mautic
     
     - name: Run tests
-      run: vendor/bin/paratest --fail-on-warning --coverage-clover coverage.xml
+      run: vendor/bin/paratest --coverage-clover coverage.xml
 
     - name: Upload code coverage
       run: bash <(curl -s https://codecov.io/bash)
