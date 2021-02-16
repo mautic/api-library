@@ -82,7 +82,7 @@ jobs:
         composer global require hirak/prestissimo
         composer install --prefer-dist --no-progress
         php bin/console mautic:install http://localhost/mautic \
-          --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org" \
+          --force --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org" \
           --mailer_transport="smtp" --mailer_host="localhost" --mailer_port="1025"
         php bin/console cache:warmup --no-interaction --env=dev
         
