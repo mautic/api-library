@@ -239,18 +239,23 @@ if (isset($response['errors'])) {
 }
 ```
 
-## Unit tests
+## Contributing
+
+### Setting up your environment (automatically)
+In order to get started quickly, we recommend that you use [DDEV](https://ddev.readthedocs.io/en/stable/) which sets things up automatically for you. It clones [https://github.com/mautic/mautic](mautic/mautic), sets up a local instance for you, and connects the API library tests to that instance.
+
+To get started, run `ddev start`! Our first-run experience will guide you through the setup.
+
+### Setting up your environment (manually)
+If you want to set up your local environment manually, ensure that you copy `/tests/local.config.php.dist` to `/tests/local.config.php`, and fill in the required settings. We recommend using the Basic Authentication method to get up and running quickly.
+
+### Unit tests
 
 Configure the unit tests config before running the unit tests. The tests fire real API requests to a Mautic instance.
 
-1. Copy `/tests/local.config.php.dist` to `/tests/local.config.php`.
-2. Open the API tester in the browser like http://localhost/api-library/apitester/index.php
-3. Fill in the URL of your Mautic instance. NOTE: if you're using Docker/DDEV and your Mautic instance is running in another container, use the container name instead of the FQDN of your Mautic instance, e.g. http://mautic-instance/...
-4. Click Submit to store the URL to the session.
-5. Fill in one of the OAuth credentials and authorize.
-6. Open the $_SESSION array and copy the 'access_token' to the local.config.php file.
-7. Then run `vendor/bin/phpunit` to run the tests.
+1. Ensure you have set up your local environment using the steps above.
+2. Run `composer test` to run the tests.
 
-Modify this command to run a specific test: `vendor/bin/phpunit --filter testCreateGetAndDelete tests/Api/NotesTest.php`
+Modify this command to run a specific test: `composer test -- --filter testCreateGetAndDelete tests/Api/NotesTest.php`
 
-Modify this command to run all tests in one class: `vendor/bin/phpunit --filter test tests/Api/NotesTest.php`
+Modify this command to run all tests in one class: `composer test -- --filter test tests/Api/NotesTest.php`
