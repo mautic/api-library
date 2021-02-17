@@ -10,5 +10,6 @@
 /tests/phpunit.phar
 /vendor
 .DS_Store
-/.ddev
 .phpunit.result.cache
+/.ddev/mautic-preference
+/mautic
