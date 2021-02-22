@@ -251,7 +251,7 @@ If you want to set up your local environment manually, ensure that you copy `/te
 
 ### Unit tests
 
-Configure the unit tests config before running the unit tests. The tests fire real API requests to a Mautic instance.
+Configure the unit tests config before running the unit tests. The tests fire real API requests to a Mautic instance. 
 
 1. Ensure you have set up your local environment using the steps above.
 2. Run `composer test` to run the tests.
