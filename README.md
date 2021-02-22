@@ -249,7 +249,7 @@ To get started, run `ddev start`! Our first-run experience will guide you throug
 ### Setting up your environment (manually)
 If you want to set up your local environment manually, ensure that you copy `/tests/local.config.php.dist` to `/tests/local.config.php`, and fill in the required settings. We recommend using the Basic Authentication method to get up and running quickly.
 
-### Unit tests
+### Unit tests 
 
 Configure the unit tests config before running the unit tests. The tests fire real API requests to a Mautic instance. 
 
