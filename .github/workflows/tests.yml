@@ -47,7 +47,6 @@ jobs:
       run: echo "SYMFONY_ENV=test" >> $GITHUB_ENV
 
     - name: Install Apache
-      # We need the sed command at the bottom to set the PHP session save path to a directory that's writable for PHP
       run: |
         sudo add-apt-repository ppa:ondrej/php -y
         sudo add-apt-repository ppa:ondrej/apache2 -y
@@ -56,7 +55,6 @@ jobs:
         sudo cp ./.github/workflows/mautic-apache.conf /etc/apache2/conf-available/mautic.conf
         sudo a2enconf mautic
         sudo service apache2 restart
-        sudo sed -i 's,^;session.save_path =.*$,session.save_path = "${{ github.workspace }}/tmp/php_sessions",' php.ini
 
     - name: Install dependencies
       run: |
