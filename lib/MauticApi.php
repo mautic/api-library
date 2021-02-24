@@ -10,6 +10,7 @@
 
 namespace Mautic;
 
+use Mautic\Auth\AbstractAuth;
 use Mautic\Auth\AuthInterface;
 use Mautic\Exception\ContextNotFoundException;
 
@@ -53,15 +54,11 @@ class MauticApi
     /**
      * Get an API context object.
      *
-     * @param string        $apiContext API context (leads, forms, etc)
-     * @param AuthInterface $auth       API Auth object
-     * @param string        $baseUrl    Base URL for API endpoints
-     *
      * @return Api\Api
      *
      * @throws ContextNotFoundException
      */
-    public function newApi($apiContext, AuthInterface $auth, $baseUrl = '')
+    public function newApi(string $apiContext, AbstractAuth $auth, string $baseUrl = '')
     {
         $apiContext = ucfirst($apiContext);
 
