@@ -56,6 +56,7 @@ jobs:
         sudo a2enmod rewrite
         sudo cp ./.github/workflows/mautic-apache.conf /etc/apache2/conf-available/mautic.conf
         sudo a2enconf mautic
+        mkdir -p ${{ github.workspace }}/tmp/php_sessions
         sudo sed -i 's,^;session.save_path =.*$,session.save_path = "${{ github.workspace }}/tmp/php_sessions",' /etc/php/7.4/apache2/php.ini
         sudo service apache2 restart
 
