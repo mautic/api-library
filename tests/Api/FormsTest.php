@@ -10,8 +10,13 @@
 
 namespace Mautic\Tests\Api;
 
+use Mautic\Api\Forms;
+
 class FormsTest extends MauticApiTestCase
 {
+    /** @var Forms */
+    protected $api;
+
     public function setUp(): void
     {
         $this->api         = $this->getContext('forms');
@@ -218,9 +223,14 @@ class FormsTest extends MauticApiTestCase
         $response = $this->api->getSubmissions($formId);
         $this->assertErrors($response);
 
-        foreach ($response['submissions'] as $submission) {
+        $submissions = $response['submissions'];
+        $this->assertTrue(count($submissions) > 0, 'Expected at least one form submission');
+
+        foreach ($submissions as $submission) {
             $this->assertSubmission($submission, $formId);
         }
+
+        $submission = end($submissions);
 
         // Try to fetch the last submission
         $response = $this->api->getSubmission($formId, $submission['id']);

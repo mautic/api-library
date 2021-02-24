@@ -23,9 +23,12 @@
     "raveren/kint": "~0.9",
     "friendsofphp/php-cs-fixer": "~2.16.1",
     "phpunit/phpunit": "~9.5.0",
-    "brianium/paratest": "^6.2"
+    "brianium/paratest": "^6.2",
+    "phpstan/phpstan": "^0.12.78"
   },
   "scripts": {
-    "test": "vendor/bin/paratest"
+    "test": "vendor/bin/paratest",
+    "phpstan": "vendor/bin/phpstan analyse",
+    "cs": "vendor/bin/php-cs-fixer fix --config=.php_cs"
   }
 }
