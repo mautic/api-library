@@ -6,6 +6,7 @@ on:
       - main
       - '[0-9]+\.[0-9]+'
   pull_request:
+  workflow_dispatch:
   schedule:
     # Run every day at 10 AM UTC to discover potential issues with recent changes to Mautic itself
     - cron: '0 10 * * *'
