@@ -43,6 +43,7 @@ jobs:
         php-version: 7.4
         ini-values: session.save_path=${{ github.workspace }}/tmp/php_sessions
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
+        coverage: pcov
 
     - name: Set SYMFONY_ENV to test
       run: echo "SYMFONY_ENV=test" >> $GITHUB_ENV
