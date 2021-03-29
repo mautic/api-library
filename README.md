@@ -1,4 +1,7 @@
 [![codecov](https://codecov.io/gh/mautic/api-library/branch/master/graph/badge.svg)](https://codecov.io/gh/mautic/api-library) [![Latest Stable Version](https://poser.pugx.org/mautic/api-library/v)](//packagist.org/packages/mautic/api-library) [![Total Downloads](https://poser.pugx.org/mautic/api-library/downloads)](//packagist.org/packages/mautic/api-library) [![Latest Unstable Version](https://poser.pugx.org/mautic/api-library/v/unstable)](//packagist.org/packages/mautic/api-library) [![License](https://poser.pugx.org/mautic/api-library/license)](//packagist.org/packages/mautic/api-library)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Using the Mautic API Library
 
@@ -259,3 +262,23 @@ Configure the unit tests config before running the unit tests. The tests fire re
 Modify this command to run a specific test: `composer test -- --filter testCreateGetAndDelete tests/Api/NotesTest.php`
 
 Modify this command to run all tests in one class: `composer test -- --filter test tests/Api/NotesTest.php`
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://webmecanik.com"><img src="https://avatars.githubusercontent.com/u/462477?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zdeno Kuzmany</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=kuzmany" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
