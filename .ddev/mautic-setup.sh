@@ -8,7 +8,6 @@ setup_mautic() {
     cd mautic
 
     composer install --prefer-dist --no-progress
-
     cp ./.ddev/mautic-local.php.dist ./mautic/app/config/local.php
 
     printf "Installing Mautic...\n"
