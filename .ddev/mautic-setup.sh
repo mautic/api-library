@@ -5,16 +5,13 @@ setup_mautic() {
 
     printf "Cloning the \"features\" branch from mautic/mautic...\n"
     git clone -b features --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
-    cp ./.ddev/mautic-local.php.dist ./mautic/app/config/local.php
     cd mautic
 
-    # Need to downgrade to Composer v1 until Mautic 4 is out
-    printf "Installing Mautic Composer dependencies...\n"
-    composer self-update --1
     composer install --prefer-dist --no-progress
+    cp ../.ddev/mautic-local.php.dist ./app/config/local.php
 
     printf "Installing Mautic...\n"
-    php bin/console mautic:install http://localhost/mautic \
+    php bin/console mautic:install --force http://localhost/mautic \
         --mailer_from_name="DDEV" --mailer_from_email="mautic@ddev.local" \
         --mailer_transport="smtp" --mailer_host="localhost" --mailer_port="1025"
     php bin/console cache:warmup --no-interaction --env=dev
