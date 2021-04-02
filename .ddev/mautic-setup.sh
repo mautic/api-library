@@ -8,7 +8,7 @@ setup_mautic() {
     cd mautic
 
     composer install --prefer-dist --no-progress
-    cp ./.ddev/mautic-local.php.dist ./mautic/app/config/local.php
+    cp ../.ddev/mautic-local.php.dist ./app/config/local.php
 
     printf "Installing Mautic...\n"
     php bin/console mautic:install --force http://localhost/mautic \
