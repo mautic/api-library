@@ -25,7 +25,7 @@ then copy the Client ID and Client Secret to the application that will be using 
 ## Authorization
 
 ### Obtaining an access token
-The first step is to obtain authorization.  Mautic supports OAuth 1.0a and OAuth 2 however it is up to the administrator
+The first step is to obtain authorization.  Mautic supports OAuth 1.0a and OAuth 2, however it is up to the administrator
 to decide which is enabled.  Thus it is best to have a configuration option within your project for the administrator
 to choose what method should be used by your code.
 
