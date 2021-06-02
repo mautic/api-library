@@ -63,7 +63,7 @@ jobs:
         sudo a2enmod rewrite
         sudo cp ./.github/workflows/mautic-apache.conf /etc/apache2/conf-available/mautic.conf
         sudo a2enconf mautic
-        sudo sed -i 's,^;session.save_handler =.*$,session.save_handler = redis,' /etc/php/7.4/apache2/php.ini
+        sudo sed -i 's,^session.save_handler =.*$,session.save_handler = redis,' /etc/php/7.4/apache2/php.ini
         sudo sed -i 's,^;session.save_path =.*$,session.save_path = "tcp://127.0.0.1:6379",' /etc/php/7.4/apache2/php.ini
         sudo service apache2 restart
         cat /etc/php/7.4/apache2/php.ini | grep session
