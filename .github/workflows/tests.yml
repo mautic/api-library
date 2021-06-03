@@ -30,6 +30,11 @@ jobs:
         image: mailhog/mailhog:latest
         ports:
           - 1025:1025
+          
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v2
@@ -41,7 +46,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: 7.4
-        ini-values: session.save_path=${{ github.workspace }}/tmp/php_sessions
+        ini-values: session.save_handler=redis, session.save_path="tcp://127.0.0.1:6379"
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
         coverage: pcov
 
@@ -58,10 +63,10 @@ jobs:
         sudo a2enmod rewrite
         sudo cp ./.github/workflows/mautic-apache.conf /etc/apache2/conf-available/mautic.conf
         sudo a2enconf mautic
-        mkdir -p ${{ github.workspace }}/tmp/php_sessions
-        chmod -R 777 ${{ github.workspace }}/tmp/php_sessions
-        sudo sed -i 's,^;session.save_path =.*$,session.save_path = "${{ github.workspace }}/tmp/php_sessions",' /etc/php/7.4/apache2/php.ini
+        sudo sed -i 's,^session.save_handler =.*$,session.save_handler = redis,' /etc/php/7.4/apache2/php.ini
+        sudo sed -i 's,^;session.save_path =.*$,session.save_path = "tcp://127.0.0.1:6379",' /etc/php/7.4/apache2/php.ini
         sudo service apache2 restart
+        cat /etc/php/7.4/apache2/php.ini | grep session
 
     - name: Install dependencies
       run: |
