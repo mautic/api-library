@@ -10,7 +10,7 @@
 
 namespace Mautic\Api;
 
-use Mautic\Auth\ApiAuth;
+use Mautic\Auth\AbstractAuth;
 use Mautic\Auth\AuthInterface;
 use Mautic\QueryBuilder\QueryBuilder;
 use Psr\Log\LoggerAwareInterface;
@@ -86,7 +86,7 @@ class Api implements LoggerAwareInterface
     protected $searchCommands = [];
 
     /**
-     * @var ApiAuth
+     * @var AbstractAuth
      */
     private $auth;
 
