@@ -85,6 +85,8 @@ jobs:
           gh pr checkout ${{ github.event.inputs.pr }}
           popd
         fi
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: Move files to web root
       run: |
