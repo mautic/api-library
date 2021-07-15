@@ -7,6 +7,10 @@ on:
       - '[0-9]+\.[0-9]+'
   pull_request:
   workflow_dispatch:
+    inputs:
+      pr:
+        description: 'PR number in mautic/mautic to test against'
+        required: false
   schedule:
     # Run every day at 10 AM UTC to discover potential issues with recent changes to Mautic itself
     - cron: '0 10 * * *'
@@ -73,8 +77,16 @@ jobs:
         composer validate --strict
         composer install --prefer-dist --no-progress
 
-    - name: Clone Mautic features branch from GitHub
-      run: git clone -b features --single-branch --depth 1 https://github.com/mautic/mautic.git mautic
+    - name: Clone Mautic features or specific PR from GitHub
+      run: |
+        gh repo clone mautic/mautic -- --branch features --single-branch --depth 1
+        if [[ "${{ github.event.inputs.pr }}" != "" ]]; then
+          pushd mautic
+          gh pr checkout ${{ github.event.inputs.pr }}
+          popd
+        fi
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: Move files to web root
       run: |
