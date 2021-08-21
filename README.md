@@ -25,8 +25,7 @@ then copy the Client ID and Client Secret to the application that will be using 
 ## Authorization
 
 ### Obtaining an access token
-The first step is to obtain authorization.  Mautic supports OAuth 1.0a and OAuth 2 however it is up to the administrator
-to decide which is enabled.  Thus it is best to have a configuration option within your project for the administrator
+The first step is to obtain authorization.  Mautic supports OAuth 2.  Thus it is best to have a configuration option within your project for the administrator
 to choose what method should be used by your code.
 
 ```php
@@ -46,7 +45,6 @@ $callback  = '';
 // ApiAuth->newAuth() will accept an array of Auth settings
 $settings = [
     'baseUrl'          => '',       // Base URL of the Mautic instance
-    'version'          => 'OAuth2', // Version of the OAuth can be OAuth2 or OAuth1a. OAuth2 is the default value.
     'clientKey'        => '',       // Client/Consumer key from Mautic
     'clientSecret'     => '',       // Client/Consumer secret key from Mautic
     'callback'         => '',       // Redirect URI/Callback URI for this script
@@ -55,7 +53,6 @@ $settings = [
 /*
 // If you already have the access token, et al, pass them in as well to prevent the need for reauthorization
 $settings['accessToken']        = $accessToken;
-$settings['accessTokenSecret']  = $accessTokenSecret; //for OAuth1.0a
 $settings['accessTokenExpires'] = $accessTokenExpires; //UNIX timestamp
 $settings['refreshToken']       = $refreshToken;
 */
@@ -76,7 +73,6 @@ try {
         // refresh token
 
         // $accessTokenData will have the following keys:
-        // For OAuth1.0a: access_token, access_token_secret, expires
         // For OAuth2: access_token, expires, token_type, refresh_token
 
         if ($auth->accessTokenUpdated()) {
@@ -88,6 +84,41 @@ try {
 } catch (Exception $e) {
     // Do Error handling
 }
+```
+
+
+### Using 2-legged OAuth2 using Client Credentials
+
+The Client Credentials grant is used when applications request an access token to access their own resources, not on behalf of a user.
+
+```php
+<?php
+
+// Bootup the Composer autoloader
+include __DIR__ . '/vendor/autoload.php';  
+
+use Mautic\Auth\ApiAuth;
+
+$settings = [
+    'AuthMethod'   => 'TwoLeggedOAuth2',
+    'clientKey'    => '',
+    'clientSecret' => '',
+    'baseUrl'      => '',
+];
+
+// $settings['accessToken'] = 'your stored access token';
+
+
+$initAuth = new ApiAuth();
+$auth     = $initAuth->newAuth($settings, $settings['AuthMethod']);
+
+if (!isset($settings['accessToken'])) {
+    // store it for one hour and use it in $settings above
+    $accessToken = $auth->getAccessToken();
+}
+
+// Nothing else to do ... It's ready to use.
+// Just pass the auth object to the API context you are creating.
 ```
 
 ### Using Basic Authentication Instead
