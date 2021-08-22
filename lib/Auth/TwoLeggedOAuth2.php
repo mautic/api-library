@@ -72,9 +72,7 @@ class TwoLeggedOAuth2 extends AbstractAuth
         if (empty($clientKey) || empty($clientSecret)) {
             //Throw exception if the required parameters were not found
             $this->log('parameters did not include clientkey and/or clientSecret');
-            throw new RequiredParameterMissingException(
-                'One or more required parameters was not supplied. Both clientKey and clientSecret required!'
-            );
+            throw new RequiredParameterMissingException('One or more required parameters was not supplied. Both clientKey and clientSecret required!');
         }
 
         $this->baseurl       = $baseUrl;
@@ -95,16 +93,13 @@ class TwoLeggedOAuth2 extends AbstractAuth
      */
     protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings)
     {
-        if ($this->_access_token !== null) {
+        if (null !== $this->_access_token) {
             $headers = array_merge($headers, ['Authorization: Bearer '.$this->_access_token]);
         }
 
         return [$headers, $parameters];
     }
 
-    /**
-     * @return string
-     */
     public function getAccessToken(): string
     {
         $parameters      = [
