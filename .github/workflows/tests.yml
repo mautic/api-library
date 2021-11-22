@@ -45,6 +45,9 @@ jobs:
 
     - name: Copy our API library config into the tests/ folder
       run: cp -a ./.github/ci-files/local.config.php tests/local.config.php
+      
+    - name: Temp update dist https://github.com/PhilipHazel/pcre2/issues/56
+      run: apt-get update && apt-get dist-upgrade -y
 
     - name: Setup PHP, with composer and extensions
       uses: shivammathur/setup-php@v2
