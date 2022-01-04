@@ -13,3 +13,4 @@
 .phpunit.result.cache
 /.ddev/mautic-preference
 /mautic
+.php_cs.cache

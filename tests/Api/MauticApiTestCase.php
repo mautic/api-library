@@ -43,7 +43,7 @@ abstract class MauticApiTestCase extends TestCase
         $auth    = $apiAuth->newAuth($this->config, $authMethod);
         if ('BasicAuth' != $authMethod) {
             if (empty($this->config['refreshToken']) && !$auth->isAuthorized()) {
-                $this->assertTrue($authorized, 'Authorization failed. Check credentials in local.config.php.');
+                $this->assertTrue($auth->isAuthorized(), 'Authorization failed. Check credentials in local.config.php.');
             } else {
                 try {
                     $auth->validateAccessToken();
@@ -179,7 +179,7 @@ abstract class MauticApiTestCase extends TestCase
             $itemIds[] = $response[$this->api->itemName()]['id'];
         }
 
-        if (is_callable($callback)) {
+        if (is_callable($callback) && !empty($response)) {
             // Allow support to make additional tests based on created associations with this item that
             // may not have create/edit endpoints
             $callback($response);

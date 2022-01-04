@@ -37,7 +37,7 @@ class MauticApi
 
         $apiContext = ucfirst($apiContext);
 
-        if (!isset($context[$apiContext])) {
+        if (!isset($contexts[$apiContext])) {
             $class = 'Mautic\\Api\\'.$apiContext;
 
             if (!class_exists($class)) {

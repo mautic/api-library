@@ -150,7 +150,11 @@ class UtmTagsTest extends MauticApiTestCase
             }
         }
 
-        $this->assertSame(0, count($response[$this->api->itemName()]['utmtags']), 'Should be no more items');
+        if (!empty($response)) {
+            $this->assertSame(0, count($response[$this->api->itemName()]['utmtags']), 'Should be no more items');
+        } else {
+            throw new \Exception('Expected a reponse object');
+        }
     }
 
     protected function addUtmTags()

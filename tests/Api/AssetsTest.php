@@ -10,6 +10,8 @@
 
 namespace Mautic\Tests\Api;
 
+use Mautic\Api\Files;
+
 class AssetsTest extends MauticApiTestCase
 {
     protected $skipPayloadAssertion = ['file'];
@@ -37,12 +39,13 @@ class AssetsTest extends MauticApiTestCase
     public function testCreateWithLocalFileGetAndDelete()
     {
         // Upload a testing file
-        $this->apiFiles = $this->getContext('files');
-        $this->apiFiles->setFolder('assets');
+        /** @var Files */
+        $apiFiles = $this->getContext('files');
+        $apiFiles->setFolder('assets');
         $fileRequest = [
             'file' => dirname(__DIR__).'/'.'mauticlogo.png',
         ];
-        $response = $this->apiFiles->create($fileRequest);
+        $response = $apiFiles->create($fileRequest);
         $this->assertErrors($response);
         $file = $response['file'];
 
