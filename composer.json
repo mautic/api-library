@@ -20,7 +20,7 @@
     "psr/log": "~1.0"
   },
   "require-dev": {
-    "raveren/kint": "~0.9",
+    "kint-php/kint": "^4.1",
     "friendsofphp/php-cs-fixer": "~2.16.1",
     "phpunit/phpunit": "~9.5.0",
     "brianium/paratest": "^6.2"
