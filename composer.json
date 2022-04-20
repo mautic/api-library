@@ -17,7 +17,7 @@
     "php": ">=7.2.0",
     "ext-curl": "*",
     "ext-json": "*",
-    "psr/log": "~1.0"
+    "psr/log": "~1.0 || ~2.0 || ~3.0"
   },
   "require-dev": {
     "kint-php/kint": "^4.1",
