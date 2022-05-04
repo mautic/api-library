@@ -77,9 +77,9 @@ jobs:
         composer validate --strict
         composer install --prefer-dist --no-progress
 
-    - name: Clone Mautic features or specific PR from GitHub
+    - name: Clone Mautic main branch or specific PR from GitHub
       run: |
-        gh repo clone mautic/mautic -- --branch features --single-branch --depth 1
+        gh repo clone mautic/mautic -- --single-branch --depth 1
         if [[ "${{ github.event.inputs.pr }}" != "" ]]; then
           pushd mautic
           gh pr checkout ${{ github.event.inputs.pr }}
