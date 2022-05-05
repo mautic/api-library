@@ -195,6 +195,14 @@ class Api implements LoggerAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
      * Make the API request.
      *
      * @param        $endpoint
