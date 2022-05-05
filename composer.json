@@ -27,5 +27,8 @@
   },
   "scripts": {
     "test": "vendor/bin/paratest"
+  },
+  "config": {
+    "process-timeout": 5000
   }
 }
