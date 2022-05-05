@@ -29,4 +29,18 @@ interface AuthInterface
      * @return array
      */
     public function makeRequest($url, array $parameters = [], $method = 'GET', array $settings = []);
+
+    /**
+     * Returns array of HTTP response headers.
+     *
+     * @return array
+     */
+    public function getResponseHeaders();
+
+    /**
+     * Returns array of HTTP response headers.
+     *
+     * @return array
+     */
+    public function getResponseInfo();
 }

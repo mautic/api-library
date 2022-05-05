@@ -19,21 +19,22 @@ class ResponseInfoTest extends MauticApiTestCase
         $this->assertErrors($response);
     }
 
-    public function testGetVersion()
+    public function testGetVersion(): void
     {
         $version = $this->api->getMauticVersion();
+        $this->assertNotNull($version);
         $this->assertMatchesRegularExpression("/^(\d+\.)?(\d+\.)?(.+|\d+)$/", $version);
     }
 
-    public function testResponseInfo()
+    public function testResponseInfo(): void
     {
         $info = $this->api->getResponseInfo();
         $this->assertEquals($info['content_type'], 'application/json');
     }
 
-    public function testResponseHeaders()
+    public function testResponseHeaders(): void
     {
         $headers = $this->api->getResponseHeaders();
-        $this->assertEquals($headers[0], 'HTTP/1.1 200 OK');
+        $this->assertStringContainsString('200', $headers[0]);
     }
 }

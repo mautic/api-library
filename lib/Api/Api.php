@@ -10,7 +10,6 @@
 
 namespace Mautic\Api;
 
-use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
 use Mautic\QueryBuilder\QueryBuilder;
 use Psr\Log\LoggerAwareInterface;
@@ -86,7 +85,7 @@ class Api implements LoggerAwareInterface
     protected $searchCommands = [];
 
     /**
-     * @var ApiAuth
+     * @var AuthInterface
      */
     private $auth;
 
@@ -340,6 +339,10 @@ class Api implements LoggerAwareInterface
 
         if (isset($headers['Mautic-Version'])) {
             return $headers['Mautic-Version'];
+        }
+
+        if (isset($headers['mautic-version'])) {
+            return $headers['mautic-version'];
         }
 
         return null;
