@@ -23,7 +23,6 @@ class StatsTest extends MauticApiTestCase
         static $tables, $tableColumns;
         if (empty($tables)) {
             $response     = $this->api->get();
-            fwrite(STDOUT, $this->api->getBaseUrl() . PHP_EOL);
             $this->assertArrayHasKey('availableTables', $response, var_export($response, true));
             $this->assertArrayHasKey('tableColumns', $response, var_export($response, true));
             $tables       = $response['availableTables'];

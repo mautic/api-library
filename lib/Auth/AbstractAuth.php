@@ -168,6 +168,8 @@ abstract class AbstractAuth implements AuthInterface
         // Set the URL
         $options[CURLOPT_URL] = $url;
 
+        echo 'URL: '.$url."\n";
+
         $headers[]                   = 'Accept: application/json';
         $options[CURLOPT_HTTPHEADER] = $headers;
 
