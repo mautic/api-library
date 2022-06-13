@@ -108,6 +108,7 @@ jobs:
         DB_PORT: "${{ env.mysql_port }}"
       run: |
         composer install --prefer-dist --no-progress
+        composer update --lock -o
         cp $GITHUB_WORKSPACE/.github/ci-files/local.php ./app/config/local.php
         cp $GITHUB_WORKSPACE/.github/ci-files/security_local.php ./app/config/security_local.php
         php bin/console mautic:install http://localhost/ \
