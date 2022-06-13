@@ -28,7 +28,7 @@ jobs:
           MYSQL_DATABASE: mautictest
         ports:
           - 3306
-        options: --shm-size=2gb --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --name mysql --shm-size=2gb --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         volumes:
           - /tmp/mysql_config:/etc/mysql/conf.d
 
