@@ -28,13 +28,14 @@ class SegmentsTest extends MauticApiTestCase
             'isGlobal'    => true,
             'filters'     => [
                 [
-                    'glue'     => 'and',
-                    'field'    => 'email',
-                    'object'   => 'lead',
-                    'type'     => 'email',
-                    'filter'   => '*@gmail.com',
-                    'display'  => null,
-                    'operator' => 'like',
+                    'glue'       => 'and',
+                    'field'      => 'email',
+                    'object'     => 'lead',
+                    'type'       => 'email',
+                    'properties' => [
+                        'filter'   => '*@gmail.com',
+                    ],
+                    'operator'   => 'like',
                 ],
             ],
         ];
