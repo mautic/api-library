@@ -165,7 +165,7 @@ abstract class MauticApiTestCase extends TestCase
                 )
             );
 
-            $this->assertEquals($item[$itemProp], $itemVal, '>>> '.$itemProp.':');
+            $this->assertEquals($itemVal, $item[$itemProp], '>>> '.$itemProp.':');
         }
     }
 
