@@ -1,5 +1,5 @@
 {
-  "name": "mautic/api-library",
+  "name": "christian-beckmann/api-library",
   "license": "MIT",
   "type": "library",
   "description": "Mautic API Connector Library",
