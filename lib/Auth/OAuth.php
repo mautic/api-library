@@ -522,7 +522,7 @@ class OAuth extends AbstractAuth
      */
     protected function isOauth1()
     {
-        return strlen($this->_request_token_url) > 0;
+        return !empty($this->_request_token_url) && strlen($this->_request_token_url) > 0;
     }
 
     /**
