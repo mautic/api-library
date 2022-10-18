@@ -27,5 +27,10 @@
   },
   "scripts": {
     "test": "vendor/bin/paratest"
+  },
+  "config": {
+    "platform": {
+      "php": "7.4"
+    }
   }
 }
