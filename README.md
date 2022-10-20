@@ -6,7 +6,7 @@
 # Using the Mautic API Library
 
 ## Requirements
-* PHP 7.2 or newer
+* PHP 8.0 or newer
 * cURL support
 
 ## Installing the API Library
