@@ -156,26 +156,6 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Returns array of HTTP response headers.
-     *
-     * @return array
-     */
-    public function getResponseHeaders()
-    {
-        return $this->parseHeaders($this->_httpResponseHeaders);
-    }
-
-    /**
-     * Returns array of HTTP response headers.
-     *
-     * @return array
-     */
-    public function getResponseInfo()
-    {
-        return $this->_httpResponseInfo;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function isAuthorized()
@@ -526,30 +506,6 @@ class OAuth extends AbstractAuth
     }
 
     /**
-     * Build the HTTP response array out of the headers string.
-     *
-     * @param string $headersStr
-     *
-     * @return array
-     */
-    protected function parseHeaders($headersStr)
-    {
-        $headersArr  = [];
-        $headersHlpr = explode("\r\n", $headersStr);
-
-        foreach ($headersHlpr as $header) {
-            $pos = strpos($header, ':');
-            if (false === $pos) {
-                $headersArr[] = trim($header);
-            } else {
-                $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, $pos + 1));
-            }
-        }
-
-        return $headersArr;
-    }
-
-    /**
      * @param string $url
      * @param string $method
      *
@@ -766,32 +722,6 @@ class OAuth extends AbstractAuth
 
             throw new IncorrectParametersReturnedException('Incorrect access token parameters returned: '.$response);
         }
-    }
-
-    /**
-     * Separates parameters from base URL.
-     *
-     * @param string $url
-     * @param array  $params
-     *
-     * @return array
-     */
-    protected function separateUrlParams($url, $params)
-    {
-        $a = parse_url($url);
-
-        if (!empty($a['query'])) {
-            parse_str($a['query'], $qparts);
-            $cleanParams = [];
-            foreach ($qparts as $k => $v) {
-                $cleanParams[$k] = $v ? $v : '';
-            }
-            $params   = array_merge($params, $cleanParams);
-            $urlParts = explode('?', $url, 2);
-            $url      = $urlParts[0];
-        }
-
-        return [$url, $params];
     }
 
     /**

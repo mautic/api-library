@@ -11,6 +11,8 @@
 
 namespace Mautic\Auth;
 
+use Psr\Http\Client\ClientInterface;
+
 interface AuthInterface
 {
     /**

@@ -10,6 +10,8 @@
 
 namespace Mautic\Tests\Api;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 use Mautic\Api\Contacts;
 use Mautic\QueryBuilder\QueryBuilder;
 
@@ -193,12 +195,9 @@ class ContactsTest extends AbstractCustomFieldsTest
     public function testGetActivityAdvanced()
     {
         // Ensure a page hit exists
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $this->config['baseUrl'].'/mtracking.gif?url='.urlencode('http://mautic.org'));
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-        curl_exec($curl);
+        $client  = new Client(['verify' => false]);
+        $request = new Request('GET', $this->config['baseUrl'].'/mtracking.gif?url='.urlencode('http://mautic.org'));
+        $client->send($request);
 
         $response = $this->api->getActivity('', ['page.hit']);
         $this->assertEventResponse($response, ['page.hit']);

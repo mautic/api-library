@@ -11,11 +11,21 @@
 
 namespace Mautic\Auth;
 
+use Http\Discovery\Psr18ClientDiscovery;
+use Psr\Http\Client\ClientInterface;
+
 /**
  * OAuth Client modified from https://code.google.com/p/simple-php-oauth/.
  */
 class ApiAuth
 {
+    protected ClientInterface $client;
+
+    public function __construct(ClientInterface $client = null)
+    {
+        $this->client = $client ?: Psr18ClientDiscovery::find();
+    }
+
     /**
      * Get an API Auth object.
      *
@@ -44,7 +54,7 @@ class ApiAuth
     public function newAuth($parameters = [], $authMethod = 'OAuth')
     {
         $class      = 'Mautic\\Auth\\'.$authMethod;
-        $authObject = new $class();
+        $authObject = new $class($this->client);
 
         $reflection = new \ReflectionMethod($class, 'setup');
         $pass       = [];

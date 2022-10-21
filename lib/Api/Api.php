@@ -285,10 +285,9 @@ class Api implements LoggerAwareInterface
 
             // Ensure a code is present in the error array
             if (!empty($response['errors'])) {
-                $info = $this->auth->getResponseInfo();
                 foreach ($response['errors'] as $key => $error) {
                     if (!isset($response['errors'][$key]['code'])) {
-                        $response['errors'][$key]['code'] = $info['http_code'];
+                        $response['errors'][$key]['code'] = $this->auth->getResponse()->getStatusCode();
                     }
                 }
             }
@@ -302,16 +301,6 @@ class Api implements LoggerAwareInterface
         }
 
         return $response;
-    }
-
-    /**
-     * Returns HTTP response info.
-     *
-     * @return array
-     */
-    public function getResponseInfo()
-    {
-        return $this->auth->getResponseInfo();
     }
 
     /**

@@ -11,24 +11,36 @@
 namespace Mautic;
 
 use Mautic\Exception\UnexpectedResponseFormatException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class helping with API responses.
  */
 class Response
 {
-    private $headers;
-    private $body;
-    private $info;
+    /**
+     * @var \Psr\Http\Message\ResponseInterface
+     */
+    private $response;
 
     /**
-     * @param string $response
+     * @var string
      */
-    public function __construct($response, array $info)
+    private $body;
+
+    public function __construct(ResponseInterface $response)
     {
-        $this->info = $info;
-        $this->parseResponse($response);
+        $this->response = $response;
+        $this->body     = (string) $this->response->getBody();
         $this->validate();
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->response->getStatusCode();
     }
 
     /**
@@ -36,7 +48,7 @@ class Response
      */
     public function getHeaders()
     {
-        return $this->headers;
+        return $this->response->getHeaders();
     }
 
     /**
@@ -96,19 +108,11 @@ class Response
     }
 
     /**
-     * @return array
-     */
-    public function getInfo()
-    {
-        return $this->info;
-    }
-
-    /**
      * @return bool
      */
     public function isZip()
     {
-        return !empty($this->info['content_type']) && 'application/zip' === $this->info['content_type'];
+        return $this->response->hasHeader('Content-Type') && 'application/zip' === $this->response->getHeader('Content-Type')[0];
     }
 
     /**
@@ -153,23 +157,13 @@ class Response
     }
 
     /**
-     * @param string $response
-     */
-    private function parseResponse($response)
-    {
-        $exploded      = explode("\r\n\r\n", $response);
-        $this->body    = array_pop($exploded);
-        $this->headers = implode("\r\n\r\n", $exploded);
-    }
-
-    /**
      * @throws UnexpectedResponseFormatException
      */
     private function validate()
     {
-        if (!in_array($this->info['http_code'], [200, 201])) {
-            $message = 'The response has unexpected status code ('.$this->info['http_code'].').';
-            throw new UnexpectedResponseFormatException($this, $message, $this->info['http_code']);
+        if (!in_array($this->response->getStatusCode(), [200, 201])) {
+            $message = 'The response has unexpected status code ('.$this->response->getStatusCode().').';
+            throw new UnexpectedResponseFormatException($this, $message, $this->response->getStatusCode());
         }
 
         if ($this->isHtml()) {
