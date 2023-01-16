@@ -320,7 +320,7 @@ abstract class MauticApiTestCase extends TestCase
         $response = $this->api->edit(10000, $this->testPayload, true);
         $this->assertPayload($response);
 
-        //now delete the category
+        //now delete the entity
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
