@@ -41,7 +41,7 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Copy our API library config into the tests/ folder
       run: cp -a ./.github/ci-files/local.config.php tests/local.config.php
@@ -141,7 +141,7 @@ jobs:
     name: CS tests
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup PHP, with composer and extensions
       uses: shivammathur/setup-php@v2
