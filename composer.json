@@ -21,7 +21,7 @@
   },
   "require-dev": {
     "kint-php/kint": "^4.1",
-    "friendsofphp/php-cs-fixer": "~2.16.1",
+    "friendsofphp/php-cs-fixer": "^2.19.3",
     "phpunit/phpunit": "~9.5.0",
     "brianium/paratest": "^6.2"
   },
