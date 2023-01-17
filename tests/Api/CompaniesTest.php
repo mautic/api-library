@@ -84,6 +84,15 @@ class CompaniesTest extends AbstractCustomFieldsTest
 
     public function testBatchEndpoints()
     {
-        $this->standardTestBatchEndpoints();
+        $batch = [];
+
+        // Company name must be unique
+        for ($i = 0; $i < 3; ++$i) {
+            $company                = $this->testPayload;
+            $company['companyname'] = 'test'.$i;
+            $batch[]                = $company;
+        }
+
+        $this->standardTestBatchEndpoints($batch);
     }
 }

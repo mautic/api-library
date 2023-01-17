@@ -11,6 +11,7 @@
 namespace Mautic\Tests\Api;
 
 use Mautic\Api\Contacts;
+use Mautic\QueryBuilder\QueryBuilder;
 
 class ContactsTest extends AbstractCustomFieldsTest
 {
@@ -365,6 +366,17 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testEditPut()
     {
+        $qb = new QueryBuilder();
+        $qb->addWhere($qb->getWhereBuilder()->eq('email', $this->testPayload['email']));
+        $response = $this->api->getCustomList($qb, 0, 1);
+        $this->assertErrors($response);
+
+        // Making sure that if the contact exists, it won't try to create it. Otherwise we'll get an error about duplicated email.
+        if (isset($response[$this->api->listName()]) && count($response[$this->api->listName()])) {
+            $response = $this->api->delete(array_pop($response[$this->api->listName()])['id']);
+            $this->assertErrors($response);
+        }
+
         $this->standardTestEditPut();
     }
 
