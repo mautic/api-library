@@ -15,34 +15,34 @@ $parameters = [
 ];
 EOF
 
-cat << 'EOF' > app/config/security_local.php
-<?php
-
-$this->import('security.php');
-
-// Support HTTP basic auth for test logins
-$container->loadFromExtension('security',
-    [
-        'firewalls' => [
-            'main' => [
-                // Support HTTP basic auth for test logins
-                'http_basic' => true,
-            ],
-        ],
-        'encoders'  => [
-          'Symfony\Component\Security\Core\User\User' => [
-            'algorithm'        => 'md5',
-            'encode_as_base64' => false,
-            'iterations'       => 0,
-          ],
-          'Mautic\UserBundle\Entity\User' => [
-            'algorithm'        => 'md5',
-            'encode_as_base64' => false,
-            'iterations'       => 0,
-          ],
-        ],
-    ]
-);
+#cat << 'EOF' > app/config/security_local.php
+#<?php
+#
+#$this->import('security.php');
+#
+#// Support HTTP basic auth for test logins
+#$container->loadFromExtension('security',
+#    [
+#        'firewalls' => [
+#            'main' => [
+#                // Support HTTP basic auth for test logins
+#                'http_basic' => true,
+#            ],
+#        ],
+#        'encoders'  => [
+#          'Symfony\Component\Security\Core\User\User' => [
+#            'algorithm'        => 'md5',
+#            'encode_as_base64' => false,
+#            'iterations'       => 0,
+#          ],
+#          'Mautic\UserBundle\Entity\User' => [
+#            'algorithm'        => 'md5',
+#            'encode_as_base64' => false,
+#            'iterations'       => 0,
+#          ],
+#        ],
+#    ]
+#);
 
 php bin/console mautic:install http://localhost/ --force --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org" --mailer_transport="smtp" --mailer_host="mailhog" --mailer_port="1025" --admin_username=admin --admin_password=mautic --admin_email="bla@bla.be"
 php bin/console cache:clear --no-interaction
