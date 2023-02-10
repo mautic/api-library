@@ -44,9 +44,9 @@ jobs:
         image: mautic/mautic:v4-apache
         env:
           MAUTIC_DB_HOST: mysql
-          MAUTIC_DB_USER: mautic
-          MAUTIC_DB_PASSWORD: mypassword
-          MAUTIC_DB_NAME: mautic
+          MAUTIC_DB_USER: root
+          MAUTIC_DB_PASSWORD: ""
+          MAUTIC_DB_NAME: mautictest
           MAUTIC_RUN_CRON_JOBS: "false"
         ports:
           - 80:80
