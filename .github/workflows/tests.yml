@@ -43,7 +43,7 @@ jobs:
       mautic:
         image: mautic/mautic:v4-apache
         env:
-          MAUTIC_DB_HOST: db
+          MAUTIC_DB_HOST: mysql
           MAUTIC_DB_USER: mautic
           MAUTIC_DB_PASSWORD: mypassword
           MAUTIC_DB_NAME: mautic
