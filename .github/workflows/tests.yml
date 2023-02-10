@@ -24,7 +24,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: mautictest
         ports:
           - 3306:3306
@@ -45,7 +45,7 @@ jobs:
         env:
           MAUTIC_DB_HOST: mysql
           MAUTIC_DB_USER: root
-          MAUTIC_DB_PASSWORD: ""
+          MAUTIC_DB_PASSWORD: root
           MAUTIC_DB_NAME: mautictest
           MAUTIC_RUN_CRON_JOBS: "false"
         ports:
