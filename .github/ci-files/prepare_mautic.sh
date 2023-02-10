@@ -5,7 +5,7 @@ set -e
 cd /var/www/html
 php bin/console mautic:install http://localhost/ --force --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org" --mailer_transport="smtp" --mailer_host="mailhog" --mailer_port="1025" --admin_username=admin --admin_password=mautic --admin_email="bla@bla.be"
 
-cat << EOF > app/config/parameter_local.php
+cat << EOF > app/config/parameters_local.php
 <?php
 /**
  * Parameter overrides for GitHub Actions.
