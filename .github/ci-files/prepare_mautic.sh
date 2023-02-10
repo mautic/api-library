@@ -10,7 +10,7 @@ cat << EOF > app/config/parameters_local.php
 /**
  * Parameter overrides for GitHub Actions.
  */
-$parameters = [
+\$parameters = [
     'api_enabled'           => true,
     'api_enable_basic_auth' => true,
 ];
