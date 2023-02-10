@@ -90,12 +90,17 @@ jobs:
 #    - name: Upload code coverage
 #      run: bash <(curl -s https://codecov.io/bash)
 #
-#    - name: Upload logs as artifacts
-#      uses: actions/upload-artifact@v2
-#      if: always()
-#      with:
-#        name: mautic-logs
-#        path: /var/www/html/var/logs/
+    - name: gather logs
+      if: always()
+      run: |
+        sudo docker cp mautic:/var/www/html/var/logs /tmp
+
+    - name: Upload logs as artifacts
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: mautic-logs
+        path: /tmp/logs/
 #
 #    - name: Slack Notification if tests fail
 #      uses: rtCamp/action-slack-notify@v2
