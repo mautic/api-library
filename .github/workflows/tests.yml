@@ -57,6 +57,12 @@ jobs:
           --health-retries=10
           --name=mautic
     steps:
+    - name: Prepare Mautic installation
+      run: |
+        sudo docker cp .github/ci-files/prepare_mautic.sh mautic:/tmp/prepare_mautic.sh
+        sudo docker exec mautic chmod 755 /tmp/prepare_mautic.sh
+        sudo docker exec mautic /tmp/prepare_mautic.sh
+        
     - uses: actions/checkout@v3
 
     - name: Copy our API library config into the tests/ folder
@@ -72,12 +78,6 @@ jobs:
 
     - name: Set SYMFONY_ENV to test
       run: echo "SYMFONY_ENV=test" >> $GITHUB_ENV
-
-    - name: Prepare Mautic installation
-      run: |
-        sudo docker cp .github/ci-files/prepare_mautic.sh mautic:/tmp/prepare_mautic.sh
-        sudo docker exec mautic chmod 755 /tmp/prepare_mautic.sh
-        sudo docker exec mautic /tmp/prepare_mautic.sh
 
     - name: Install dependencies
       run: |
