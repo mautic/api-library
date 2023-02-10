@@ -74,7 +74,7 @@ jobs:
 
     - name: Prepare Mautic installation
       run: |
-        sudo docker cp /tmp/ci-files/prepare_mautic.sh mautic:/tmp/prepare_mautic.sh
+        sudo docker cp .github/ci-files/prepare_mautic.sh mautic:/tmp/prepare_mautic.sh
         sudo docker exec -it mautic "bash /tmp/prepare_mautic.sh"
 
     - name: Install dependencies
