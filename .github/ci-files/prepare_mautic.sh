@@ -2,6 +2,8 @@
 
 set -e
 
+apt-get update && apt-get install default-mysql-client -y
+
 cd /var/www
 
 cat << 'EOF' > docroot/app/config/parameters_local.php
