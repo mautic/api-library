@@ -21,7 +21,7 @@ jobs:
     name: PHPUnit tests
     strategy:
       matrix:
-        mautic_version: ["ghcr.io/mollux/docker-mautic:5.x-dev", "ghcr.io/mollux/docker-mautic:4.4.6"]
+        mautic_version: ["5.x-dev", "4.4.6"]
 
     services:
       mysql:
@@ -51,7 +51,7 @@ jobs:
           - 6379:6379
 
       mautic:
-        image: ${{ matrix.mautic_version }}
+        image: ghcr.io/mollux/docker-mautic:${{ matrix.mautic_version }}
         env:
           MAUTIC_DB_HOST: mysql
           MAUTIC_DB_USER: root
@@ -109,7 +109,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: mautic-logs
+        name: mautic-logs-${{ matrix.mautic_version }}
         path: /tmp/logs/
 
     - name: Slack Notification if tests fail
