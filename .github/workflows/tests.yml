@@ -103,7 +103,7 @@ jobs:
     - name: gather logs
       if: always()
       run: |
-        sudo docker cp mautic:/var/www/html/var/logs/ /tmp/logs
+        sudo docker cp mautic:/var/www/var/logs/ /tmp/logs
 
     - name: Upload logs as artifacts
       uses: actions/upload-artifact@v3
