@@ -19,6 +19,9 @@ jobs:
   phpunit:
     runs-on: ubuntu-20.04
     name: PHPUnit tests
+    strategy:
+      matrix:
+        mautic_version: [ghcr.io/mollux/docker-mautic:5.x-dev, mautic/mautic:v4-apache]
 
     services:
       mysql:
@@ -48,7 +51,7 @@ jobs:
           - 6379:6379
 
       mautic:
-        image: mautic/mautic:v4-apache
+        image: ${{ matrix.mautic_version }}
         env:
           MAUTIC_DB_HOST: mysql
           MAUTIC_DB_USER: root
