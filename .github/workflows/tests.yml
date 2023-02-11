@@ -94,9 +94,9 @@ jobs:
     - name: Run tests
       run: vendor/bin/phpunit --coverage-clover coverage.xml
 
-#    - name: Upload code coverage
-#      run: bash <(curl -s https://codecov.io/bash)
-#
+    - name: Upload code coverage
+      run: bash <(curl -s https://codecov.io/bash)
+
     - name: gather logs
       if: always()
       run: |
@@ -108,13 +108,13 @@ jobs:
       with:
         name: mautic-logs
         path: /tmp/logs/
-#
-#    - name: Slack Notification if tests fail
-#      uses: rtCamp/action-slack-notify@v2
-#      if: ${{ failure() && github.event_name == 'schedule' }}
-#      env:
-#        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-#        SLACK_MESSAGE: 'The daily API library tests against mautic/mautic have failed. Most likely a PR was merged recently which introduced a regression of some sort.'
+
+    - name: Slack Notification if tests fail
+      uses: rtCamp/action-slack-notify@v2
+      if: ${{ failure() && github.event_name == 'schedule' }}
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_MESSAGE: 'The daily API library tests against mautic/mautic have failed. Most likely a PR was merged recently which introduced a regression of some sort.'
 
   cs:
     runs-on: ubuntu-20.04
