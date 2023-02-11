@@ -2,9 +2,9 @@
 
 set -e
 
-cd /var/www/docroot
+cd /var/www
 
-cat << 'EOF' > app/config/parameters_local.php
+cat << 'EOF' > docroot/app/config/parameters_local.php
 <?php
 /**
  * Parameter overrides for GitHub Actions.
@@ -15,7 +15,7 @@ $parameters = [
 ];
 EOF
 
-cat << 'EOF2' > app/config/security_local.php
+cat << 'EOF2' > docroot/app/config/security_local.php
 <?php
 
 $this->import('security.php');
