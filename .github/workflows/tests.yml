@@ -103,7 +103,7 @@ jobs:
         sudo docker cp mautic:/var/www/html/var/logs/ /tmp/logs
 
     - name: Upload logs as artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: mautic-logs
