@@ -21,7 +21,7 @@ jobs:
     name: PHPUnit tests
     strategy:
       matrix:
-        mautic_version: ["5.x-dev", "4.4.6"]
+        mautic_version: ["5.x-dev", "4.x-dev"]
 
     services:
       mysql:
