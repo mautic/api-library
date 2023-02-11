@@ -44,11 +44,6 @@ jobs:
         image: mailhog/mailhog:latest
         ports:
           - 1025:1025
-          
-      redis:
-        image: redis:6
-        ports:
-          - 6379:6379
 
       mautic:
         image: ghcr.io/mollux/docker-mautic:${{ matrix.mautic_version }}
@@ -82,7 +77,6 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: 8.0
-        ini-values: session.save_handler=redis, session.save_path="tcp://127.0.0.1:6379"
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
         coverage: pcov
 
