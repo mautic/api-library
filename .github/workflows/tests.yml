@@ -92,7 +92,7 @@ jobs:
         composer install --prefer-dist --no-progress
 
     - name: Run tests
-      run: vendor/bin/paratest -p 3 --coverage-clover coverage.xml
+      run: vendor/bin/phpunit --coverage-clover coverage.xml
 
 #    - name: Upload code coverage
 #      run: bash <(curl -s https://codecov.io/bash)
