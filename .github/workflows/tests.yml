@@ -21,7 +21,7 @@ jobs:
     name: PHPUnit tests
     strategy:
       matrix:
-        mautic_version: ["ghcr.io/mollux/docker-mautic:5.x-dev", "mautic/mautic:v4-apache"]
+        mautic_version: ["ghcr.io/mollux/docker-mautic:5.x-dev", "ghcr.io/mollux/docker-mautic:4.4.6"]
 
     services:
       mysql:
