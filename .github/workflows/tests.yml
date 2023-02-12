@@ -18,11 +18,11 @@ on:
 jobs:
   phpunit:
     runs-on: ubuntu-20.04
-    name: PHPUnit ${{ matrix.php-version }} ${{ matrix.mautic_version }}
+    name: PHPUnit ${{ matrix.php_version }} ${{ matrix.mautic_version }}
     strategy:
       matrix:
         mautic_version: ["5.x-dev", "4.x-dev"]
-        php_version: ["7.4", "8.0"]
+        php_version: ["7.4", "8.0", "8.1"]
 
     services:
       mysql:
