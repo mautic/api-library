@@ -385,14 +385,14 @@ class OAuth extends AbstractAuth
         }
 
         //Check for existing access token
-        if (strlen($this->_access_token) > 0) {
+        if ($this->_access_token && strlen($this->_access_token) > 0) {
             $this->log('has access token');
 
             return true;
         }
 
         //Reauthorize if no token was found
-        if (0 == strlen($this->_access_token)) {
+        if (!$this->_access_token || 0 == strlen($this->_access_token)) {
             $this->log('access token empty so authorize');
 
             //OAuth flows
@@ -634,7 +634,7 @@ class OAuth extends AbstractAuth
                 $parameters['code'] = $_GET['code'];
             }
 
-            if (strlen($this->_refresh_token) > 0) {
+            if ($this->_refresh_token && strlen($this->_refresh_token) > 0) {
                 $this->log('Using refresh token');
                 $parameters['grant_type']    = 'refresh_token';
                 $parameters['refresh_token'] = $this->_refresh_token;
