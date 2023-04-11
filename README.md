@@ -1,6 +1,6 @@
 [![codecov](https://codecov.io/gh/mautic/api-library/branch/master/graph/badge.svg)](https://codecov.io/gh/mautic/api-library) [![Latest Stable Version](https://poser.pugx.org/mautic/api-library/v)](//packagist.org/packages/mautic/api-library) [![Total Downloads](https://poser.pugx.org/mautic/api-library/downloads)](//packagist.org/packages/mautic/api-library) [![Latest Unstable Version](https://poser.pugx.org/mautic/api-library/v/unstable)](//packagist.org/packages/mautic/api-library) [![License](https://poser.pugx.org/mautic/api-library/license)](//packagist.org/packages/mautic/api-library)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Using the Mautic API Library
@@ -271,9 +271,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href="https://webmecanik.com"><img src="https://avatars.githubusercontent.com/u/462477?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zdeno Kuzmany</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=kuzmany" title="Code">💻</a></td>
-      <td align="center"><a href="https://github.com/dlopez-akalam"><img src="https://avatars.githubusercontent.com/u/6641589?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dlopez-akalam</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=dlopez-akalam" title="Code">💻</a></td>
-      <td align="center"><a href="https://github.com/mollux"><img src="https://avatars.githubusercontent.com/u/3983285?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mollux</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=mollux" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://webmecanik.com"><img src="https://avatars.githubusercontent.com/u/462477?v=4?s=100" width="100px;" alt="Zdeno Kuzmany"/><br /><sub><b>Zdeno Kuzmany</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=kuzmany" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dlopez-akalam"><img src="https://avatars.githubusercontent.com/u/6641589?v=4?s=100" width="100px;" alt="dlopez-akalam"/><br /><sub><b>dlopez-akalam</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=dlopez-akalam" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mollux"><img src="https://avatars.githubusercontent.com/u/3983285?v=4?s=100" width="100px;" alt="mollux"/><br /><sub><b>mollux</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=mollux" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/LadySolveig"><img src="https://avatars.githubusercontent.com/u/64533137?v=4?s=100" width="100px;" alt="Martina  Scholz"/><br /><sub><b>Martina  Scholz</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=LadySolveig" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

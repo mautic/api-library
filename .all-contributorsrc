@@ -31,6 +31,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "LadySolveig",
+      "name": "Martina  Scholz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64533137?v=4",
+      "profile": "https://github.com/LadySolveig",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -38,5 +47,6 @@
   "projectOwner": "mautic",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
