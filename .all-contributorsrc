@@ -58,6 +58,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "PierreAmmeloot",
+      "name": "Pierre Ammeloot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4603318?v=4",
+      "profile": "https://pierre.ammeloot.fr",
+      "contributions": [
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7,
