@@ -15,7 +15,7 @@ class FilesTest extends MauticApiTestCase
     public function setUp(): void
     {
         $this->api                 = $this->getContext('files');
-        $this->testPayload['file'] = dirname(__DIR__).'/'.'mauticlogo.png';
+        $this->testPayload['file'] = dirname(__DIR__).'/mauticlogo.png';
         $this->assertTrue(file_exists($this->testPayload['file']), 'A file for test at '.$this->testPayload['file'].' does not exist.');
     }
 

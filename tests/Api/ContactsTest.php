@@ -325,7 +325,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $pointsSet   = 5;
         $response    = $this->api->edit(10000, $this->testPayload);
 
-        //there should be an error as the contact shouldn't exist
+        // there should be an error as the contact shouldn't exist
         $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
         $response = $this->api->create($this->testPayload);
@@ -343,7 +343,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
         $this->assertSame($response[$this->api->itemName()]['points'], $pointsSet, 'Points were not set correctly');
 
-        //now delete the contact
+        // now delete the contact
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
@@ -360,7 +360,7 @@ class ContactsTest extends AbstractCustomFieldsTest
             ]
         );
 
-        //there should be an error as the country does not exist
+        // there should be an error as the country does not exist
         $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
     }
 
@@ -394,7 +394,7 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         $response = $this->api->get($contact['id']);
         $this->assertErrors($response);
-        $this->assertSame($response[$this->api->itemName()]['points'], ($contact['points'] + $pointToAdd), 'Points were not added correctly');
+        $this->assertSame($response[$this->api->itemName()]['points'], $contact['points'] + $pointToAdd, 'Points were not added correctly');
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
@@ -414,7 +414,7 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         $response = $this->api->get($contact['id']);
         $this->assertErrors($response);
-        $this->assertSame($response[$this->api->itemName()]['points'], ($contact['points'] - $pointToSub), 'Points were not subtracted correctly');
+        $this->assertSame($response[$this->api->itemName()]['points'], $contact['points'] - $pointToSub, 'Points were not subtracted correctly');
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);

@@ -18,17 +18,17 @@ class Contacts extends Api
     /**
      * Contact unsubscribed themselves.
      */
-    const UNSUBSCRIBED = 1;
+    public const UNSUBSCRIBED = 1;
 
     /**
      * Contact was unsubscribed due to an unsuccessful send.
      */
-    const BOUNCED = 2;
+    public const BOUNCED = 2;
 
     /**
      * Contact was manually unsubscribed by user.
      */
-    const MANUAL = 3;
+    public const MANUAL = 3;
 
     /**
      * {@inheritdoc}
@@ -276,7 +276,7 @@ class Contacts extends Api
     /**
      * Get a list of smart segments the contact is in.
      *
-     * @param $id
+     * @param int $id
      *
      * @return array|mixed
      */
@@ -288,7 +288,7 @@ class Contacts extends Api
     /**
      * Get a list of companies the contact is in.
      *
-     * @param $id
+     * @param int $id
      *
      * @return array|mixed
      */
@@ -300,7 +300,7 @@ class Contacts extends Api
     /**
      * Get a list of campaigns the contact is in.
      *
-     * @param $id
+     * @param int $id
      *
      * @return array|mixed
      */

@@ -97,7 +97,7 @@ class BasicAuth extends AbstractAuth
         $password = trim($password);
 
         if (empty($userName) || empty($password)) {
-            //Throw exception if the required parameters were not found
+            // Throw exception if the required parameters were not found
             $this->log('parameters did not include username and/or password');
             throw new RequiredParameterMissingException('One or more required parameters was not supplied. Both userName and password required!');
         }
@@ -107,14 +107,14 @@ class BasicAuth extends AbstractAuth
     }
 
     /**
-     * @param $url
-     * @param $method
+     * @param string $url
+     * @param string $method
      *
      * @return array
      */
     protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings)
     {
-        //Set Basic Auth parameters/headers
+        // Set Basic Auth parameters/headers
         $headers = array_merge($headers, [$this->buildAuthorizationHeader(), 'Expect:']);
 
         return [$headers, $parameters];

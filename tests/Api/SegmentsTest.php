@@ -96,7 +96,7 @@ class SegmentsTest extends MauticApiTestCase
     {
         $response = $this->api->edit(10000, $this->testPayload);
 
-        //there should be an error as the segment shouldn't exist
+        // there should be an error as the segment shouldn't exist
         $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
         $response = $this->api->create($this->testPayload);
@@ -109,7 +109,7 @@ class SegmentsTest extends MauticApiTestCase
         $response = $this->api->edit($response[$this->api->itemName()]['id'], $update);
         $this->assertPayload($response, $update);
 
-        //now delete the segment
+        // now delete the segment
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
@@ -119,7 +119,7 @@ class SegmentsTest extends MauticApiTestCase
         $response = $this->api->edit(10000, $this->testPayload, true);
         $this->assertPayload($response);
 
-        //now delete the segment
+        // now delete the segment
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }

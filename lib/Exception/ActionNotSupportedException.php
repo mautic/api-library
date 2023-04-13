@@ -18,5 +18,5 @@ class ActionNotSupportedException extends AbstractApiException
     /**
      * {@inheritdoc}
      */
-    const DEFAULT_MESSAGE = 'Action is not supported at this time.';
+    public const DEFAULT_MESSAGE = 'Action is not supported at this time.';
 }

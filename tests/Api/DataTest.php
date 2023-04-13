@@ -137,7 +137,7 @@ class DataTest extends MauticApiTestCase
         $this->assertTrue(!empty($response['types']), 'Check "types" exists in Array');
         $this->assertPayload($response);
         // Types contains 10 elements when test written
-        $this->assertTrue((count($response[$this->api->listName()])) >= 10, 'Should contain 10 or more elements');
+        $this->assertTrue(count($response[$this->api->listName()]) >= 10, 'Should contain 10 or more elements');
 
         // test all currently known types exist
         foreach ($this->dataToTest as $key => $data) {

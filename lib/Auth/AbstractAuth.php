@@ -48,8 +48,8 @@ abstract class AbstractAuth implements AuthInterface
     protected $_curlTimeout = null;
 
     /**
-     * @param $url
-     * @param $method
+     * @param string $url
+     * @param string $method
      *
      * @return mixed
      */
@@ -108,13 +108,13 @@ abstract class AbstractAuth implements AuthInterface
 
         list($url, $parameters) = $this->separateUrlParams($url, $parameters);
 
-        //make sure $method is capitalized for congruency
+        // make sure $method is capitalized for congruency
         $method  = strtoupper($method);
         $headers = (isset($settings['headers']) && is_array($settings['headers'])) ? $settings['headers'] : [];
 
         list($headers, $parameters) = $this->prepareRequest($url, $headers, $parameters, $method, $settings);
 
-        //Set default CURL options
+        // Set default CURL options
         $options = [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
@@ -128,12 +128,12 @@ abstract class AbstractAuth implements AuthInterface
         // CURLOPT_FOLLOWLOCATION cannot be activated when an open_basedir is set
         $options[CURLOPT_FOLLOWLOCATION] = (ini_get('open_basedir')) ? false : true;
 
-        //Set custom REST method if not GET or POST
+        // Set custom REST method if not GET or POST
         if (!in_array($method, ['GET', 'POST'])) {
             $options[CURLOPT_CUSTOMREQUEST] = $method;
         }
 
-        //Set post fields for POST/PUT/PATCH requests
+        // Set post fields for POST/PUT/PATCH requests
         $isPost = false;
         if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
             $isPost = true;
@@ -158,7 +158,7 @@ abstract class AbstractAuth implements AuthInterface
         $query = $this->getQueryParameters($isPost, $parameters);
         $this->log('Query parameters = '.print_r($query, true));
 
-        //Create a query string for GET/DELETE requests
+        // Create a query string for GET/DELETE requests
         if (count($query) > 0) {
             $queryGlue = false === strpos($url, '?') ? '?' : '&';
             $url       = $url.$queryGlue.http_build_query($query, '', '&');
@@ -171,7 +171,7 @@ abstract class AbstractAuth implements AuthInterface
         $headers[]                   = 'Accept: application/json';
         $options[CURLOPT_HTTPHEADER] = $headers;
 
-        //Make CURL request
+        // Make CURL request
         $curl = curl_init();
         curl_setopt_array($curl, $options);
 
@@ -201,7 +201,7 @@ abstract class AbstractAuth implements AuthInterface
     /**
      * @deprecated 2.6.0 to be removed in 3.0; use createCurlFile instead
      *
-     * @param        $filename
+     * @param string $filename
      * @param string $mimetype
      * @param string $postname
      *
@@ -235,8 +235,8 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
-     * @param $isPost
-     * @param $parameters
+     * @param bool  $isPost
+     * @param array $parameters
      *
      * @return array
      */
@@ -272,7 +272,7 @@ abstract class AbstractAuth implements AuthInterface
             if (false === $pos) {
                 $headersArr[] = trim($header);
             } else {
-                $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, ($pos + 1)));
+                $headersArr[trim(substr($header, 0, $pos))] = trim(substr($header, $pos + 1));
             }
         }
 
@@ -282,8 +282,8 @@ abstract class AbstractAuth implements AuthInterface
     /**
      * Separates parameters from base URL.
      *
-     * @param $url
-     * @param $params
+     * @param string $url
+     * @param array  $params
      *
      * @return array
      */

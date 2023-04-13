@@ -18,5 +18,5 @@ class RequiredParameterMissingException extends AbstractApiException
     /**
      * {@inheritdoc}
      */
-    const DEFAULT_MESSAGE = 'Required Parameter is missing.';
+    public const DEFAULT_MESSAGE = 'Required Parameter is missing.';
 }

@@ -112,7 +112,7 @@ class PointTriggersTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertTrue(empty($response[$this->api->itemName()]['events']), 'Trigger events were not deleted via PUT request');
 
-        //now delete the form
+        // now delete the form
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
@@ -131,7 +131,7 @@ class PointTriggersTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertTrue(empty($response[$this->api->itemName()]['events']), 'Events were not deleted');
 
-        //now delete the trigger
+        // now delete the trigger
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }

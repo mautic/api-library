@@ -20,7 +20,7 @@ class UnexpectedResponseFormatException extends AbstractApiException
     /**
      * {@inheritdoc}
      */
-    const DEFAULT_MESSAGE = 'The response returned is in an unexpected format.';
+    public const DEFAULT_MESSAGE = 'The response returned is in an unexpected format.';
 
     /**
      * @var Response

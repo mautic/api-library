@@ -19,7 +19,7 @@ abstract class AbstractApiException extends \Exception
      * The default message to be used if a specific message is not provided.
      * Note: Overriden in subclass.
      */
-    const DEFAULT_MESSAGE = 'Unknown Error';
+    public const DEFAULT_MESSAGE = 'Unknown Error';
 
     /**
      * {@inheritdoc}
