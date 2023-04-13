@@ -18,5 +18,5 @@ class IncorrectParametersReturnedException extends AbstractApiException
     /**
      * {@inheritdoc}
      */
-    const DEFAULT_MESSAGE = 'Incorrect parameters returned.';
+    public const DEFAULT_MESSAGE = 'Incorrect parameters returned.';
 }

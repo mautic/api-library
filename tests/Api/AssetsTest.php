@@ -40,7 +40,7 @@ class AssetsTest extends MauticApiTestCase
         $this->apiFiles = $this->getContext('files');
         $this->apiFiles->setFolder('assets');
         $fileRequest = [
-            'file' => dirname(__DIR__).'/'.'mauticlogo.png',
+            'file' => dirname(__DIR__).'/mauticlogo.png',
         ];
         $response = $this->apiFiles->create($fileRequest);
         $this->assertErrors($response);

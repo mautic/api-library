@@ -34,7 +34,7 @@ use Mautic\Response;
 
 class ExceptionsTest extends MauticApiTestCase
 {
-    const CUSTOM_ERROR_MESSAGE = 'This is a Custom Error Exception';
+    public const CUSTOM_ERROR_MESSAGE = 'This is a Custom Error Exception';
 
     public function testContextNotFoundException()
     {

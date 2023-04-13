@@ -18,5 +18,5 @@ class ContextNotFoundException extends AbstractApiException
     /**
      * {@inheritdoc}
      */
-    const DEFAULT_MESSAGE = 'Context not found.';
+    public const DEFAULT_MESSAGE = 'Context not found.';
 }

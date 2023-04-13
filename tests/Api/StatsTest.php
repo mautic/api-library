@@ -118,7 +118,7 @@ class StatsTest extends MauticApiTestCase
         foreach ($this->getTableList() as $table) {
             $response = $this->api->get($table, 1, 2);
             $this->assertPayload($response);
-            $this->assertTrue((count($response[$this->api->listName()])) <= 2);
+            $this->assertTrue(count($response[$this->api->listName()]) <= 2);
         }
     }
 
@@ -127,7 +127,7 @@ class StatsTest extends MauticApiTestCase
         list($tables, $columns) = $this->getTableList(true);
 
         foreach ($tables as $table) {
-            $hasId = (in_array('id', $columns[$table]));
+            $hasId = in_array('id', $columns[$table]);
 
             $response = $this->api->get(
                 $table,
@@ -152,7 +152,7 @@ class StatsTest extends MauticApiTestCase
         list($tables, $columns) = $this->getTableList(true);
 
         foreach ($tables as $table) {
-            $hasId    = (in_array('id', $columns[$table]));
+            $hasId    = in_array('id', $columns[$table]);
             $response = $this->api->get(
                 $table,
                 0,
@@ -177,7 +177,7 @@ class StatsTest extends MauticApiTestCase
         list($tables, $columns) = $this->getTableList(true);
 
         foreach ($tables as $table) {
-            $hasId = (in_array('id', $columns[$table]));
+            $hasId = in_array('id', $columns[$table]);
 
             $response = $this->api->get(
                 $table,
@@ -217,10 +217,10 @@ class StatsTest extends MauticApiTestCase
 
             $response = $this->api->get($table, 0, 2, [], $where);
             $this->assertPayload($response);
-            $this->assertTrue((count($response[$this->api->listName()])) <= 1);
+            $this->assertTrue(count($response[$this->api->listName()]) <= 1);
 
             // The record might not exist in the database, but in case it does...
-            if (1 === (count($response[$this->api->listName()]))) {
+            if (1 === count($response[$this->api->listName()])) {
                 $this->assertSame((int) $response[$this->api->listName()][0]['id'], $where[0]['val']);
             }
         }
@@ -246,7 +246,7 @@ class StatsTest extends MauticApiTestCase
             $this->assertPayload($response);
 
             // The record might not exist in the database, but in case it does...
-            if ((count($response[$this->api->listName()])) > 0) {
+            if (count($response[$this->api->listName()]) > 0) {
                 $this->assertGreaterThan($where[0]['val'], (int) $response[$this->api->listName()][0]['id']);
             }
         }

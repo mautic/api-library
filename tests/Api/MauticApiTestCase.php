@@ -302,7 +302,7 @@ abstract class MauticApiTestCase extends TestCase
     {
         $response = $this->api->edit(10000, $this->testPayload);
 
-        //there should be an error as the item shouldn't exist
+        // there should be an error as the item shouldn't exist
         $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
         $response = $this->api->create($this->testPayload);
@@ -320,7 +320,7 @@ abstract class MauticApiTestCase extends TestCase
         $response = $this->api->edit(10000, $this->testPayload, true);
         $this->assertPayload($response);
 
-        //now delete the entity
+        // now delete the entity
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }

@@ -96,7 +96,7 @@ class FormsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertTrue(empty($response[$this->api->itemName()]['fields']), 'Fields were not deleted');
 
-        //now delete the form
+        // now delete the form
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
@@ -115,7 +115,7 @@ class FormsTest extends MauticApiTestCase
         $this->assertErrors($response);
         $this->assertTrue(empty($response[$this->api->itemName()]['actions']), 'Actions were not deleted');
 
-        //now delete the form
+        // now delete the form
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
@@ -124,7 +124,7 @@ class FormsTest extends MauticApiTestCase
     {
         $response   = $this->api->edit(10000, $this->testPayload);
 
-        //there should be an error as the form shouldn't exist
+        // there should be an error as the form shouldn't exist
         $this->assertTrue(isset($response['errors']), $response['errors'][0]['message']);
 
         $response = $this->api->create($this->testPayload);
@@ -157,7 +157,7 @@ class FormsTest extends MauticApiTestCase
         $this->assertSame($lastField['label'], 'edited field');
         $this->assertSame($lastAction['name'], 'edited action');
 
-        //now delete the form
+        // now delete the form
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }
@@ -188,7 +188,7 @@ class FormsTest extends MauticApiTestCase
         $this->assertTrue(empty($response[$this->api->itemName()]['fields']), 'Fields were not deleted via PUT request');
         $this->assertTrue(empty($response[$this->api->itemName()]['actions']), 'Actions were not deleted via PUT request');
 
-        //now delete the form
+        // now delete the form
         $response = $this->api->delete($response[$this->api->itemName()]['id']);
         $this->assertErrors($response);
     }

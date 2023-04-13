@@ -194,7 +194,7 @@ class Api implements LoggerAwareInterface
     /**
      * Make the API request.
      *
-     * @param        $endpoint
+     * @param string $endpoint
      * @param string $method
      *
      * @return array
@@ -259,7 +259,7 @@ class Api implements LoggerAwareInterface
                     if (!is_array($response)) {
                         $this->getLogger()->warning($response);
 
-                        //assume an error
+                        // assume an error
                         $error = [
                         'code'    => 500,
                         'message' => $response,
@@ -354,7 +354,7 @@ class Api implements LoggerAwareInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return array|bool
      */
@@ -492,7 +492,7 @@ class Api implements LoggerAwareInterface
     /**
      * Delete an item.
      *
-     * @param $id
+     * @param int $id
      *
      * @return array|mixed
      */
@@ -505,8 +505,6 @@ class Api implements LoggerAwareInterface
 
     /**
      * Delete a batch of items.
-     *
-     * @param $ids
      *
      * @return array|mixed
      */
@@ -539,7 +537,7 @@ class Api implements LoggerAwareInterface
     /**
      * Verify that a default endpoint is supported by the API.
      *
-     * @param $action
+     * @param string $action
      *
      * @return bool
      */
