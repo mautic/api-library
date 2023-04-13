@@ -155,4 +155,4 @@ jobs:
         composer install --prefer-dist --no-progress
 
     - name: Run CS tests
-      run: vendor/bin/php-cs-fixer fix --config=.php_cs -v --dry-run --using-cache=no --show-progress=dots --diff $(git diff -- '*.php' --name-only --diff-filter=ACMRTUXB "HEAD~..HEAD")
+      run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php -v --dry-run --using-cache=no --show-progress=dots --diff $(git diff -- '*.php' --name-only --diff-filter=ACMRTUXB "HEAD~..HEAD")
