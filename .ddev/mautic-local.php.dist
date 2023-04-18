@@ -14,4 +14,9 @@ $parameters = [
     'db_password'           => 'db',
     'admin_email'           => 'mautic@ddev.local',
     'admin_password'        => 'mautic',
+	'mailer_from_name'      => 'DDEV',
+	'mailer_from_email'     => 'mautic@ddev.local',
+	'mailer_transport'      => 'smtp',
+	'mailer_host'           => 'localhost',
+	'mailer_port'           => '1025',
 ];

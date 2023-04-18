@@ -100,9 +100,7 @@ jobs:
       run: |
         composer install --prefer-dist --no-progress
         cp $GITHUB_WORKSPACE/.github/ci-files/local.php ./app/config/local.php
-        php bin/console mautic:install http://localhost/ \
-          --force --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org" \
-          --mailer_transport="smtp" --mailer_host="localhost" --mailer_port="1025" --env=dev
+        php bin/console mautic:install http://localhost/ --force --env=dev
         php bin/console cache:warmup --no-interaction --env=dev
       working-directory: /var/www/html/
 
