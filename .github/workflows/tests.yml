@@ -67,6 +67,7 @@ jobs:
         sudo a2enmod rewrite
         sudo sed -i 's,^session.save_handler =.*$,session.save_handler = redis,' /etc/php/8.0/apache2/php.ini
         sudo sed -i 's,^;session.save_path =.*$,session.save_path = "tcp://127.0.0.1:6379",' /etc/php/8.0/apache2/php.ini
+        sudo sed -i 's,^memory_limit =.*$,memory_limit = 256M,' /etc/php/8.0/apache2/php.ini
         sudo service apache2 restart
         cat /etc/php/8.0/apache2/php.ini | grep session
 
