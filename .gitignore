@@ -8,6 +8,7 @@
 /tests/local.config.php_*
 /tests/local.tokens.php
 /tests/phpunit.phar
+/composer.lock
 /vendor
 .DS_Store
 /.php-cs-fixer.cache
