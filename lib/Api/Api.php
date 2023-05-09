@@ -332,10 +332,10 @@ class Api implements LoggerAwareInterface
      */
     public function getMauticVersion()
     {
-        $headers = $this->auth->getResponseHeaders();
+        $headers = array_change_key_case($this->auth->getResponseHeaders(), CASE_LOWER);
 
-        if (isset($headers['Mautic-Version'])) {
-            return $headers['Mautic-Version'];
+        if (isset($headers['mautic-version'])) {
+            return $headers['mautic-version'];
         }
 
         return null;
