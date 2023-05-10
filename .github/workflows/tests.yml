@@ -94,6 +94,7 @@ jobs:
         sudo chown -R www-data:www-data /var/www/html
         rm -rf /var/www/html/*
         mv $GITHUB_WORKSPACE/mautic/* /var/www/html/
+        cp ./.github/ci-files/.env.local /var/www/html/
 
     - name: Install Mautic
       env:
