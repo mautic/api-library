@@ -22,7 +22,7 @@ Server: Apache/2.4.25 (Unix) OpenSSL/0.9.8zh PHP/7.0.15
 X-Powered-By: PHP/7.0.15
 Set-Cookie: 9743595cf0a472cb3ec0272949ffe7e8=4ocah9itj45lmnhv4ub25ml1b7; path=/; HttpOnly
 Cache-Control: no-cache
-Location: /index_dev.php/s/dashboard
+Location: /index.php/s/dashboard
 Content-Length: 348
 
 Content-Type: text/html; charset=UTF-8
@@ -33,7 +33,7 @@ Server: Apache/2.4.25 (Unix) OpenSSL/0.9.8zh PHP/7.0.15
 X-Powered-By: PHP/7.0.15
 Set-Cookie: 9743595cf0a472cb3ec0272949ffe7e8=ahtmrsuem98b5kunm2g162pa85; path=/; HttpOnly
 Cache-Control: no-cache
-Location: http://mautic.dev/index_dev.php/s/login
+Location: http://mautic.dev/index.php/s/login
 Content-Length: 400
 Content-Type: text/html; charset=UTF-8
 
@@ -65,7 +65,7 @@ Content-Type: text/html; charset=UTF-8';
     private $urlParamBody = 'first=value&arr[]=foo+bar&arr[]=baz';
 
     private $curlInfo = [
-        'url'                     => 'http://mautic.dev/index_dev.php',
+        'url'                     => 'http://mautic.dev/index.php',
         'content_type'            => null,
         'http_code'               => 200,
         'header_size'             => 0,

@@ -52,10 +52,10 @@ return [
     'version'           => 'OAuth1a',
 
     // Required for OAuth1a and OAuth2
-    'baseUrl'           => 'http://example.com/index_dev.php',
+    'baseUrl'           => 'http://example.com/index.php',
 
     // Required for All tests
-    'apiUrl'            => 'http://example.com/index_dev.php/api/',
+    'apiUrl'            => 'http://example.com/index.php/api/',
     // Required for EmailsTest
     'testEmail'         => 'notexisting@email.com',
 
