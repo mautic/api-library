@@ -87,7 +87,6 @@ class StatsTest extends MauticApiTestCase
             'lead_utmtags',
             'page_hits',
             'page_redirects',
-            'plugin_citrix_events',
             'point_lead_action_log',
             'point_lead_event_log',
             'push_notification_stats',
