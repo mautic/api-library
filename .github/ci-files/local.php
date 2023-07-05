@@ -17,6 +17,5 @@ $parameters = [
     'mailer_from_name'      => 'GitHub Actions',
     'mailer_from_email'     => 'github-actions@mautic.org',
     'mailer_transport'      => 'smtp',
-    'mailer_host'           => 'localhost',
-    'mailer_port'           => '1025',
+    'mailer_dsn'            => 'smtp://localhost:1025',
 ];
