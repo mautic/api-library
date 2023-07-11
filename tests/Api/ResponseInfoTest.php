@@ -25,15 +25,9 @@ class ResponseInfoTest extends MauticApiTestCase
         $this->assertMatchesRegularExpression("/^(\d+\.)?(\d+\.)?(.+|\d+)$/", $version);
     }
 
-    public function testResponseInfo()
-    {
-        $info = $this->api->getResponseInfo();
-        $this->assertEquals($info['content_type'], 'application/json');
-    }
-
     public function testResponseHeaders()
     {
         $headers = $this->api->getResponseHeaders();
-        $this->assertEquals($headers[0], 'HTTP/1.1 200 OK');
+        $this->assertEquals($headers['Content-Type'], 'application/json');
     }
 }

@@ -7,13 +7,44 @@
 
 ## Requirements
 * PHP 8.0 or newer
-* cURL support
 
 ## Installing the API Library
 You can install the API Library with the following command:
 
 ```bash
 composer require mautic/api-library
+```
+
+N.B. Make sure you have installed a PSR-18 HTTP Client before you install this package or install one at the same time e.g. `composer require mautic/api-library guzzlehttp/guzzle:^7.3`.
+
+### HTTP Client
+
+We are decoupled from any HTTP messaging client with the help of [PSR-18 HTTP Client](https://www.php-fig.org/psr/psr-18/). This requires an extra package providing [psr/http-client-implementation](https://packagist.org/providers/psr/http-client-implementation). To use Guzzle 7, for example, simply require `guzzlehttp/guzzle`:
+
+``` bash
+composer require guzzlehttp/guzzle:^7.3
+```
+
+The installed HTTP Client is auto-discovered using [php-http/discovery](https://packagist.org/providers/php-http/discovery), but you can also provide your own HTTP Client if you like.
+
+```php
+<?php
+
+// Bootup the Composer autoloader
+include __DIR__ . '/vendor/autoload.php';  
+
+use GuzzleHttp\Client;
+use Mautic\Auth\ApiAuth;
+
+// Initiate an HTTP Client
+$httpClient = new Client([
+    'timeout'  => 10,
+]);
+
+// Initiate the auth object
+$initAuth = new ApiAuth($httpClient);
+$auth     = $initAuth->newAuth($settings);
+// etc.
 ```
 
 ## Mautic Setup
@@ -130,14 +161,6 @@ $auth     = $initAuth->newAuth($settings, 'BasicAuth');
     ],
  ];
 
-```
-**Note:** You can also specify a CURLOPT_TIMEOUT in the request (default is set to wait indefinitely):
-```php
-$initAuth = new ApiAuth();
-$auth     = $initAuth->newAuth($settings, 'BasicAuth');
-$timeout  = 10;
-
-$auth->setCurlTimeout($timeout);
 ```
 
 ## API Requests

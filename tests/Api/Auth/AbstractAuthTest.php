@@ -10,6 +10,7 @@
 
 namespace Mautic\Tests\Api\Auth;
 
+use GuzzleHttp\Client;
 use Mautic\Auth\AbstractAuth;
 use Mautic\Exception\UnexpectedResponseFormatException;
 use PHPUnit\Framework\TestCase;
@@ -25,21 +26,21 @@ class AbstractAuthTest extends TestCase
 
     public function test404Response()
     {
-        $auth = $this->getMockForAbstractClass(AbstractAuth::class);
+        $auth = $this->getMockForAbstractClass(AbstractAuth::class, [new Client()]);
         $this->expectException(UnexpectedResponseFormatException::class);
         $auth->makeRequest('https://github.com/mautic/api-library/this-page-does-not-exist');
     }
 
     public function testHtmlResponse()
     {
-        $auth = $this->getMockForAbstractClass(AbstractAuth::class);
+        $auth = $this->getMockForAbstractClass(AbstractAuth::class, [new Client()]);
         $this->expectException(UnexpectedResponseFormatException::class);
         $auth->makeRequest($this->config['baseUrl']);
     }
 
     public function testJsonResponse()
     {
-        $auth = $this->getMockForAbstractClass(AbstractAuth::class);
+        $auth = $this->getMockForAbstractClass(AbstractAuth::class, [new Client()]);
         try {
             $response = $auth->makeRequest($this->config['apiUrl'].'contacts');
             $this->assertTrue(is_array($response));
