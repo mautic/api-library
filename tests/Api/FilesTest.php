@@ -34,15 +34,19 @@ class FilesTest extends MauticApiTestCase
 
     public function testGetListSubdir()
     {
-        $this->api->setFolder('images/flags');
+        $this->api->setFolder('images/test_api_dir');
+        $createResponse = $this->api->create($this->testPayload);
+
         $response = $this->api->getList();
         $this->assertTrue(isset($response['files']));
         $this->assertErrors($response);
+
+        $this->api->delete($createResponse['file']['name']);
     }
 
-    public function testGetListAssetFiles()
+    public function testGetListMediaFiles()
     {
-        $this->api->setFolder('assets');
+        $this->api->setFolder('media');
         $response   = $this->api->getList();
         $this->assertErrors($response);
     }
@@ -80,9 +84,9 @@ class FilesTest extends MauticApiTestCase
         $this->assertSuccess($response);
     }
 
-    public function testCreateAndDeleteAsset()
+    public function testCreateAndDeleteMedia()
     {
-        $this->api->setFolder('assets');
+        $this->api->setFolder('media');
         $response = $this->api->create($this->testPayload);
         $this->assertPayload($response);
 
