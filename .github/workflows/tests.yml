@@ -96,7 +96,6 @@ jobs:
         mv $GITHUB_WORKSPACE/mautic/* /var/www/html/
         cp ./.github/ci-files/.env /var/www/html/
         sed -i 's/DB_PORT=3306/DB_PORT=${{ job.services.mysql.ports[3306] }}/g' /var/www/html/.env
-        cp /var/www/html/.env /var/www/html/.env.dist
         rm -f /var/www/html/.env.test
 
     - name: Install Mautic
@@ -104,8 +103,15 @@ jobs:
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
       run: |
         composer install --prefer-dist --no-progress
-        cp $GITHUB_WORKSPACE/.github/ci-files/local.php ./app/config/local.php
-        php bin/console mautic:install http://localhost/ --force --env=test
+        if [[ "$(jq -r '.version | .[0:1]' app/release_metadata.json)" == "4" ]]; then
+            cp $GITHUB_WORKSPACE/.github/ci-files/local_4.php ./app/config/local.php
+            php bin/console mautic:install http://localhost/ --force --env=test --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org"
+            sed -i "s/('prod',/('test',/g" ./index.php
+        else
+            cp $GITHUB_WORKSPACE/.github/ci-files/local_5.php ./app/config/local.php
+            php bin/console mautic:install http://localhost/ --force --env=test
+        fi
+        
         php bin/console cache:warmup --no-interaction --env=test
       working-directory: /var/www/html/
 
