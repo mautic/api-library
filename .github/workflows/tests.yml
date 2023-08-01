@@ -96,7 +96,7 @@ jobs:
         mv $GITHUB_WORKSPACE/mautic/* /var/www/html/
         cp ./.github/ci-files/.env /var/www/html/
         sed -i 's/DB_PORT=3306/DB_PORT=${{ job.services.mysql.ports[3306] }}/g' /var/www/html/.env
-        rm /var/www/html/.env.test
+        rm -f /var/www/html/.env.test
 
     - name: Install Mautic
       env:
