@@ -10,4 +10,7 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
+  <php>
+    <env name="MAUTIC_VERSION" value="5"/>
+  </php>
 </phpunit>

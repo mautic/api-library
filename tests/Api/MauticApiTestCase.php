@@ -22,6 +22,8 @@ abstract class MauticApiTestCase extends TestCase
     protected $skipPayloadAssertion = [];
     protected $testPayload          = [];
 
+    protected $mauticVersion = null;
+
     /** @var Api */
     protected $api;
 
@@ -67,6 +69,7 @@ abstract class MauticApiTestCase extends TestCase
 
     protected function getContext($context)
     {
+        $this->mauticVersion = $_ENV['MAUTIC_VERSION'] ?? '5';
         list($auth, $apiUrl) = $this->getAuth();
 
         $api = new MauticApi();
