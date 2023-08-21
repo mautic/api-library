@@ -130,7 +130,7 @@ jobs:
     - name: Run tests
       run: |
         sed -i 's/env name="MAUTIC_VERSION" value="5"/env name="MAUTIC_VERSION" value="${{ env.MAUTIC_VERSION }}"/g' ./phpunit.xml.dist
-        vendor/bin/paratest -p 2 --coverage-clover coverage.xml
+        vendor/bin/phpunit --coverage-clover coverage.xml
 
     - name: Upload code coverage
       run: bash <(curl -s https://codecov.io/bash)
