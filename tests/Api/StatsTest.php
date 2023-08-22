@@ -96,6 +96,12 @@ class StatsTest extends MauticApiTestCase
             'video_hits',
             'webhook_logs',
         ];
+
+        if ('4' == $this->mauticVersion) {
+            $expectedTables[] = 'plugin_citrix_events';
+            sort($expectedTables);
+        }
+
         $tables = $this->getTableList();
         $this->assertTrue(!empty($tables));
         $this->assertSame(

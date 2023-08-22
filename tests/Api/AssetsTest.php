@@ -14,6 +14,8 @@ class AssetsTest extends MauticApiTestCase
 {
     protected $skipPayloadAssertion = ['file'];
 
+    protected $mediaFolder = 'media';
+
     public function setUp(): void
     {
         $this->api         = $this->getContext('assets');
@@ -22,6 +24,10 @@ class AssetsTest extends MauticApiTestCase
             'storageLocation' => 'remote',
             'file'            => 'https://www.mautic.org/media/logos/logo/Mautic_Logo_DB.pdf',
         ];
+
+        if ('4' == $this->mauticVersion) {
+            $this->mediaFolder = 'assets';
+        }
     }
 
     public function testGetList()
@@ -38,7 +44,7 @@ class AssetsTest extends MauticApiTestCase
     {
         // Upload a testing file
         $this->apiFiles = $this->getContext('files');
-        $this->apiFiles->setFolder('media');
+        $this->apiFiles->setFolder($this->mediaFolder);
         $fileRequest = [
             'file' => dirname(__DIR__).'/mauticlogo.png',
         ];

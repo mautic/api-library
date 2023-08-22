@@ -103,8 +103,17 @@ jobs:
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
       run: |
         composer install --prefer-dist --no-progress
-        cp $GITHUB_WORKSPACE/.github/ci-files/local.php ./app/config/local.php
-        php bin/console mautic:install http://localhost/ --force --env=test
+        if [[ "$(jq -r '.version | .[0:1]' app/release_metadata.json)" == "4" ]]; then
+            cp $GITHUB_WORKSPACE/.github/ci-files/local_4.php ./app/config/local.php
+            php bin/console mautic:install http://localhost/ --force --env=test --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org"
+            sed -i "s/('prod',/('test',/g" ./index.php
+            echo "MAUTIC_VERSION=4" >> $GITHUB_ENV
+        else
+            cp $GITHUB_WORKSPACE/.github/ci-files/local_5.php ./app/config/local.php
+            php bin/console mautic:install http://localhost/ --force --env=test
+            echo "MAUTIC_VERSION=5" >> $GITHUB_ENV
+        fi
+        
         php bin/console cache:warmup --no-interaction --env=test
       working-directory: /var/www/html/
 
@@ -119,7 +128,9 @@ jobs:
       run: sudo chown -R www-data:www-data /var/www/html
 
     - name: Run tests
-      run: vendor/bin/paratest -p 3 --coverage-clover coverage.xml
+      run: |
+        sed -i 's/env name="MAUTIC_VERSION" value="5"/env name="MAUTIC_VERSION" value="${{ env.MAUTIC_VERSION }}"/g' ./phpunit.xml.dist
+        vendor/bin/phpunit --coverage-clover coverage.xml
 
     - name: Upload code coverage
       run: bash <(curl -s https://codecov.io/bash)
