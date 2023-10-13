@@ -109,7 +109,7 @@ jobs:
             sed -i "s/('prod',/('test',/g" ./index.php
             echo "MAUTIC_VERSION=4" >> $GITHUB_ENV
         else
-            cp $GITHUB_WORKSPACE/.github/ci-files/local_5.php ./app/config/local.php
+            cp $GITHUB_WORKSPACE/.github/ci-files/local_5.php ./config/local.php
             php bin/console mautic:install http://localhost/ --force --env=test
             echo "MAUTIC_VERSION=5" >> $GITHUB_ENV
         fi
