@@ -253,7 +253,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         // $this->assertErrors($response);
         $stageApi->delete($stage['id']);
     }
-
+    
     public function testMergingDuplicateContacts()
     {
         // Check if there is some contact with the email

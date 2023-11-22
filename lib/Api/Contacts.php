@@ -72,12 +72,12 @@ class Contacts extends Api
 
     /**
      * @param string $search
-     * @param int    $start
-     * @param int    $limit
+     * @param int $start
+     * @param int $limit
      * @param string $orderBy
      * @param string $orderByDir
-     * @param bool   $publishedOnly
-     * @param bool   $minimal
+     * @param bool $publishedOnly
+     * @param bool $minimal
      *
      * @return array|mixed
      */
@@ -121,11 +121,11 @@ class Contacts extends Api
     /**
      * Get a list of contact activity events for all contacts.
      *
-     * @param int       $id         Contact ID
-     * @param string    $search
-     * @param string    $orderBy
-     * @param string    $orderByDir
-     * @param int       $page
+     * @param int $id Contact ID
+     * @param string $search
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int $page
      * @param \DateTime $dateFrom
      * @param \DateTime $dateTo
      *
@@ -141,7 +141,8 @@ class Contacts extends Api
         $page = 1,
         \DateTime $dateFrom = null,
         \DateTime $dateTo = null
-    ) {
+    )
+    {
         return $this->fetchActivity('/'.$id.'/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page, $dateFrom, $dateTo);
     }
 
@@ -149,10 +150,10 @@ class Contacts extends Api
      * Get a list of contact engagement events.
      * Not related to a specific contact ID.
      *
-     * @param string    $search
-     * @param string    $orderBy
-     * @param string    $orderByDir
-     * @param int       $page
+     * @param string $search
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int $page
      * @param \DateTime $dateFrom
      * @param \DateTime $dateTo
      *
@@ -167,18 +168,19 @@ class Contacts extends Api
         $page = 1,
         \DateTime $dateFrom = null,
         \DateTime $dateTo = null
-    ) {
+    )
+    {
         return $this->fetchActivity('/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page, $dateFrom, $dateTo);
     }
 
     /**
      * Get a list of contact activity events for all contacts.
      *
-     * @param string    $path       of the URL after the endpoint
-     * @param string    $search
-     * @param string    $orderBy
-     * @param string    $orderByDir
-     * @param int       $page
+     * @param string $path of the URL after the endpoint
+     * @param string $search
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int $page
      * @param \DateTime $dateFrom
      * @param \DateTime $dateTo
      *
@@ -194,7 +196,8 @@ class Contacts extends Api
         $page = 1,
         \DateTime $dateFrom = null,
         \DateTime $dateTo = null
-    ) {
+    )
+    {
         $parameters = [
             'filters' => [
                 'search'        => $search,
@@ -222,10 +225,10 @@ class Contacts extends Api
     /**
      * Get a list of a contact's notes.
      *
-     * @param int    $id         Contact ID
+     * @param int $id Contact ID
      * @param string $search
-     * @param int    $start
-     * @param int    $limit
+     * @param int $start
+     * @param int $limit
      * @param string $orderBy
      * @param string $orderByDir
      *
@@ -249,10 +252,10 @@ class Contacts extends Api
     /**
      * Get a list of a contact's devices.
      *
-     * @param int    $id         Contact ID
+     * @param int $id Contact ID
      * @param string $search
-     * @param int    $start
-     * @param int    $limit
+     * @param int $start
+     * @param int $limit
      * @param string $orderBy
      * @param string $orderByDir
      *
@@ -312,8 +315,8 @@ class Contacts extends Api
     /**
      * Add the points to a contact.
      *
-     * @param int   $id
-     * @param int   $points
+     * @param int $id
+     * @param int $points
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
@@ -326,8 +329,8 @@ class Contacts extends Api
     /**
      * Subtract points from a contact.
      *
-     * @param int   $id
-     * @param int   $points
+     * @param int $id
+     * @param int $points
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
@@ -340,10 +343,10 @@ class Contacts extends Api
     /**
      * Adds Do Not Contact.
      *
-     * @param int    $id
+     * @param int $id
      * @param string $channel
-     * @param int    $reason
-     * @param null   $channelId
+     * @param int $reason
+     * @param null $channelId
      * @param string $comments
      *
      * @return array|mixed
@@ -364,7 +367,7 @@ class Contacts extends Api
     /**
      * Removes Do Not Contact.
      *
-     * @param int    $id
+     * @param int $id
      * @param string $channel
      *
      * @return mixed
@@ -381,7 +384,7 @@ class Contacts extends Api
     /**
      * Add UTM Tags to Contact.
      *
-     * @param int   $id
+     * @param int $id
      * @param array $utmTags
      *
      * @return mixed
@@ -393,6 +396,35 @@ class Contacts extends Api
             $utmTags,
             'POST'
         );
+    }
+
+    /**
+     * Create a new item (if supported).
+     *
+     * @return array|mixed
+     */
+    public function create(array $parameters, array $queryArguments = [])
+    {
+        $supported   = $this->isSupported('create');
+        $queryAppend = $queryArguments !== [] ? '?'.http_build_query($queryArguments) : '';
+        return (true === $supported)
+            ? $this->makeRequest($this->endpoint.'/new'.$queryAppend, $parameters, 'POST')
+            : $supported;
+    }
+
+    /**
+     * Create a batch of new items.
+     *
+     * @return array|mixed
+     */
+    public function createBatch(array $parameters, array $queryArguments = [])
+    {
+        $supported = $this->isSupported('createBatch');
+        $queryAppend = $queryArguments !== [] ? '?'.http_build_query($queryArguments) : '';
+
+        return (true === $supported)
+            ? $this->makeRequest($this->endpoint.'/batch/new' . $queryAppend, $parameters, 'POST')
+            : $supported;
     }
 
     /**
