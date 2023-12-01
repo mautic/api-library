@@ -240,6 +240,24 @@ if (isset($response['errors'])) {
 }
 ```
 
+### Contact create and batch create extension
+
+Calls to create contact got an optional method argument to allow request flags that are accepted by some mautic plugins like Custom Objects.
+
+```php
+<?php
+
+$data = [
+    "firstName" => "John",
+    "lastName"  => "Doe",
+    "email"     => "sss@sss.cd",
+]
+
+// Create the contact and include its custom items in the response
+$response = $contactApi->create($data, ['includeCustomObjects' => true]);
+```
+
+
 ## Contributing
 
 ### Setting up your environment (automatically)
