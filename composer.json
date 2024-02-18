@@ -32,7 +32,7 @@
     "guzzlehttp/guzzle": "A popular HTTP client that implements psr/http-client-implementation."
   },
   "scripts": {
-    "test": "vendor/bin/paratest"
+    "test": "vendor/bin/phpunit"
   },
   "config": {
     "allow-plugins": {
