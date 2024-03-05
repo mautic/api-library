@@ -340,8 +340,7 @@ class Contacts extends Api
     /**
      * Get all point group scores associated with contact.
      *
-     * @param int   $contactId
-     * @param int   $groupId
+     * @param int $groupId
      *
      * @return array|mixed
      */
@@ -353,9 +352,6 @@ class Contacts extends Api
     /**
      * Get the contact score for a specified point group.
      *
-     * @param int   $contactId
-     * @param int   $groupId
-     *
      * @return array|mixed
      */
     public function getPointGroupScore(int $contactId, int $groupId)
@@ -366,9 +362,6 @@ class Contacts extends Api
     /**
      * Increase the score of the contact point group.
      *
-     * @param int   $contactId
-     * @param int   $groupId
-     * @param int   $points
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
@@ -381,9 +374,6 @@ class Contacts extends Api
     /**
      * Decrease the score of the contact point group.
      *
-     * @param int   $contactId
-     * @param int   $groupId
-     * @param int   $points
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
@@ -396,9 +386,6 @@ class Contacts extends Api
     /**
      * Multiply the score of the contact point group.
      *
-     * @param int   $contactId
-     * @param int   $groupId
-     * @param int   $value
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
@@ -411,9 +398,6 @@ class Contacts extends Api
     /**
      * Divide the score of the contact point group.
      *
-     * @param int   $contactId
-     * @param int   $groupId
-     * @param int   $value
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed
@@ -426,9 +410,6 @@ class Contacts extends Api
     /**
      * Set the score of the contact point group.
      *
-     * @param int   $contactId
-     * @param int   $groupId
-     * @param int   $points
      * @param array $parameters 'eventName' and 'actionName'
      *
      * @return mixed

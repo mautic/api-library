@@ -421,10 +421,10 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testAddPointGroupScore()
     {
-        $pointsToAdd = 5;
+        $pointsToAdd   = 5;
         $pointGroupApi = $this->getContext('pointGroups');
-        $response = $pointGroupApi->create(['name' => 'Group A']);
-        $pointGroup = $response[$pointGroupApi->itemName()];
+        $response      = $pointGroupApi->create(['name' => 'Group A']);
+        $pointGroup    = $response[$pointGroupApi->itemName()];
 
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
@@ -445,9 +445,9 @@ class ContactsTest extends AbstractCustomFieldsTest
     public function testSubtractPointGroupScore()
     {
         $pointsToSubtract = 3;
-        $pointGroupApi = $this->getContext('pointGroups');
-        $response = $pointGroupApi->create(['name' => 'Group B']);
-        $pointGroup = $response[$pointGroupApi->itemName()];
+        $pointGroupApi    = $this->getContext('pointGroups');
+        $response         = $pointGroupApi->create(['name' => 'Group B']);
+        $pointGroup       = $response[$pointGroupApi->itemName()];
 
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
@@ -458,7 +458,7 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         $response = $this->api->subtractPointGroupScore($contact['id'], $pointGroup['id'], $pointsToSubtract);
         $this->assertErrors($response);
-        $this->assertTrue(!empty($response['groupScore']), 'Subtracting point group score from a contact with ID =' . $contact['id'] . ' was not successful');
+        $this->assertTrue(!empty($response['groupScore']), 'Subtracting point group score from a contact with ID ='.$contact['id'].' was not successful');
 
         $response = $this->api->getPointGroupScore($contact['id'], $pointGroup['id']);
         $this->assertErrors($response);
@@ -470,10 +470,10 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testMultiplyPointGroupScore()
     {
-        $multiplier = 2;
+        $multiplier    = 2;
         $pointGroupApi = $this->getContext('pointGroups');
-        $response = $pointGroupApi->create(['name' => 'Group C']);
-        $pointGroup = $response[$pointGroupApi->itemName()];
+        $response      = $pointGroupApi->create(['name' => 'Group C']);
+        $pointGroup    = $response[$pointGroupApi->itemName()];
 
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
@@ -484,7 +484,7 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         $response = $this->api->multiplyPointGroupScore($contact['id'], $pointGroup['id'], $multiplier);
         $this->assertErrors($response);
-        $this->assertTrue(!empty($response['groupScore']), 'Multiplying point group score for a contact with ID =' . $contact['id'] . ' was not successful');
+        $this->assertTrue(!empty($response['groupScore']), 'Multiplying point group score for a contact with ID ='.$contact['id'].' was not successful');
 
         $response = $this->api->getPointGroupScore($contact['id'], $pointGroup['id']);
         $this->assertErrors($response);
@@ -496,10 +496,10 @@ class ContactsTest extends AbstractCustomFieldsTest
 
     public function testDividePointGroupScore()
     {
-        $divisor = 4;
+        $divisor       = 4;
         $pointGroupApi = $this->getContext('pointGroups');
-        $response = $pointGroupApi->create(['name' => 'Group D']);
-        $pointGroup = $response[$pointGroupApi->itemName()];
+        $response      = $pointGroupApi->create(['name' => 'Group D']);
+        $pointGroup    = $response[$pointGroupApi->itemName()];
 
         $response = $this->api->create($this->testPayload);
         $this->assertErrors($response);
@@ -510,7 +510,7 @@ class ContactsTest extends AbstractCustomFieldsTest
 
         $response = $this->api->dividePointGroupScore($contact['id'], $pointGroup['id'], $divisor);
         $this->assertErrors($response);
-        $this->assertTrue(!empty($response['groupScore']), 'Dividing point group score for a contact with ID =' . $contact['id'] . ' was not successful');
+        $this->assertTrue(!empty($response['groupScore']), 'Dividing point group score for a contact with ID ='.$contact['id'].' was not successful');
 
         $response = $this->api->getPointGroupScore($contact['id'], $pointGroup['id']);
         $this->assertErrors($response);
