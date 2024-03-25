@@ -132,7 +132,7 @@ abstract class AbstractAuth implements AuthInterface
                 $headers[] = 'Content-Type: application/json';
             }
 
-            $this->log('Posted parameters = '.print_r($parameters, true));
+            $this->log('Posted parameters = '.print_r(json_encode($parameters), true));
         }
 
         $query = $this->getQueryParameters(null !== $body, $parameters);
