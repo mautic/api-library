@@ -430,7 +430,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
         $this->assertSame(0, $response['total']);
         $this->assertIsArray($response['groupScores']);
-        $this->assertEmpty(0, $response['groupScores']);
+        $this->assertEmpty($response['groupScores']);
 
         // add score
         $pointsToAdd   = 5;
@@ -439,7 +439,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $pointGroup    = $response[$pointGroupApi->itemName()];
         $response      = $this->api->addPointGroupScore($contact['id'], $pointGroup['id'], $pointsToAdd);
         $this->assertErrors($response);
-        $this->assertNotEmpty($response['groupScore'], 'Adding point group score to a contact with ID =' . $contact['id'] . ' was not successful');
+        $this->assertNotEmpty($response['groupScore'], 'Adding point group score to a contact with ID ='.$contact['id'].' was not successful');
 
         // test get point group scores list
         $response = $this->api->getPointGroupScores($contact['id']);
