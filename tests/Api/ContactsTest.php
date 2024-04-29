@@ -419,7 +419,44 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
     }
 
-    public function testAddPointGroupScore()
+    public function testGetPointGroupScores(): void
+    {
+        $response = $this->api->create($this->testPayload);
+        $this->assertErrors($response);
+        $contact = $response[$this->api->itemName()];
+
+        // test empty group points list
+        $response = $this->api->getPointGroupScores($contact['id']);
+        $this->assertErrors($response);
+        $this->assertSame(0, $response['total']);
+        $this->assertIsArray($response['groupScores']);
+        $this->assertEmpty(0, $response['groupScores']);
+
+        // add score
+        $pointsToAdd   = 5;
+        $pointGroupApi = $this->getContext('pointGroups');
+        $response      = $pointGroupApi->create(['name' => 'Group A']);
+        $pointGroup    = $response[$pointGroupApi->itemName()];
+        $response      = $this->api->addPointGroupScore($contact['id'], $pointGroup['id'], $pointsToAdd);
+        $this->assertErrors($response);
+        $this->assertNotEmpty($response['groupScore'], 'Adding point group score to a contact with ID =' . $contact['id'] . ' was not successful');
+
+        // test get point group scores list
+        $response = $this->api->getPointGroupScores($contact['id']);
+        $this->assertErrors($response);
+        $this->assertSame(1, $response['total']);
+        $this->assertIsArray($response['groupScores']);
+        $this->assertCount(1, $response['groupScores']);
+        $this->assertSame(5, $response['groupScores'][0]['score']);
+        $this->assertSame($pointGroup['id'], $response['groupScores'][0]['group']['id']);
+        $this->assertSame($pointGroup['name'], $response['groupScores'][0]['group']['name']);
+        $this->assertSame($pointGroup['description'], $response['groupScores'][0]['group']['description']);
+
+        $response = $this->api->delete($contact['id']);
+        $this->assertErrors($response);
+    }
+
+    public function testAddPointGroupScore(): void
     {
         $pointsToAdd   = 5;
         $pointGroupApi = $this->getContext('pointGroups');
@@ -442,7 +479,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
     }
 
-    public function testSubtractPointGroupScore()
+    public function testSubtractPointGroupScore(): void
     {
         $pointsToSubtract = 3;
         $pointGroupApi    = $this->getContext('pointGroups');
@@ -468,7 +505,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
     }
 
-    public function testMultiplyPointGroupScore()
+    public function testMultiplyPointGroupScore(): void
     {
         $multiplier    = 2;
         $pointGroupApi = $this->getContext('pointGroups');
@@ -494,7 +531,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertErrors($response);
     }
 
-    public function testDividePointGroupScore()
+    public function testDividePointGroupScore(): void
     {
         $divisor       = 4;
         $pointGroupApi = $this->getContext('pointGroups');

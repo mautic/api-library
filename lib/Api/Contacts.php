@@ -339,22 +339,16 @@ class Contacts extends Api
 
     /**
      * Get all point group scores associated with contact.
-     *
-     * @param int $groupId
-     *
-     * @return array|mixed
      */
-    public function getPointGroupScores(int $contactId)
+    public function getPointGroupScores(int $contactId): array
     {
         return $this->makeRequest('contacts/'.$contactId.'/points/groups');
     }
 
     /**
      * Get the contact score for a specified point group.
-     *
-     * @return array|mixed
      */
-    public function getPointGroupScore(int $contactId, int $groupId)
+    public function getPointGroupScore(int $contactId, int $groupId): array
     {
         return $this->makeRequest('contacts/'.$contactId.'/points/groups/'.$groupId);
     }
@@ -363,10 +357,8 @@ class Contacts extends Api
      * Increase the score of the contact point group.
      *
      * @param array $parameters 'eventName' and 'actionName'
-     *
-     * @return mixed
      */
-    public function addPointGroupScore(int $contactId, int $groupId, int $points, array $parameters = [])
+    public function addPointGroupScore(int $contactId, int $groupId, int $points, array $parameters = []): array
     {
         return $this->makeRequest('contacts/'.$contactId.'/points/groups/'.$groupId.'/plus/'.$points, $parameters, 'POST');
     }
@@ -375,10 +367,8 @@ class Contacts extends Api
      * Decrease the score of the contact point group.
      *
      * @param array $parameters 'eventName' and 'actionName'
-     *
-     * @return mixed
      */
-    public function subtractPointGroupScore(int $contactId, int $groupId, int $points, array $parameters = [])
+    public function subtractPointGroupScore(int $contactId, int $groupId, int $points, array $parameters = []): array
     {
         return $this->makeRequest('contacts/'.$contactId.'/points/groups/'.$groupId.'/minus/'.$points, $parameters, 'POST');
     }
@@ -387,10 +377,8 @@ class Contacts extends Api
      * Multiply the score of the contact point group.
      *
      * @param array $parameters 'eventName' and 'actionName'
-     *
-     * @return mixed
      */
-    public function multiplyPointGroupScore(int $contactId, int $groupId, int $value, array $parameters = [])
+    public function multiplyPointGroupScore(int $contactId, int $groupId, int $value, array $parameters = []): array
     {
         return $this->makeRequest('contacts/'.$contactId.'/points/groups/'.$groupId.'/times/'.$value, $parameters, 'POST');
     }
@@ -399,10 +387,8 @@ class Contacts extends Api
      * Divide the score of the contact point group.
      *
      * @param array $parameters 'eventName' and 'actionName'
-     *
-     * @return mixed
      */
-    public function dividePointGroupScore(int $contactId, int $groupId, int $value, array $parameters = [])
+    public function dividePointGroupScore(int $contactId, int $groupId, int $value, array $parameters = []): array
     {
         return $this->makeRequest('contacts/'.$contactId.'/points/groups/'.$groupId.'/divide/'.$value, $parameters, 'POST');
     }
@@ -411,10 +397,8 @@ class Contacts extends Api
      * Set the score of the contact point group.
      *
      * @param array $parameters 'eventName' and 'actionName'
-     *
-     * @return mixed
      */
-    public function setPointGroupScore(int $contactId, int $groupId, int $points, array $parameters = [])
+    public function setPointGroupScore(int $contactId, int $groupId, int $points, array $parameters = []): array
     {
         return $this->makeRequest('contacts/'.$contactId.'/points/groups/'.$groupId.'/set/'.$points, $parameters, 'POST');
     }

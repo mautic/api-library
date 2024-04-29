@@ -1,12 +1,6 @@
 <?php
-/**
- * @copyright   2014 Mautic, NP. All rights reserved.
- * @author      Mautic
- *
- * @see        http://mautic.org
- *
- * @license     MIT http://opensource.org/licenses/MIT
- */
+
+declare(strict_types=1);
 
 namespace Mautic\Tests\Api;
 
@@ -21,22 +15,22 @@ class PointGroupsTest extends MauticApiTestCase
         ];
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $this->standardTestGetList();
     }
 
-    public function testGetListOfSpecificIds()
+    public function testGetListOfSpecificIds(): void
     {
         $this->standardTestGetListOfSpecificIds();
     }
 
-    public function testCreateGetAndDelete()
+    public function testCreateGetAndDelete(): void
     {
         $this->standardTestCreateGetAndDelete();
     }
 
-    public function testEditPatch()
+    public function testEditPatch(): void
     {
         $editTo = [
             'name' => 'Updated Point Group Name',
@@ -44,12 +38,12 @@ class PointGroupsTest extends MauticApiTestCase
         $this->standardTestEditPatch($editTo);
     }
 
-    public function testEditPut()
+    public function testEditPut(): void
     {
         $this->standardTestEditPut();
     }
 
-    public function testBatchEndpoints()
+    public function testBatchEndpoints(): void
     {
         $this->standardTestBatchEndpoints();
     }
