@@ -48,7 +48,7 @@ class EmailsTest extends MauticApiTestCase
                                     'field'    => 'email',
                                     'object'   => 'lead',
                                     'type'     => 'email',
-                                    'filter'   => 'Prague',
+                                    'filter'   => null,
                                     'display'  => null,
                                     'operator' => '!empty',
                                 ],
