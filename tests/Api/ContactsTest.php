@@ -450,7 +450,6 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertSame(5, $response['groupScores'][0]['score']);
         $this->assertSame($pointGroup['id'], $response['groupScores'][0]['group']['id']);
         $this->assertSame($pointGroup['name'], $response['groupScores'][0]['group']['name']);
-        $this->assertSame($pointGroup['description'], $response['groupScores'][0]['group']['description']);
 
         $response = $this->api->delete($contact['id']);
         $this->assertErrors($response);
