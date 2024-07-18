@@ -43,12 +43,12 @@ class AssetsTest extends MauticApiTestCase
     public function testCreateWithLocalFileGetAndDelete()
     {
         // Upload a testing file
-        $this->apiFiles = $this->getContext('files');
-        $this->apiFiles->setFolder($this->mediaFolder);
+        $apiFiles = $this->getContext('files');
+        $apiFiles->setFolder($this->mediaFolder);
         $fileRequest = [
             'file' => dirname(__DIR__).'/mauticlogo.png',
         ];
-        $response = $this->apiFiles->create($fileRequest);
+        $response = $apiFiles->create($fileRequest);
         $this->assertErrors($response);
         $file = $response['file'];
 

@@ -99,7 +99,7 @@ class UtmTagsTest extends MauticApiTestCase
         $utmIds = $this->addUtmTags();
 
         // check the date; Should be empty
-        $this->assertTrue(empty($response[$this->api->itemName()]['lastActive']));
+        $this->assertTrue(empty($utmIds[$this->api->itemName()]['lastActive']));
 
         // Now add the payload with a known date
         $this->testPayload['lastActive'] = '2017-01-17T00:30:08+00:00';
@@ -150,7 +150,11 @@ class UtmTagsTest extends MauticApiTestCase
             }
         }
 
-        $this->assertSame(0, count($response[$this->api->itemName()]['utmtags']), 'Should be no more items');
+        if (!empty($response)) {
+            $this->assertSame(0, count($response[$this->api->itemName()]['utmtags']), 'Should be no more items');
+        } else {
+            $this->fail('Expected a response object');
+        }
     }
 
     protected function addUtmTags()
