@@ -26,13 +26,15 @@
     "kint-php/kint": "^4.1",
     "friendsofphp/php-cs-fixer": "~3.12.0",
     "phpunit/phpunit": "~9.5.0",
-    "guzzlehttp/guzzle": "^7.5"
+    "guzzlehttp/guzzle": "^7.5",
+    "phpstan/phpstan": "^1.11"
   },
   "suggest": {
     "guzzlehttp/guzzle": "A popular HTTP client that implements psr/http-client-implementation."
   },
   "scripts": {
-    "test": "vendor/bin/phpunit"
+    "test": "vendor/bin/phpunit",
+    "phpstan": "vendor/bin/phpstan analyse"
   },
   "config": {
     "allow-plugins": {
