@@ -218,9 +218,14 @@ class FormsTest extends MauticApiTestCase
         $response = $this->api->getSubmissions($formId);
         $this->assertErrors($response);
 
+        $submissions = $response['submissions'];
+        $this->assertTrue(count($submissions) > 0, 'Expected at least one form submission');
+
         foreach ($response['submissions'] as $submission) {
             $this->assertSubmission($submission, $formId);
         }
+
+        $submission = end($submissions);
 
         // Try to fetch the last submission
         $response = $this->api->getSubmission($formId, $submission['id']);

@@ -471,7 +471,7 @@ class CampaignsTest extends MauticApiTestCase
                 $date = new \DateTime($log['triggerDate'], new \DateTimeZone('UTC'));
                 $this->assertEquals($log['triggerDate'], $date->format('c'));
             } else {
-                $this->assertFalse(false, 'Event ID not recognized in the log.', var_export($event, true));
+                $this->fail('Event ID not recognized in the log.'.var_export($event, true));
             }
         }
 
