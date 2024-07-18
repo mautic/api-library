@@ -1,6 +1,6 @@
 [![codecov](https://codecov.io/gh/mautic/api-library/branch/master/graph/badge.svg)](https://codecov.io/gh/mautic/api-library) [![Latest Stable Version](https://poser.pugx.org/mautic/api-library/v)](//packagist.org/packages/mautic/api-library) [![Total Downloads](https://poser.pugx.org/mautic/api-library/downloads)](//packagist.org/packages/mautic/api-library) [![Latest Unstable Version](https://poser.pugx.org/mautic/api-library/v/unstable)](//packagist.org/packages/mautic/api-library) [![License](https://poser.pugx.org/mautic/api-library/license)](//packagist.org/packages/mautic/api-library)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Using the Mautic API Library
@@ -301,6 +301,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://johnlinhart.com"><img src="https://avatars.githubusercontent.com/u/1235442?v=4?s=100" width="100px;" alt="John Linhart"/><br /><sub><b>John Linhart</b></sub></a><br /><a href="https://github.com/mautic/api-library/pulls?q=is%3Apr+reviewed-by%3Aescopecz" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Rocksheep"><img src="https://avatars.githubusercontent.com/u/1311371?v=4?s=100" width="100px;" alt="Marinus van Velzen"/><br /><sub><b>Marinus van Velzen</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=Rocksheep" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://pierre.ammeloot.fr"><img src="https://avatars.githubusercontent.com/u/4603318?v=4?s=100" width="100px;" alt="Pierre Ammeloot"/><br /><sub><b>Pierre Ammeloot</b></sub></a><br /><a href="#userTesting-PierreAmmeloot" title="User Testing">📓</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://matbcvo.github.io"><img src="https://avatars.githubusercontent.com/u/1006437?v=4?s=100" width="100px;" alt="Martin Vooremäe"/><br /><sub><b>Martin Vooremäe</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=matbcvo" title="Code">💻</a> <a href="https://github.com/mautic/api-library/commits?author=matbcvo" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
