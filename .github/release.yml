@@ -1,7 +1,5 @@
 changelog:
   exclude:
-    labels:
-      - chore
     authors:
       - github-actions
   categories:
