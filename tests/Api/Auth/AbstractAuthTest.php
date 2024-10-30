@@ -42,13 +42,21 @@ class AbstractAuthTest extends TestCase
     {
         $auth = $this->getMockForAbstractClass(AbstractAuth::class, [new Client()]);
         try {
-            $response = $auth->makeRequest($this->config['apiUrl'].'contacts');
-            $this->assertTrue(is_array($response));
-            $this->assertFalse(empty($response));
+            $auth->makeRequest($this->config['apiUrl'].'contacts');
+            self::fail('This should not happen, as the API does not have the authentication.');
         } catch (UnexpectedResponseFormatException $exception) {
-            $response = json_decode($exception->getResponse()->getBody(), true);
-            $this->assertTrue(is_array($response));
-            $this->assertFalse(empty($response));
+            $body = $exception->getResponse()->getBody();
+            try {
+                $response = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                if ('' === $body) {
+                    $body = '(empty string)';
+                }
+
+                self::fail('Mautic returned wrong json response: '.$body.'. JSON exception: '.$e->getMessage());
+            }
+            $this->assertIsArray($response, $body);
+            $this->assertGreaterThan(0, count($response));
         }
     }
 }
