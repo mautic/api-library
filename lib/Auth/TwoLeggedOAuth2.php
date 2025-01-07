@@ -74,13 +74,13 @@ class TwoLeggedOAuth2 extends AbstractAuth
     $accessTokenExpires = null
   ) {
         if (empty($clientKey) || empty($clientSecret)) {
-            //Throw exception if the required parameters were not found
+            // Throw exception if the required parameters were not found
             $this->log('parameters did not include clientkey and/or clientSecret');
             throw new RequiredParameterMissingException('One or more required parameters was not supplied. Both clientKey and clientSecret required!');
         }
 
         if (empty($baseUrl)) {
-            //Throw exception if the required parameters were not found
+            // Throw exception if the required parameters were not found
             $this->log('parameters did not include baseUrl');
             throw new RequiredParameterMissingException('One or more required parameters was not supplied. baseUrl required!');
         }
@@ -154,27 +154,27 @@ class TwoLeggedOAuth2 extends AbstractAuth
     {
         $this->log('validateAccessToken()');
 
-        //Check to see if token in session has expired
-        if (strlen($this->_access_token) > 0 && !empty($this->_expires) && $this->_expires < (time() + 10)) {
+        // Check to see if token in session has expired
+        if (!empty($this->_access_token) && !empty($this->_expires) && $this->_expires < (time() + 10)) {
             $this->log('access token expired');
 
             return false;
         }
 
-        //Check for existing access token
-        if (strlen($this->_access_token) > 0) {
+        // Check for existing access token
+        if (!empty($this->_access_token)) {
             $this->log('has valid access token');
 
             return true;
         }
 
-        //If there is no existing access token, it can't be valid
+        // If there is no existing access token, it can't be valid
         return false;
     }
 
     /**
-     * @param $isPost
-     * @param $parameters
+     * @param bool  $isPost
+     * @param array $parameters
      *
      * @return array
      */
@@ -183,7 +183,7 @@ class TwoLeggedOAuth2 extends AbstractAuth
         $query = parent::getQueryParameters($isPost, $parameters);
 
         if (isset($parameters['file'])) {
-            //Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
+            // Mautic's OAuth2 server does not recognize multipart forms so we have to append the access token as part of the URL
             $query['access_token'] = $parameters['access_token'];
         }
 
@@ -191,8 +191,8 @@ class TwoLeggedOAuth2 extends AbstractAuth
     }
 
     /**
-     * @param       $url
-     * @param array $method
+     * @param string $url
+     * @param array  $method
      *
      * @return array
      */
@@ -222,10 +222,10 @@ class TwoLeggedOAuth2 extends AbstractAuth
           'grant_type'    => 'client_credentials',
         ];
 
-        //Make the request
+        // Make the request
         $params = $this->makeRequest($this->_access_token_url, $parameters, 'POST');
 
-        //Add the token to session
+        // Add the token to session
         if (is_array($params)) {
             if (isset($params['access_token']) && isset($params['expires_in'])) {
                 $this->log('access token set as '.$params['access_token']);
