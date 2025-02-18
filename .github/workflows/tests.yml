@@ -17,7 +17,7 @@ on:
 
 jobs:
   phpunit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     name: PHPUnit tests
 
     services:
@@ -150,7 +150,7 @@ jobs:
         SLACK_MESSAGE: 'The daily API library tests against mautic/mautic have failed. Most likely a PR was merged recently which introduced a regression of some sort.'
 
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     name: CS & PHPSTAN tests
 
     steps:
@@ -159,7 +159,7 @@ jobs:
     - name: Setup PHP, with composer and extensions
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 8.0
+        php-version: 8.1
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
 
     - name: Install dependencies
