@@ -53,10 +53,7 @@ class QueryBuilder
         ];
     }
 
-    /**
-     * @param WhereBuilder $whereBuilder
-     */
-    public function addWhere(WhereBuilder $whereBuilder = null)
+    public function addWhere(?WhereBuilder $whereBuilder = null)
     {
         if (null === $whereBuilder) {
             if (null === self::$whereBuilder) {

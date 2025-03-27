@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class Pages extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'pages';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'pages';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'page';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

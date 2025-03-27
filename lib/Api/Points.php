@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class Points extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'points';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'points';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'point';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
     ];

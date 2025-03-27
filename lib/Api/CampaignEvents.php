@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2016 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,19 +16,10 @@ namespace Mautic\Api;
  */
 class CampaignEvents extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'campaigns/events';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'events';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'event';
 
     /**

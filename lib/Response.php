@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -19,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
 class Response
 {
     /**
-     * @var \Psr\Http\Message\ResponseInterface
+     * @var ResponseInterface
      */
     private $response;
 

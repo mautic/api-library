@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -27,10 +28,7 @@ class UnexpectedResponseFormatException extends AbstractApiException
      */
     private $response;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(Response $response, $message = '', $code = 500, \Exception $previous = null)
+    public function __construct(Response $response, $message = '', $code = 500, ?\Exception $previous = null)
     {
         $this->response = $response;
 

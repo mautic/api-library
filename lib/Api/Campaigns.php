@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,19 +16,10 @@ namespace Mautic\Api;
  */
 class Campaigns extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'campaigns';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'campaigns';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'campaign';
 
     /**
@@ -38,9 +30,6 @@ class Campaigns extends Api
         'campaigns/(.*?)/contact/(.*?)/remove' => 'campaigns/$1/contact/remove/$2', // 2.6.0
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

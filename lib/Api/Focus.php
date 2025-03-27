@@ -1,4 +1,5 @@
 <?php
+
 /*
  * @package     Mautic
  * @copyright   2014 Mautic, NP. All rights reserved.
@@ -14,24 +15,12 @@ namespace Mautic\Api;
  */
 class Focus extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'focus';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'focus';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'focus';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

@@ -24,7 +24,7 @@ class WhereBuilder
     /**
      * @var null
      */
-    protected $composite = null;
+    protected $composite;
 
     /**
      * WhereBuilder constructor.
@@ -46,7 +46,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -59,7 +58,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -72,7 +70,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -85,7 +82,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -98,7 +94,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -111,7 +106,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -124,7 +118,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -137,7 +130,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val
      *
      * @return $this
      */
@@ -174,8 +166,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val1
-     * @param mixed  $val2
      *
      * @return $this
      */
@@ -188,8 +178,6 @@ class WhereBuilder
 
     /**
      * @param string $col
-     * @param mixed  $val1
-     * @param mixed  $val2
      *
      * @return $this
      */

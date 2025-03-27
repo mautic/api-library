@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class Webhooks extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'hooks';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'hooks';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'hook';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

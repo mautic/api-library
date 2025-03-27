@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,19 +16,10 @@ namespace Mautic\Api;
  */
 class Emails extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'emails';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'emails';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'email';
 
     /**
@@ -37,9 +29,6 @@ class Emails extends Api
         'emails/(.*?)/contact/(.*?)/send' => 'emails/$1/send/contact/$2', // 2.6.0
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

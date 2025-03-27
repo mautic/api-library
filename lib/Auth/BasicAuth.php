@@ -74,9 +74,6 @@ class BasicAuth extends AbstractAuth
      */
     private $userName;
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAuthorized()
     {
         return !empty($this->userName) && !empty($this->password);

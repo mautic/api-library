@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class Reports extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'reports';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'reports';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'report';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',
@@ -57,7 +46,7 @@ class Reports extends Api
      *
      * @return array|mixed
      */
-    public function get($id, $limit = null, $page = null, \DateTime $dateFrom = null, \DateTime $dateTo = null)
+    public function get($id, $limit = null, $page = null, ?\DateTime $dateFrom = null, ?\DateTime $dateTo = null)
     {
         $options = [];
 

@@ -44,8 +44,6 @@ abstract class AbstractAuth implements AuthInterface
     /**
      * @param string $url
      * @param string $method
-     *
-     * @return mixed
      */
     abstract protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings);
 
@@ -89,7 +87,7 @@ abstract class AbstractAuth implements AuthInterface
     /**
      * Returns the HTTP response.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getResponse()
     {
@@ -97,8 +95,6 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws UnexpectedResponseFormatException|Exception
      */
     public function makeRequest($url, array $parameters = [], $method = 'GET', array $settings = [])

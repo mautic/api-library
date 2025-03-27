@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class Notifications extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'notifications';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'notifications';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'notification';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

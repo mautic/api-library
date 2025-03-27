@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -21,10 +22,7 @@ abstract class AbstractApiException extends \Exception
      */
     public const DEFAULT_MESSAGE = 'Unknown Error';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct($message = '', $code = 500, \Exception $previous = null)
+    public function __construct($message = '', $code = 500, ?\Exception $previous = null)
     {
         if (empty($message)) {
             // Use message appropriate to the subclass with late binding

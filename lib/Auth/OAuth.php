@@ -155,9 +155,6 @@ class OAuth extends AbstractAuth
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAuthorized()
     {
         // Check for existing access token
@@ -290,7 +287,7 @@ class OAuth extends AbstractAuth
         $accessTokenExpires = null,
         $callback = null,
         $scope = null,
-        $refreshToken = null
+        $refreshToken = null,
     ) {
         $this->_client_id           = $clientKey;
         $this->_client_secret       = $clientSecret;
