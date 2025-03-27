@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class Assets extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'assets';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'assets';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'asset';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

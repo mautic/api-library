@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,19 +16,10 @@ namespace Mautic\Api;
  */
 class Stages extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'stages';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'stages';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'stage';
 
     protected $bcRegexEndpoints = [
@@ -35,9 +27,6 @@ class Stages extends Api
         'stages/(.*?)/contact/(.*?)/remove' => 'stages/$1/contact/remove/$2', // 2.6.0
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
     ];

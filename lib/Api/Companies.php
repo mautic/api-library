@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,19 +16,10 @@ namespace Mautic\Api;
  */
 class Companies extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'companies';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'companies';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'company';
 
     /**
@@ -38,9 +30,6 @@ class Companies extends Api
         'companies/(.*?)/contact/(.*?)/remove' => 'companies/$1/contact/remove/$2', // 2.6.0
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:mine',

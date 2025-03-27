@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2016 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class DynamicContents extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'dynamiccontents';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'dynamicContents';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'dynamicContent';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

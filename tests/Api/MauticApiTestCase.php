@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -18,11 +19,11 @@ use PHPUnit\Framework\TestCase;
 
 abstract class MauticApiTestCase extends TestCase
 {
-    protected $config               = null;
+    protected $config;
     protected $skipPayloadAssertion = [];
     protected $testPayload          = [];
 
-    protected $mauticVersion = null;
+    protected $mauticVersion;
 
     /** @var Api */
     protected $api;
@@ -102,7 +103,7 @@ abstract class MauticApiTestCase extends TestCase
         array $payload = [],
         $isBatch = false,
         $idColumn = 'id',
-        $callback = null
+        $callback = null,
     ) {
         $this->assertErrors($response);
 
@@ -229,7 +230,7 @@ abstract class MauticApiTestCase extends TestCase
         }
     }
 
-    protected function standardTestCreateGetAndDelete(array $payload = null)
+    protected function standardTestCreateGetAndDelete(?array $payload = null)
     {
         if (empty($payload)) {
             $payload = $this->testPayload;
@@ -250,7 +251,7 @@ abstract class MauticApiTestCase extends TestCase
         $this->assertErrors($response);
     }
 
-    protected function standardTestBatchEndpoints(array $batch = null, $callback = null)
+    protected function standardTestBatchEndpoints(?array $batch = null, $callback = null)
     {
         if (method_exists($this, 'setUpPayloadClass')) {
             $this->setUpPayloadClass();

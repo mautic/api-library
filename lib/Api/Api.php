@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -230,12 +231,12 @@ class Api implements LoggerAwareInterface
 
             if (false === strpos($url, 'http')) {
                 $error = [
-                'code'    => 500,
-                'message' => sprintf(
-                    'URL is incomplete.  Please use %s, set the base URL as the third argument to $MauticApi->newApi(), or make $endpoint a complete URL.',
-                    __CLASS__.'setBaseUrl()'
-                ),
-            ];
+                    'code'    => 500,
+                    'message' => sprintf(
+                        'URL is incomplete.  Please use %s, set the base URL as the third argument to $MauticApi->newApi(), or make $endpoint a complete URL.',
+                        __CLASS__.'setBaseUrl()'
+                    ),
+                ];
             } else {
                 try {
                     $settings = [];
@@ -251,24 +252,24 @@ class Api implements LoggerAwareInterface
 
                         // assume an error
                         $error = [
-                        'code'    => 500,
-                        'message' => $response,
-                    ];
+                            'code'    => 500,
+                            'message' => $response,
+                        ];
                     }
                 } catch (\Exception $e) {
                     $this->getLogger()->error('Failed connecting to Mautic API: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
                     $error = [
-                    'code'    => $e->getCode(),
-                    'message' => $e->getMessage(),
-                ];
+                        'code'    => $e->getCode(),
+                        'message' => $e->getMessage(),
+                    ];
                 }
             }
 
             if (!empty($error)) {
                 return [
-                'errors' => [$error],
-            ];
+                    'errors' => [$error],
+                ];
             } elseif (!empty($response['errors'])) {
                 $this->getLogger()->error('Mautic API returned errors: '.var_export($response['errors'], true));
             }

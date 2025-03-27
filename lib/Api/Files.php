@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,19 +16,10 @@ namespace Mautic\Api;
  */
 class Files extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'files/images';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'files';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'file';
 
     /**
@@ -41,9 +33,6 @@ class Files extends Api
         $this->endpoint = 'files/'.$folder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function edit($id, array $parameters, $createIfNotExists = false)
     {
         return $this->actionNotSupported('edit');
@@ -61,25 +50,16 @@ class Files extends Api
         return parent::create($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createBatch(array $parameters)
     {
         return $this->actionNotSupported('createBatch');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function editBatch(array $parameters, $createIfNotExists = false)
     {
         return $this->actionNotSupported('editBatch');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deleteBatch(array $ids)
     {
         return $this->actionNotSupported('deleteBatch');

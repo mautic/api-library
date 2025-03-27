@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -18,17 +19,17 @@ class DataTest extends MauticApiTestCase
     protected $dataToTest = [
         'Core Widgets' => [
             'recent.activity'                => 'Recent Activity',
-            ],
+        ],
         'Asset Widgets' => [
             'asset.downloads.in.time'        => 'Downloads in time',
             'unique.vs.repetitive.downloads' => 'Unique vs repetitive downloads',
             'popular.assets'                 => 'Popular assets',
             'created.assets'                 => 'Created assets',
-            ],
+        ],
         'Campaign Widgets' => [
             'events.in.time'                 => 'Events triggered in time',
             'leads.added.in.time'            => 'Leads added in time',
-            ],
+        ],
         'Email Widgets' => [
             'emails.in.time'                 => 'Emails in time',
             'ignored.vs.read.emails'         => 'Ignored vs read',
@@ -37,13 +38,13 @@ class DataTest extends MauticApiTestCase
             'most.read.emails'               => 'Most read emails',
             'created.emails'                 => 'Created emails',
             'device.granularity.email'       => 'Devices for emails read',
-            ],
+        ],
         'Form Widgets' => [
             'submissions.in.time'            => 'Submissions in time',
             'top.submission.referrers'       => 'Top submission referrers',
             'top.submitters'                 => 'Top submitters',
             'created.forms'                  => 'Created forms',
-            ],
+        ],
         'Contact Widgets' => [
             'created.leads.in.time'          => 'Created contacts in time',
             'anonymous.vs.identified.leads'  => 'Anonymous vs identified contacts',
@@ -122,7 +123,7 @@ class DataTest extends MauticApiTestCase
             'create'            => function () { return $this->api->create([]); },
             'edit'              => function () { return $this->api->edit('x', []); },
             'delete'            => function () { return $this->api->delete('x'); },
-            ];
+        ];
         foreach ($notSupported as $key => $closure) {
             $response = $closure();
             $this->assertTrue(!empty($response['errors']), 'Should contain Error element');
