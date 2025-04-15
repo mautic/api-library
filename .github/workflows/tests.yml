@@ -61,9 +61,17 @@ jobs:
       # We need the sed command at the bottom to set the PHP session save path to a directory that's writable for PHP
       # NOTE: update the PHP version below as well if you're updating PHP!
       run: |
-        sudo add-apt-repository ppa:ondrej/php -y
+        # Required for managing PPAs
+        sudo apt-get install software-properties-common -y
+
+        # Add PPA with UTF-8 locale to prevent locale issues
+        sudo LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/apache2 -y
+
+        # Update and install packages
         sudo apt-get update
-        sudo apt-get install apache2 libapache2-mod-php8.3
+        sudo apt-get install apache2 libapache2-mod-php8.3 -y
+
+        # Configure Apache and PHP
         sudo a2enmod rewrite
         sudo sed -i 's,^session.save_handler =.*$,session.save_handler = redis,' /etc/php/8.3/apache2/php.ini
         sudo sed -i 's,^;session.save_path =.*$,session.save_path = "tcp://127.0.0.1:6379",' /etc/php/8.3/apache2/php.ini
