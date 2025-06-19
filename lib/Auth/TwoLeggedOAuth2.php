@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mautic\Auth;
 
 use Mautic\Exception\IncorrectParametersReturnedException;
@@ -12,67 +14,49 @@ class TwoLeggedOAuth2 extends AbstractAuth
 {
     /**
      * Access token URL.
-     *
-     * @var string
      */
-    protected $_access_token_url;
+    protected string $_access_token_url;
 
     /**
      * Access token returned by OAuth server.
-     *
-     * @var string
      */
-    protected $_access_token;
+    protected ?string $_access_token;
 
     /**
      * Consumer or client key.
-     *
-     * @var string
      */
-    protected $_client_id;
+    protected string $_client_id;
 
     /**
      * Consumer or client secret.
-     *
-     * @var string
      */
-    protected $_client_secret;
+    protected string $_client_secret;
 
     /**
      * Unix timestamp for when token expires.
-     *
-     * @var string
      */
-    protected $_expires;
+    protected ?int $_expires;
 
     /**
      * OAuth2 token type.
-     *
-     * @var string
      */
-    protected $_token_type = 'bearer';
+    protected ?string $_token_type = 'bearer';
 
     /**
      * Set to true if the access token was updated.
-     *
-     * @var bool
      */
-    protected $_access_token_updated = false;
+    protected bool $_access_token_updated = false;
 
     /**
-     * @param string $baseUrl            URL of the Mautic instance
-     * @param string $clientKey
-     * @param string $clientSecret
-     * @param string $accessToken
-     * @param string $accessTokenExpires
+     * @param string|null $baseUrl URL of the Mautic instance
      */
     public function setup(
-    $baseUrl = null,
-    $clientKey = null,
-    $clientSecret = null,
-    $accessToken = null,
-    $accessTokenExpires = null
-  ) {
+        ?string $baseUrl = null,
+        ?string $clientKey = null,
+        ?string $clientSecret = null,
+        ?string $accessToken = null,
+        ?string $accessTokenExpires = null,
+    ): void {
         if (empty($clientKey) || empty($clientSecret)) {
             // Throw exception if the required parameters were not found
             $this->log('parameters did not include clientkey and/or clientSecret');
@@ -92,8 +76,8 @@ class TwoLeggedOAuth2 extends AbstractAuth
 
         if (!empty($accessToken)) {
             $this->setAccessTokenDetails([
-              'access_token' => $accessToken,
-              'expires'      => $accessTokenExpires,
+                'access_token' => $accessToken,
+                'expires'      => $accessTokenExpires,
             ]);
         }
     }
@@ -110,22 +94,17 @@ class TwoLeggedOAuth2 extends AbstractAuth
 
     /**
      * Returns access token data.
-     *
-     * @return array
      */
-    public function getAccessTokenData()
+    public function getAccessTokenData(): array
     {
         return [
-          'access_token' => $this->_access_token,
-          'expires'      => $this->_expires,
-          'token_type'   => $this->_token_type,
+            'access_token' => $this->_access_token,
+            'expires'      => $this->_expires,
+            'token_type'   => $this->_token_type,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isAuthorized()
+    public function isAuthorized(): bool
     {
         $this->log('isAuthorized()');
 
@@ -137,7 +116,7 @@ class TwoLeggedOAuth2 extends AbstractAuth
      *
      * @return $this
      */
-    public function setAccessTokenDetails(array $accessTokenDetails)
+    public function setAccessTokenDetails(array $accessTokenDetails): static
     {
         $this->_access_token = $accessTokenDetails['access_token'] ?? null;
         $this->_expires      = $accessTokenDetails['expires'] ?? null;
@@ -147,14 +126,12 @@ class TwoLeggedOAuth2 extends AbstractAuth
 
     /**
      * Validate existing access token.
-     *
-     * @return bool
      */
-    public function validateAccessToken()
+    public function validateAccessToken(): bool
     {
         $this->log('validateAccessToken()');
 
-        // Check to see if token in session has expired
+        // Check to see if token in session has expired (or will in a few seconds)
         if (!empty($this->_access_token) && !empty($this->_expires) && $this->_expires < (time() + 10)) {
             $this->log('access token expired');
 
@@ -175,10 +152,8 @@ class TwoLeggedOAuth2 extends AbstractAuth
     /**
      * @param bool  $isPost
      * @param array $parameters
-     *
-     * @return array
      */
-    protected function getQueryParameters($isPost, $parameters)
+    protected function getQueryParameters($isPost, $parameters): array
     {
         $query = parent::getQueryParameters($isPost, $parameters);
 
@@ -193,10 +168,8 @@ class TwoLeggedOAuth2 extends AbstractAuth
     /**
      * @param string $url
      * @param array  $method
-     *
-     * @return array
      */
-    protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings)
+    protected function prepareRequest($url, array $headers, array $parameters, $method, array $settings): array
     {
         if ($this->isAuthorized()) {
             $headers = array_merge($headers, ['Authorization: Bearer '.$this->_access_token]);
@@ -208,18 +181,16 @@ class TwoLeggedOAuth2 extends AbstractAuth
     /**
      * Request access token.
      *
-     * @return bool
-     *
      * @throws IncorrectParametersReturnedException|\Mautic\Exception\UnexpectedResponseFormatException
      */
-    public function requestAccessToken()
+    public function requestAccessToken(): bool
     {
         $this->log('requestAccessToken()');
 
         $parameters = [
-          'client_id'     => $this->_client_id,
-          'client_secret' => $this->_client_secret,
-          'grant_type'    => 'client_credentials',
+            'client_id'     => $this->_client_id,
+            'client_secret' => $this->_client_secret,
+            'grant_type'    => 'client_credentials',
         ];
 
         // Make the request
@@ -231,7 +202,7 @@ class TwoLeggedOAuth2 extends AbstractAuth
                 $this->log('access token set as '.$params['access_token']);
 
                 $this->_access_token         = $params['access_token'];
-                $this->_expires              = time() + $params['expires_in'];
+                $this->_expires              = time() + (int) $params['expires_in'];
                 $this->_token_type           = (isset($params['token_type'])) ? $params['token_type'] : null;
                 $this->_access_token_updated = true;
 
