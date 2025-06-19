@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -26,17 +27,17 @@ class FocusTest extends MauticApiTestCase
             'html'       => '<div><strong style="color:red">html mode enabled</strong></div>',
             'properties' => [
                 'bar' => [
-                        'allow_hide' => 1,
-                        'sticky'     => 1,
-                        'size'       => 'large',
-                        'placement'  => 'top',
-                    ],
+                    'allow_hide' => 1,
+                    'sticky'     => 1,
+                    'size'       => 'large',
+                    'placement'  => 'top',
+                ],
                 'modal' => [
-                        'placement' => 'top',
-                    ],
+                    'placement' => 'top',
+                ],
                 'notification' => [
-                        'placement' => 'top_left',
-                    ],
+                    'placement' => 'top_left',
+                ],
                 'animate'         => 1,
                 'link_activation' => 1,
                 'colors'          => [

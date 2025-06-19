@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,19 +16,10 @@ namespace Mautic\Api;
  */
 class Segments extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'segments';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'lists';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'list';
 
     /**

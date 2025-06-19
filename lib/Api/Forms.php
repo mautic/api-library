@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,24 +16,12 @@ namespace Mautic\Api;
  */
 class Forms extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'forms';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'forms';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'form';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:published',

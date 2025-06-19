@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,18 +16,9 @@ namespace Mautic\Api;
  */
 class Tags extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'tags';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'tags';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'tag';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -21,9 +22,8 @@ class AuthorizationRequiredException extends \Exception
      * AuthorizationRequiredException constructor.
      *
      * @param string $authUrl
-     *                        {@inheritdoc}
      */
-    public function __construct($authUrl, $message = 'Authorization is required.', $code = 401, \Exception $previous = null)
+    public function __construct($authUrl, $message = 'Authorization is required.', $code = 401, ?\Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->authUrl = $authUrl;

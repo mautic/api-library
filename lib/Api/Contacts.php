@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -30,19 +31,10 @@ class Contacts extends Api
      */
     public const MANUAL = 3;
 
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'contacts';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'contacts';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'contact';
 
     /**
@@ -53,9 +45,6 @@ class Contacts extends Api
         'contacts/(.*?)/dnc/(.*?)/remove' => 'contacts/$1/dnc/remove/$2', // 2.6.0
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected $searchCommands = [
         'ids',
         'is:anonymous',
@@ -121,13 +110,11 @@ class Contacts extends Api
     /**
      * Get a list of contact activity events for all contacts.
      *
-     * @param int       $id         Contact ID
-     * @param string    $search
-     * @param string    $orderBy
-     * @param string    $orderByDir
-     * @param int       $page
-     * @param \DateTime $dateFrom
-     * @param \DateTime $dateTo
+     * @param int    $id         Contact ID
+     * @param string $search
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int    $page
      *
      * @return array|mixed
      */
@@ -139,8 +126,8 @@ class Contacts extends Api
         $orderBy = '',
         $orderByDir = 'ASC',
         $page = 1,
-        \DateTime $dateFrom = null,
-        \DateTime $dateTo = null
+        ?\DateTime $dateFrom = null,
+        ?\DateTime $dateTo = null,
     ) {
         return $this->fetchActivity('/'.$id.'/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page, $dateFrom, $dateTo);
     }
@@ -149,12 +136,10 @@ class Contacts extends Api
      * Get a list of contact engagement events.
      * Not related to a specific contact ID.
      *
-     * @param string    $search
-     * @param string    $orderBy
-     * @param string    $orderByDir
-     * @param int       $page
-     * @param \DateTime $dateFrom
-     * @param \DateTime $dateTo
+     * @param string $search
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int    $page
      *
      * @return array|mixed
      */
@@ -165,8 +150,8 @@ class Contacts extends Api
         $orderBy = '',
         $orderByDir = 'ASC',
         $page = 1,
-        \DateTime $dateFrom = null,
-        \DateTime $dateTo = null
+        ?\DateTime $dateFrom = null,
+        ?\DateTime $dateTo = null,
     ) {
         return $this->fetchActivity('/activity', $search, $includeEvents, $excludeEvents, $orderBy, $orderByDir, $page, $dateFrom, $dateTo);
     }
@@ -174,13 +159,11 @@ class Contacts extends Api
     /**
      * Get a list of contact activity events for all contacts.
      *
-     * @param string    $path       of the URL after the endpoint
-     * @param string    $search
-     * @param string    $orderBy
-     * @param string    $orderByDir
-     * @param int       $page
-     * @param \DateTime $dateFrom
-     * @param \DateTime $dateTo
+     * @param string $path       of the URL after the endpoint
+     * @param string $search
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param int    $page
      *
      * @return array|mixed
      */
@@ -192,8 +175,8 @@ class Contacts extends Api
         $orderBy = '',
         $orderByDir = 'ASC',
         $page = 1,
-        \DateTime $dateFrom = null,
-        \DateTime $dateTo = null
+        ?\DateTime $dateFrom = null,
+        ?\DateTime $dateTo = null,
     ) {
         $parameters = [
             'filters' => [
@@ -315,8 +298,6 @@ class Contacts extends Api
      * @param int   $id
      * @param int   $points
      * @param array $parameters 'eventName' and 'actionName'
-     *
-     * @return mixed
      */
     public function addPoints($id, $points, array $parameters = [])
     {
@@ -329,8 +310,6 @@ class Contacts extends Api
      * @param int   $id
      * @param int   $points
      * @param array $parameters 'eventName' and 'actionName'
-     *
-     * @return mixed
      */
     public function subtractPoints($id, $points, array $parameters = [])
     {
@@ -432,8 +411,6 @@ class Contacts extends Api
      *
      * @param int    $id
      * @param string $channel
-     *
-     * @return mixed
      */
     public function removeDnc($id, $channel = 'email')
     {
@@ -449,8 +426,6 @@ class Contacts extends Api
      *
      * @param int   $id
      * @param array $utmTags
-     *
-     * @return mixed
      */
     public function addUtm($id, $utmTags)
     {
@@ -466,8 +441,6 @@ class Contacts extends Api
      *
      * @param int $id
      * @param int $utmId
-     *
-     * @return mixed
      */
     public function removeUtm($id, $utmId)
     {

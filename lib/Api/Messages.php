@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright   2014 Mautic, NP. All rights reserved.
  * @author      Mautic
@@ -15,18 +16,9 @@ namespace Mautic\Api;
  */
 class Messages extends Api
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $endpoint = 'messages';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $listName = 'messages';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $itemName = 'message';
 }
