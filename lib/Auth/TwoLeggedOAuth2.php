@@ -8,7 +8,7 @@ use Mautic\Exception\IncorrectParametersReturnedException;
 use Mautic\Exception\RequiredParameterMissingException;
 
 /**
- * OAuth Client modified from https://code.google.com/p/simple-php-oauth/.
+ * @internal OAuth Client modified from https://code.google.com/p/simple-php-oauth/.
  */
 class TwoLeggedOAuth2 extends AbstractAuth
 {
