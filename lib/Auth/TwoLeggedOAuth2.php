@@ -55,7 +55,7 @@ class TwoLeggedOAuth2 extends AbstractAuth
         ?string $clientKey = null,
         ?string $clientSecret = null,
         ?string $accessToken = null,
-        ?int    $accessTokenExpires = null,
+        ?int $accessTokenExpires = null,
     ): void {
         if (empty($clientKey) || empty($clientSecret)) {
             // Throw exception if the required parameters were not found
@@ -119,7 +119,7 @@ class TwoLeggedOAuth2 extends AbstractAuth
     public function setAccessTokenDetails(array $accessTokenDetails): static
     {
         $this->_access_token = $accessTokenDetails['access_token'] ?? null;
-        $this->_expires = isset($accessTokenDetails['expires']) ? (int) $accessTokenDetails['expires'] : null;
+        $this->_expires      = isset($accessTokenDetails['expires']) ? (int) $accessTokenDetails['expires'] : null;
 
         return $this;
     }
