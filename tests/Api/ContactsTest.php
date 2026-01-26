@@ -52,7 +52,7 @@ class ContactsTest extends AbstractCustomFieldsTest
         $this->assertTrue(isset($response['filters']));
 
         if ($expectedEvents) {
-            foreach ($expectedEvents as $key => $eventName) {
+            foreach ($expectedEvents as $eventName) {
                 $actual = 'oops Missing';
                 foreach ($response['events'] as $event) {
                     if ($eventName == $event['event']) {
