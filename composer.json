@@ -27,14 +27,14 @@
     "friendsofphp/php-cs-fixer": "^3.93",
     "phpunit/phpunit": "~9.5.0",
     "guzzlehttp/guzzle": "^7.5",
-    "phpstan/phpstan": "^1.11"
+    "phpstan/phpstan": "^2.1"
   },
   "suggest": {
     "guzzlehttp/guzzle": "A popular HTTP client that implements psr/http-client-implementation."
   },
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "phpstan": "vendor/bin/phpstan analyse"
+    "phpstan": "php -d memory_limit=1G vendor/bin/phpstan analyse"
   },
   "config": {
     "allow-plugins": {
