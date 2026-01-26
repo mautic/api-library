@@ -111,7 +111,7 @@ class Api implements LoggerAwareInterface
     public function getLogger()
     {
         // If a logger hasn't been set, use NullLogger
-        if (!($this->logger instanceof LoggerInterface)) {
+        if (!$this->logger instanceof LoggerInterface) {
             $this->logger = new NullLogger();
         }
 
