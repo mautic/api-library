@@ -172,3 +172,6 @@ jobs:
 
     - name: Run PHPSTAN tests
       run: composer phpstan
+
+    - name: Run Rector tests
+      run: vendor/bin/rector process --dry-run
