@@ -6,7 +6,7 @@
 # Using the Mautic API Library
 
 ## Requirements
-* PHP 8.0 or newer
+* PHP 8.2 or newer
 
 ## Installing the API Library
 You can install the API Library with the following command:
