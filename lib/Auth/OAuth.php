@@ -471,9 +471,8 @@ class OAuth extends AbstractAuth
         if (!$this->_do_not_redirect) {
             header('Location: '.$authUrl);
             exit;
-        } else {
-            throw new AuthorizationRequiredException($authUrl);
         }
+        throw new AuthorizationRequiredException($authUrl);
     }
 
     /**

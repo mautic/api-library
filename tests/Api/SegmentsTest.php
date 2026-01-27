@@ -161,7 +161,7 @@ class SegmentsTest extends MauticApiTestCase
 
     public function testBatchEndpoints()
     {
-        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action) {
+        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action): void {
             switch ($action) {
                 // Add extra values to the batch after create, as the API returns them in the response.
                 // This is probably related to https://github.com/mautic/mautic/pull/8649

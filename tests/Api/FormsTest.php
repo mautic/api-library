@@ -196,7 +196,7 @@ class FormsTest extends MauticApiTestCase
 
     public function testBatchEndpoints()
     {
-        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action) {
+        $this->standardTestBatchEndpoints(null, function ($response, &$batch, $action): void {
             switch ($action) {
                 case 'create':
                     foreach ($batch as &$item) {
