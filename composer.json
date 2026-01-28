@@ -25,7 +25,7 @@
   "require-dev": {
     "kint-php/kint": "^4.1",
     "friendsofphp/php-cs-fixer": "^3.93",
-    "phpunit/phpunit": "~9.5.0",
+    "phpunit/phpunit": "~9.6.33",
     "guzzlehttp/guzzle": "^7.5",
     "phpstan/phpstan": "^2.1",
     "rector/rector": "^2.3"
