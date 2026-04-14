@@ -102,7 +102,7 @@ jobs:
       env:
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
       run: |
-        composer install --prefer-dist --no-progress
+        APP_ENV=prod SYMFONY_ENV=prod composer install --prefer-dist --no-progress
         if [[ "$(jq -r '.version | .[0:1]' app/release_metadata.json)" == "4" ]]; then
             cp $GITHUB_WORKSPACE/.github/ci-files/local_4.php ./app/config/local.php
             php bin/console mautic:install http://localhost/ --force --env=test --mailer_from_name="GitHub Actions" --mailer_from_email="github-actions@mautic.org"
