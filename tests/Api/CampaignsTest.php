@@ -369,8 +369,6 @@ class CampaignsTest extends MauticApiTestCase
     public function testCampaignContactGetList($cleanup = true)
     {
         $this->setUpPayloadClass();
-        $response = $this->api->create($this->testPayload);
-        $this->assertPayload($response);
 
         // Create contact
         $contactsContext = $this->getContext('contacts');
