@@ -50,7 +50,7 @@ class CategoriesTest extends MauticApiTestCase
         $assetPayload = [
             'title'           => 'Mautic Logo sent as a API request',
             'storageLocation' => 'remote',
-            'file'            => 'https://www.mautic.org/media/logos/logo/Mautic_Logo_DB.pdf',
+            'file'            => 'https://mautic.org/wp-content/uploads/2025/01/Mautic_Logo_LB.pdf',
             'category'        => $categoryId,
         ];
 
