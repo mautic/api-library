@@ -13,11 +13,21 @@ namespace Mautic\Tests\Api;
 
 class StagesTest extends MauticApiTestCase
 {
+    private static $weightCounter = 0;
+
     public function setUp(): void
     {
         $this->api         = $this->getContext('stages');
         $this->testPayload = [
             'name' => 'test',
+        ];
+    }
+
+    protected function getTestPayload(): array
+    {
+        return [
+            'name'   => sprintf('test %s', uniqid('', true)),
+            'weight' => (int) (microtime(true) * 1000000) + ++self::$weightCounter,
         ];
     }
 
@@ -58,8 +68,9 @@ class StagesTest extends MauticApiTestCase
         $contact = $response['contact'];
 
         // Create stage
-        $response = $this->api->create($this->testPayload);
-        $this->assertPayload($response);
+        $payload  = $this->getTestPayload();
+        $response = $this->api->create($payload);
+        $this->assertPayload($response, $payload);
         $stage = $response[$this->api->itemName()];
 
         // Add contact to the stage
