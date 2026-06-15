@@ -310,13 +310,14 @@ abstract class MauticApiTestCase extends TestCase
 
     public function standardTestEditPatch(array $editTo)
     {
-        $response = $this->api->edit(10000, $this->getTestPayload());
+        $createPayload = $this->getTestPayload();
+        $response      = $this->api->edit(10000, $createPayload);
 
         // there should be an error as the item shouldn't exist
         $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
-        $response = $this->api->create($this->getTestPayload());
-        $this->assertPayload($response);
+        $response = $this->api->create($createPayload);
+        $this->assertPayload($response, $createPayload);
 
         $response = $this->api->edit($response[$this->api->itemName()]['id'], $editTo);
         $this->assertPayload($response, $editTo);
@@ -327,8 +328,9 @@ abstract class MauticApiTestCase extends TestCase
 
     public function standardTestEditPut()
     {
-        $response = $this->api->edit(10000, $this->getTestPayload(), true);
-        $this->assertPayload($response);
+        $payload  = $this->getTestPayload();
+        $response = $this->api->edit(10000, $payload, true);
+        $this->assertPayload($response, $payload);
 
         // now delete the entity
         $response = $this->api->delete($response[$this->api->itemName()]['id']);

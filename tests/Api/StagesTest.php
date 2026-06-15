@@ -13,7 +13,7 @@ namespace Mautic\Tests\Api;
 
 class StagesTest extends MauticApiTestCase
 {
-    private static $weightCounter = 0;
+    private static $nextWeight;
 
     public function setUp(): void
     {
@@ -27,8 +27,21 @@ class StagesTest extends MauticApiTestCase
     {
         return [
             'name'   => sprintf('test %s', uniqid('', true)),
-            'weight' => (int) (microtime(true) * 1000000) + ++self::$weightCounter,
+            'weight' => $this->getNextWeight(),
         ];
+    }
+
+    private function getNextWeight(): int
+    {
+        if (null === self::$nextWeight) {
+            $response   = $this->api->getList('', 0, 1, 'weight', 'DESC');
+            $firstStage = $response[$this->api->listName()][0] ?? [];
+            $maxWeight  = isset($firstStage['weight']) ? (int) $firstStage['weight'] : 0;
+
+            self::$nextWeight = $maxWeight + 1;
+        }
+
+        return self::$nextWeight++;
     }
 
     public function testGetList()
