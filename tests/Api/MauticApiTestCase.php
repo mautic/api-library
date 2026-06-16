@@ -173,13 +173,19 @@ abstract class MauticApiTestCase extends TestCase
         }
     }
 
+    protected function getTestPayload(): array
+    {
+        return $this->testPayload;
+    }
+
     protected function standardTestGetListOfSpecificIds($callback = null)
     {
         // Create some items first
         $itemIds = [];
         for ($i = 0; $i <= 2; ++$i) {
-            $response = $this->api->create($this->testPayload);
-            $this->assertErrors($response, 'Payload: '.json_encode($this->testPayload, JSON_PRETTY_PRINT));
+            $payload  = $this->getTestPayload();
+            $response = $this->api->create($payload);
+            $this->assertErrors($response, 'Payload: '.json_encode($payload, JSON_PRETTY_PRINT));
             $itemIds[] = $response[$this->api->itemName()]['id'];
         }
 
@@ -233,7 +239,7 @@ abstract class MauticApiTestCase extends TestCase
     protected function standardTestCreateGetAndDelete(?array $payload = null)
     {
         if (empty($payload)) {
-            $payload = $this->testPayload;
+            $payload = $this->getTestPayload();
         }
 
         // Create item
@@ -259,9 +265,9 @@ abstract class MauticApiTestCase extends TestCase
 
         if (null == $batch) {
             $batch = [
-                $this->testPayload,
-                $this->testPayload,
-                $this->testPayload,
+                $this->getTestPayload(),
+                $this->getTestPayload(),
+                $this->getTestPayload(),
             ];
         }
 
@@ -304,13 +310,14 @@ abstract class MauticApiTestCase extends TestCase
 
     public function standardTestEditPatch(array $editTo)
     {
-        $response = $this->api->edit(10000, $this->testPayload);
+        $createPayload = $this->getTestPayload();
+        $response      = $this->api->edit(10000, $createPayload);
 
         // there should be an error as the item shouldn't exist
         $this->assertTrue(isset($response['errors'][0]), $response['errors'][0]['message']);
 
-        $response = $this->api->create($this->testPayload);
-        $this->assertPayload($response);
+        $response = $this->api->create($createPayload);
+        $this->assertPayload($response, $createPayload);
 
         $response = $this->api->edit($response[$this->api->itemName()]['id'], $editTo);
         $this->assertPayload($response, $editTo);
@@ -321,8 +328,9 @@ abstract class MauticApiTestCase extends TestCase
 
     public function standardTestEditPut()
     {
-        $response = $this->api->edit(10000, $this->testPayload, true);
-        $this->assertPayload($response);
+        $payload  = $this->getTestPayload();
+        $response = $this->api->edit(10000, $payload, true);
+        $this->assertPayload($response, $payload);
 
         // now delete the entity
         $response = $this->api->delete($response[$this->api->itemName()]['id']);

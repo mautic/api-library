@@ -13,12 +13,35 @@ namespace Mautic\Tests\Api;
 
 class StagesTest extends MauticApiTestCase
 {
+    private static $nextWeight;
+
     public function setUp(): void
     {
         $this->api         = $this->getContext('stages');
         $this->testPayload = [
             'name' => 'test',
         ];
+    }
+
+    protected function getTestPayload(): array
+    {
+        return [
+            'name'   => sprintf('test %s', uniqid('', true)),
+            'weight' => $this->getNextWeight(),
+        ];
+    }
+
+    private function getNextWeight(): int
+    {
+        if (null === self::$nextWeight) {
+            $response   = $this->api->getList('', 0, 1, 'weight', 'DESC');
+            $firstStage = $response[$this->api->listName()][0] ?? [];
+            $maxWeight  = isset($firstStage['weight']) ? (int) $firstStage['weight'] : 0;
+
+            self::$nextWeight = $maxWeight + 1;
+        }
+
+        return self::$nextWeight++;
     }
 
     public function testGetList()
@@ -58,8 +81,9 @@ class StagesTest extends MauticApiTestCase
         $contact = $response['contact'];
 
         // Create stage
-        $response = $this->api->create($this->testPayload);
-        $this->assertPayload($response);
+        $payload  = $this->getTestPayload();
+        $response = $this->api->create($payload);
+        $this->assertPayload($response, $payload);
         $stage = $response[$this->api->itemName()];
 
         // Add contact to the stage
