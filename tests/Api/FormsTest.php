@@ -38,6 +38,7 @@ class FormsTest extends MauticApiTestCase
                     ],
                 ],
             ],
+            'postAction'  => 'return',
         ];
     }
 
