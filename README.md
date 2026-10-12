@@ -119,6 +119,56 @@ try {
 }
 ```
 
+### Using Two-Legged Authentication (Oauth2 Client Credentials) Instead
+The above method uses authorization code flow for Oauth2. Client Credentials is the preferred method of
+authentication when the use-case is application to application, where any actions
+are triggered by the application itself and not a user taking an action (e.g. cleanup during cron).
+
+```php
+<?php
+
+// Bootup the Composer autoloader
+include __DIR__ . '/vendor/autoload.php';
+
+use Mautic\Auth\ApiAuth;
+
+session_start();
+
+$publicKey = '';
+$secretKey = '';
+$callback  = '';
+
+// ApiAuth->newAuth() will accept an array of Auth settings
+$settings = [
+    'AuthMethod'   => 'TwoLeggedOAuth2',
+    'clientKey'    => '',
+    'clientSecret' => '',
+    'baseUrl'      => '',
+];
+
+/*
+// If you already have the access token, et al, pass them in as well to prevent the need for reauthorization
+$settings['accessToken']        = $accessToken;
+$settings['accessTokenExpires'] = $accessTokenExpires; //UNIX timestamp
+*/
+
+// Initiate the auth object
+$initAuth = new ApiAuth();
+$auth     = $initAuth->newAuth($settings, $settings['AuthMethod']);
+
+if (!$auth->isAuthorized()) {
+    $auth->requestAccessToken();
+    // $accessTokenData will have the following keys:
+    // access_token, expires, token_type
+    $accessTokenData = $auth->getAccessTokenData();
+
+    //store access token data however you want
+}
+
+// Nothing else to do ... It's ready to use.
+// Just pass the auth object to the API context you are creating.
+```
+
 ### Using Basic Authentication Instead
 Instead of messing around with OAuth, you may simply elect to use BasicAuth instead.
 
