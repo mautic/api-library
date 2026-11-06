@@ -14,8 +14,10 @@ namespace Mautic\Auth;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
+use Mautic\Exception\ConnectionException;
 use Mautic\Exception\UnexpectedResponseFormatException;
 use Mautic\Response;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -95,6 +97,7 @@ abstract class AbstractAuth implements AuthInterface
     }
 
     /**
+     * @throws ConnectionException                         if the request could not reach the API (timeout, DNS, TLS, ...)
      * @throws UnexpectedResponseFormatException|Exception
      */
     public function makeRequest($url, array $parameters = [], $method = 'GET', array $settings = [])
@@ -154,7 +157,18 @@ abstract class AbstractAuth implements AuthInterface
         }
 
         // Send request
-        $this->_httpResponse = $this->client->sendRequest($request);
+        try {
+            $this->_httpResponse = $this->client->sendRequest($request);
+        } catch (ClientExceptionInterface $exception) {
+            // The request never reached the API (DNS failure, connection timeout,
+            // TLS error, ...). Surface the underlying transport error - which for
+            // cURL based clients carries the cURL error message and number - instead
+            // of letting it bubble up as a generic "status code (0)" response.
+            $message = sprintf('Could not connect to the Mautic API at %s: %s', $url, $exception->getMessage());
+            $this->log($message);
+
+            throw new ConnectionException($message, (int) $exception->getCode(), $exception);
+        }
 
         // Parse response
         $response = new Response($this->_httpResponse);
