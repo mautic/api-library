@@ -19,7 +19,7 @@
     "psr/log": "~1.0 || ~2.0 || ~3.0",
     "psr/http-client": "^1.0",
     "psr/http-client-implementation": "^1.0",
-    "guzzlehttp/psr7": "^2.4",
+    "guzzlehttp/psr7": "^2.4 || ^3.0",
     "php-http/discovery": "^1.15"
   },
   "require-dev": {
