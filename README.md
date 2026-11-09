@@ -47,6 +47,31 @@ $auth     = $initAuth->newAuth($settings);
 // etc.
 ```
 
+#### Using an HTTP proxy
+
+With API library 4.x, configure the proxy on your PSR-18 HTTP client and pass
+the client to `ApiAuth`. This example uses Guzzle and assumes `$settings`
+contains your existing OAuth configuration:
+
+```php
+use GuzzleHttp\Client;
+use Mautic\Auth\ApiAuth;
+
+$httpClient = new Client([
+    'proxy'   => 'http://proxy.example.com:8080',
+    'timeout' => 10,
+]);
+
+$initAuth = new ApiAuth($httpClient);
+$auth     = $initAuth->newAuth($settings, 'OAuth');
+```
+
+For Basic Authentication, use `$initAuth->newAuth($settings, 'BasicAuth')`
+with `userName` and `password` in `$settings`. The proxy configuration is the same.
+
+The library uses the supplied client for API requests. If you use a different
+PSR-18 client, configure the proxy through that client's own options.
+
 ## Mautic Setup
 The API must be enabled in Mautic. Within Mautic, go to the Configuration page (located in the Settings menu) and under API Settings enable
 Mautic's API. If you intend to use Basic Authentication, ensure you enable it. You can also choose which OAuth protocol to use here.  After saving the configuration, go to the API Credentials page (located in the Settings menu) and create a new client.  Enter the callback/redirect URI that the request will be sent from.  Click Apply, then copy the Client ID and Client Secret to the application that will be using the API.
