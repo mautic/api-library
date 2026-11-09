@@ -50,8 +50,8 @@ $auth     = $initAuth->newAuth($settings);
 #### Using an HTTP proxy
 
 With API library 4.x, configure the proxy on your PSR-18 HTTP client and pass
-the client to `ApiAuth`. For example, with Guzzle and your existing authentication
-`$settings`:
+the client to `ApiAuth`. This example uses Guzzle and assumes `$settings`
+contains your existing OAuth configuration:
 
 ```php
 use GuzzleHttp\Client;
@@ -63,8 +63,11 @@ $httpClient = new Client([
 ]);
 
 $initAuth = new ApiAuth($httpClient);
-$auth     = $initAuth->newAuth($settings);
+$auth     = $initAuth->newAuth($settings, 'OAuth');
 ```
+
+For Basic Authentication, use `$initAuth->newAuth($settings, 'BasicAuth')`
+with `userName` and `password` in `$settings`. The proxy configuration is the same.
 
 The library uses the supplied client for API requests. If you use a different
 PSR-18 client, configure the proxy through that client's own options.
