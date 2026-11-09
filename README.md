@@ -51,6 +51,18 @@ $auth     = $initAuth->newAuth($settings);
 The API must be enabled in Mautic. Within Mautic, go to the Configuration page (located in the Settings menu) and under API Settings enable
 Mautic's API. If you intend to use Basic Authentication, ensure you enable it. You can also choose which OAuth protocol to use here.  After saving the configuration, go to the API Credentials page (located in the Settings menu) and create a new client.  Enter the callback/redirect URI that the request will be sent from.  Click Apply, then copy the Client ID and Client Secret to the application that will be using the API.
 
+### OAuth credential names
+
+The API Credentials list and the credential edit form use different labels for the same values.
+Use this mapping when copying credentials into the API Library's `$settings` array:
+
+| API Library setting | API Credentials list | Credential edit form |
+| ------------------- | -------------------- | -------------------- |
+| `clientKey`         | Public Key           | Client ID            |
+| `clientSecret`      | Secret Key           | Client Secret        |
+
+Keep `clientKey` and `clientSecret` as the array keys. The labels shown in Mautic are not alternative setting names.
+
 ## Authorization
 
 ### Obtaining an access token
@@ -76,8 +88,8 @@ $callback  = '';
 $settings = [
     'baseUrl'          => '',       // Base URL of the Mautic instance
     'version'          => 'OAuth2', // Version of the OAuth can be OAuth2 or OAuth1a. OAuth2 is the default value.
-    'clientKey'        => '',       // Client/Consumer key from Mautic
-    'clientSecret'     => '',       // Client/Consumer secret key from Mautic
+    'clientKey'        => $publicKey, // Client ID (Public Key in the API Credentials list)
+    'clientSecret'     => $secretKey, // Client Secret (Secret Key in the API Credentials list)
     'callback'         => '',       // Redirect URI/Callback URI for this script
 ];
 
