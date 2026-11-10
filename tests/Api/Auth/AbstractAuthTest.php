@@ -12,9 +12,14 @@
 namespace Mautic\Tests\Api\Auth;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request;
 use Mautic\Auth\AbstractAuth;
+use Mautic\Exception\ConnectionException;
 use Mautic\Exception\UnexpectedResponseFormatException;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
 
 class AbstractAuthTest extends TestCase
 {
@@ -30,6 +35,34 @@ class AbstractAuthTest extends TestCase
         $auth = $this->getMockForAbstractClass(AbstractAuth::class, [new Client()]);
         $this->expectException(UnexpectedResponseFormatException::class);
         $auth->makeRequest('https://github.com/mautic/api-library/this-page-does-not-exist');
+    }
+
+    public function testConnectionExceptionIsThrownWhenTheTransportFails(): void
+    {
+        $url       = 'https://mautic.example.com/api/contacts';
+        $curlError = 'cURL error 7: Failed to connect to mautic.example.com port 443: Connection timed out';
+
+        // Simulate a transport level failure (timeout/DNS/TLS) from the PSR-18 client.
+        $client = $this->createMock(ClientInterface::class);
+        $client->method('sendRequest')
+            ->willThrowException(new ConnectException($curlError, new Request('GET', $url)));
+
+        $auth = $this->getMockForAbstractClass(AbstractAuth::class, [$client]);
+        $auth->method('prepareRequest')->willReturnCallback(
+            static fn ($url, array $headers, array $parameters, $method, array $settings): array => [$headers, $parameters]
+        );
+
+        try {
+            $auth->makeRequest($url);
+            self::fail('A ConnectionException should have been thrown when the transport fails.');
+        } catch (ConnectionException $exception) {
+            // The underlying cURL error must be surfaced instead of a generic "status code (0)".
+            self::assertStringContainsString($curlError, $exception->getMessage());
+            // The target URL is included so it is clear what failed.
+            self::assertStringContainsString($url, $exception->getMessage());
+            // The original transport exception is preserved for further inspection.
+            self::assertInstanceOf(ClientExceptionInterface::class, $exception->getPrevious());
+        }
     }
 
     public function testHtmlResponse()
