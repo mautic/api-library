@@ -86,6 +86,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "VictorMoni",
+      "name": "Victor Moni",
+      "avatar_url": "https://avatars.githubusercontent.com/u/123900844?v=4",
+      "profile": "http://victormoni.vercel.app",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
