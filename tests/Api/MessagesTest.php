@@ -49,10 +49,11 @@ class MessagesTest extends MauticApiTestCase
             $api         = $this->getContext($contextName);
             $response    = $api->create(
                 [
-                    'name'    => 'MM API test', // required for all
-                    'subject' => 'MM API test', // required for email
-                    'message' => 'test', // required for sms
-                    'heading' => 'test', // required for notifications
+                    'name'       => 'MM API test', // required for all
+                    'subject'    => 'MM API test', // required for email
+                    'customHtml' => 'test', // required for email
+                    'message'    => 'test', // required for sms
+                    'heading'    => 'test', // required for notifications
                 ]
             );
             $this->assertErrors($response);
