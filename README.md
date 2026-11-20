@@ -1,6 +1,6 @@
 [![codecov](https://codecov.io/gh/mautic/api-library/branch/master/graph/badge.svg)](https://codecov.io/gh/mautic/api-library) [![Latest Stable Version](https://poser.pugx.org/mautic/api-library/v)](//packagist.org/packages/mautic/api-library) [![Total Downloads](https://poser.pugx.org/mautic/api-library/downloads)](//packagist.org/packages/mautic/api-library) [![Latest Unstable Version](https://poser.pugx.org/mautic/api-library/v/unstable)](//packagist.org/packages/mautic/api-library) [![License](https://poser.pugx.org/mautic/api-library/license)](//packagist.org/packages/mautic/api-library)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Using the Mautic API Library
@@ -343,6 +343,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://matbcvo.github.io"><img src="https://avatars.githubusercontent.com/u/1006437?v=4&size=100" width="100px" height="100px" alt="Martin Vooremäe"/><br /><sub><b>Martin Vooremäe</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=matbcvo" title="Code">💻</a> <a href="https://github.com/mautic/api-library/commits?author=matbcvo" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Buvanesh11"><img src="https://avatars.githubusercontent.com/u/234412744?v=4&size=100" width="100px" height="100px" alt="Buvanesh11"/><br /><sub><b>Buvanesh11</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=Buvanesh11" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://victormoni.vercel.app"><img src="https://avatars.githubusercontent.com/u/123900844?v=4&size=100" width="100px" height="100px" alt="Victor Moni"/><br /><sub><b>Victor Moni</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=VictorMoni" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://santhiprakash.com"><img src="https://avatars.githubusercontent.com/u/38608178?v=4&size=100" width="100px" height="100px" alt="Santhi Prakash"/><br /><sub><b>Santhi Prakash</b></sub></a><br /><a href="https://github.com/mautic/api-library/commits?author=santhiprakash" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
