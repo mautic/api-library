@@ -95,6 +95,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "santhiprakash",
+      "name": "Santhi Prakash",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38608178?v=4",
+      "profile": "https://santhiprakash.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
